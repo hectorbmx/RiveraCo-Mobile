@@ -1,1 +1,72 @@
 
+ion-tab-bar {
+  // Fondo de la barra (blanco como pediste)
+  --background: #ffffff;
+  
+  // Línea superior decorativa (opcional, le da un toque profesional)
+  border-top: 1px solid rgba(5, 59, 117, 0.1);
+  height: 65px; // Un poco más alta para que luzca mejor
+  
+  ion-tab-button {
+    // Color del icono y texto cuando NO están seleccionados (Azul Login)
+    --color: #053b75; 
+    --color-selected: #ffcc00; // Amarillo cuando se selecciona
+
+    ion-icon {
+      font-size: 26px; // Iconos un poco más grandes
+      margin-bottom: 2px;
+    }
+
+    ion-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    // Efecto visual cuando la pestaña está activa
+    &.tab-selected {
+      ion-icon {
+        // Un azul más intenso o el mismo para el seleccionado
+        color: #053b75; 
+        filter: drop-shadow(0 0 5px rgba(255, 204, 0, 0.4));
+      }
+      ion-label {
+        color: #053b75;
+      }
+      
+      // Indicador amarillo debajo o encima del icono activo
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 40%;
+        height: 3px;
+        background: #ffcc00; // Amarillo construcción
+        border-radius: 0 0 4px 4px;
+      }
+    }
+  }
+}// Añade esto a tu archivo scss de los tabs
+.exit-icon {
+  color: #eb445a; // Color rojo suave para indicar "salida" o peligro
+}
+
+// Estilo para la alerta de confirmación (esto suele ir en global.scss)
+.custom-alert {
+  --background: #ffffff;
+  
+  .alert-head {
+    color: #053b75; // Azul construcción
+    h2 { font-weight: 800; }
+  }
+
+  .alert-button {
+    color: #053b75;
+    font-weight: bold;
+    
+    &:last-child {
+      color: #eb445a; // El botón de "Salir" en rojo
+    }
+  }
+}

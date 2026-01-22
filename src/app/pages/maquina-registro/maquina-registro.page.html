@@ -1,0 +1,178 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Registro de Máquina</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && errorMsg" class="error-container">
+    <ion-card class="error-card">
+      <ion-card-content>
+        <p>{{ errorMsg }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="!loading && asignacion">
+    <!-- Card de asignación -->
+    <ion-card class="asignacion-card">
+      <ion-card-header>
+        <ion-card-subtitle>MÁQUINA ASIGNADA</ion-card-subtitle>
+        <ion-card-title>{{ asignacion.maquina?.nombre || 'Sin nombre' }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid class="info-grid">
+          <ion-row>
+            <ion-col size="6">
+              <div class="info-item">
+                <p class="label">Estado</p>
+                <ion-badge [color]="asignacion.estado === 'activa' ? 'success' : 'medium'">
+                  {{ asignacion.estado }}
+                </ion-badge>
+              </div>
+            </ion-col>
+            <ion-col size="6">
+              <div class="info-item">
+                <p class="label">Horómetro Actual</p>
+                <p class="value">{{ horometroSugerido }} hrs</p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Sección de registros -->
+    <div class="section-header">
+      <h2>Historial de Registros</h2>
+      <span class="count-badge">{{ registros?.length || 0 }}</span>
+    </div>
+
+    <!-- Lista de registros -->
+    <ion-card class="registros-card" *ngIf="registros && registros.length > 0">
+      <ion-list lines="none">
+        <ion-item *ngFor="let r of registros; let i = index" class="registro-item">
+          <ion-label>
+            <div class="horometro-info">
+              <h3>{{ r.horometro_inicio }} → {{ r.horometro_fin }} hrs</h3>
+              <span class="horas-badge">{{ r.horas }} hrs</span>
+            </div>
+            <div class="registro-details">
+              <span class="fecha-text">{{ formatFecha(r.inicio) }}</span>
+              <span class="notas-text" *ngIf="r.notas">{{ r.notas }}</span>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+    <!-- Mensaje cuando no hay registros -->
+    <ion-card *ngIf="!registros || registros.length === 0" class="empty-card">
+      <ion-card-content>
+        <p>No hay registros disponibles</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+ 
+
+
+</ion-content>
+
+ <ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block" (click)="abrirModalNuevo()">
+      Nuevo registro
+    </ion-button>
+
+  </ion-toolbar>
+</ion-footer>
+<ion-modal
+  [isOpen]="modalOpen"
+  cssClass="nuevo-registro-modal"
+  (didDismiss)="cerrarModal()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Registrar horas</ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="cerrarModal()">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-card class="modal-card">
+        <ion-card-header>
+          <ion-card-subtitle>MÁQUINA</ion-card-subtitle>
+          <ion-card-title>{{ asignacion?.maquina?.nombre || 'Máquina' }}</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <p class="muted">
+            Último horómetro registrado:
+            <ion-badge color="danger" class="ultimo-badge">
+              {{ horometroSugerido ?? 0 }}
+            </ion-badge>
+          </p>
+
+
+          <ion-item class="field-item" lines="none">
+            <ion-label class="field-label" position="stacked">Horómetro final</ion-label>
+            <ion-input
+              notas="horometro_fin"
+              fill="outline"
+              type="number"
+              inputmode="decimal"
+              [(ngModel)]="form.horometro_fin"
+              placeholder="Ej. 115"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item class="field-item ion-margin-top" lines="none">
+            <ion-label class="field-label" position="stacked">Notas (opcional)</ion-label>
+            <ion-textarea
+              name="notas"
+              fill="outline"
+              autoGrow="true"
+              rows="3"
+              [(ngModel)]="form.notas"
+              placeholder="Ej. pila #2"
+            ></ion-textarea>
+          </ion-item>
+
+          <ion-card *ngIf="formError" class="error-mini ion-margin-top">
+            <ion-card-content>
+              <ion-text color="danger">{{ formError }}</ion-text>
+            </ion-card-content>
+          </ion-card>
+
+          <div class="modal-actions ion-margin-top">
+            <ion-button fill="outline" (click)="cerrarModal()" [disabled]="saving">
+              Cancelar
+            </ion-button>
+
+            <ion-button color="primary" (click)="guardarRegistro()" [disabled]="saving">
+              <ion-spinner *ngIf="saving" name="crescent" class="btn-spinner"></ion-spinner>
+              <span class="btn-text dark">{{ saving ? 'Guardando...' : 'Guardar' }}</span>
+            </ion-button>
+
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ng-template>
+</ion-modal>

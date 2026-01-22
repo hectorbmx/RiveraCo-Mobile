@@ -1,0 +1,249 @@
+// Fondo limpio
+ion-content {
+  --background: #f8f9fa;
+}
+
+// Encabezado de sección minimalista
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 4px 8px 4px;
+  
+  h2 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  
+  .count-badge {
+    background: #e8eaed;
+    color: #5f6368;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
+
+// Cards compactas y limpias
+ion-card {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin: 8px 0;
+  border: 1px solid #e8eaed;
+  background: #ffffff;
+
+  ion-card-header {
+    padding: 12px 16px 8px 16px;
+    
+    ion-card-subtitle {
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: #5f6368;
+      margin-bottom: 4px;
+    }
+    
+    ion-card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.3;
+    }
+  }
+
+  ion-card-content {
+    padding: 8px 16px 12px 16px;
+  }
+}
+
+// Grid de información más compacto
+.info-grid {
+  padding: 0;
+  
+  ion-row {
+    margin-bottom: 0;
+  }
+  
+  ion-col {
+    padding: 4px 8px;
+  }
+}
+
+.info-item {
+  .label {
+    font-size: 0.7rem;
+    color: #80868b;
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1a1a1a;
+    line-height: 1.2;
+  }
+}
+
+// Card de máquina más compacta
+.maquina-card {
+  ion-card-header {
+    padding-bottom: 8px;
+  }
+  
+  .info-item {
+    ion-badge {
+      margin-top: 4px;
+      font-size: 0.7rem;
+      padding: 4px 8px;
+    }
+  }
+}
+.modal-subtitle {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.muted {
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-actions ion-button {
+  flex: 1;
+}
+
+.btn-spinner {
+  margin-right: 8px;
+}
+
+// Lista de empleados CLARA (sin fondo negro)
+.empleados-card {
+  overflow: hidden;
+  background: #ffffff; // Fondo blanco
+  
+  ion-list {
+    padding: 0;
+    background: #ffffff; // Fondo blanco para la lista
+  }
+
+  .empleado-item {
+    --background: #ffffff; // Fondo blanco para items
+    --color: #1a1a1a; // Texto oscuro
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --inner-padding-end: 0;
+    --min-height: 56px;
+    border-bottom: 1px solid #e8eaed;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    // Efecto hover para interactividad
+    &:hover {
+      --background: #f8f9fa;
+    }
+
+    ion-label {
+      margin: 8px 0;
+      
+      h3 {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #1a1a1a; // Texto oscuro
+        margin: 0 0 4px 0;
+      }
+
+      .empleado-details {
+        display: flex;
+        align-items: center;
+        font-size: 0.75rem;
+        color: #5f6368; // Gris medio
+        margin: 0;
+        gap: 6px;
+        
+        .separator {
+          color: #dadce0;
+        }
+        
+        .rol-text {
+          font-weight: 500;
+          color: #5f6368; // Gris medio
+        }
+        
+        .id-text {
+          color: #80868b; // Gris claro
+        }
+      }
+    }
+  }
+}
+
+// Badges más discretos
+ion-badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+// Card vacío
+.empty-card {
+  background: #ffffff;
+  
+  ion-card-content {
+    padding: 32px 16px;
+    text-align: center;
+    
+    p {
+      color: #80868b;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+  }
+}
+
+// Colores personalizados para badges
+ion-badge {
+  &[color="primary"] {
+    --background: #1a73e8;
+    --color: #ffffff;
+  }
+  
+  &[color="secondary"] {
+    --background: #5f6368;
+    --color: #ffffff;
+  }
+  
+  &[color="success"] {
+    --background: #1e8e3e;
+    --color: #ffffff;
+  }
+  
+  &[color="warning"] {
+    --background: #f9ab00;
+    --color: #ffffff;
+  }
+  
+  &[color="medium"] {
+    --background: #80868b;
+    --color: #ffffff;
+  }
+}

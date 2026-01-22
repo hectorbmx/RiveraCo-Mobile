@@ -1,17 +1,356 @@
-<ion-header [translucent]="true">
+<ion-header class="custom-header">
   <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Comisión</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="comision-content">
+  <ng-container *ngIf="ctx && form; else noctx">
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+    <!-- DATOS GENERALES - CARD INFORMATIVO -->
+    <div class="info-card">
+      <div class="info-card-header">
+        <h2 class="info-card-title">{{ form.cliente_nombre_formato || 'NOMBRE DE LA OBRA' }}</h2>
+        <span class="info-card-badge">OBRA ACTIVA</span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <label class="info-label">CLIENTE</label>
+          <p class="info-value">{{ form.cliente_nombre_formato || 'Sin cliente' }}</p>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">CLAVE</label>
+          <p class="info-value">{{ form.obra_id || '-' }}</p>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">PILAS</label>
+          <p class="info-value">{{ pilasCantidadProgramada || '-' }}</p>
+        </div>
+      </div>
+
+    
+    </div>
+
+    <!-- MÁQUINA EN OBRA -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">MÁQUINA EN OBRA</h2>
+      </div>
+
+      <div class="machine-grid">
+        <div class="machine-item">
+          <label class="machine-label">MÁQUINA</label>
+          <p class="machine-value">{{ maquinaNombre || 'Sin máquina' }}</p>
+        </div>
+
+        <div class="machine-item">
+          <label class="machine-label">ESTADO</label>
+          <span class="status-badge active">ACTIVA</span>
+        </div>
+
+        <div class="machine-item">
+          <label class="machine-label">FECHA INICIO</label>
+          <p class="machine-value">{{ form.fecha || '-' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBSERVACIONES -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">OBSERVACIONES</h2>
+      </div>
+
+      <div class="form-group">
+        <ion-textarea
+          [(ngModel)]="form.observaciones"
+          class="custom-textarea"
+          placeholder="Escriba aquí..."
+          autoGrow="true"
+          rows="4"
+          fill="outline"
+        ></ion-textarea>
+      </div>
+    </div>
+
+    <!-- PERSONAL EN LA OBRA -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">PERSONAL ASIGNADO</h2>
+        <span class="section-count">{{ form.personal?.length || 0 }}</span>
+      </div>
+
+      <div *ngFor="let p of form.personal; let i = index" class="personal-card">
+        <div class="personal-header">
+          <div class="personal-info">
+            <h3 class="personal-name">{{ p.nombre }}</h3>
+            <span class="personal-role">{{ p.rol_nombre || 'Sin rol' }}</span>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="chevron-icon"></ion-icon>
+        </div>
+
+        <div class="time-grid">
+          <div class="time-item">
+            <label class="time-label">INICIO</label>
+            <ion-input
+              [(ngModel)]="p.inicio"
+              (ionChange)="recalcHoras(p)"
+              placeholder="08:00"
+              class="time-input"
+            ></ion-input>
+          </div>
+
+          <div class="time-item">
+            <label class="time-label">FIN</label>
+            <ion-input
+              [(ngModel)]="p.fin"
+              (ionChange)="recalcHoras(p)"
+              placeholder="17:00"
+              class="time-input"
+            ></ion-input>
+          </div>
+
+          <div class="time-item">
+            <label class="time-label">COMIDA</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="p.comida_hrs"
+              (ionChange)="recalcHoras(p)"
+              class="time-input"
+              placeholder="1"
+            ></ion-input>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <label class="stat-label">HORAS</label>
+            <div class="stat-value">{{ p.horas_laboradas || 0 }}</div>
+          </div>
+
+          <div class="stat-item">
+            <label class="stat-label">EXTRA</label>
+            <div class="stat-value">{{ p.tiempo_extra || 0 }}</div>
+          </div>
+        </div>
+
+        <div class="activities-grid">
+          <div class="activity-item">
+            <span class="activity-label">Metros</span>
+            <ion-toggle [(ngModel)]="p.actividades.metros" class="custom-toggle"></ion-toggle>
+          </div>
+
+          <div class="activity-item">
+            <span class="activity-label">Acero</span>
+            <ion-toggle [(ngModel)]="p.actividades.acero" class="custom-toggle"></ion-toggle>
+          </div>
+
+          <div class="activity-item">
+            <span class="activity-label">Bentonita</span>
+            <ion-toggle [(ngModel)]="p.actividades.bentonita" class="custom-toggle"></ion-toggle>
+          </div>
+
+          <div class="activity-item">
+            <span class="activity-label">Concreto</span>
+            <ion-toggle [(ngModel)]="p.actividades.concreto" class="custom-toggle"></ion-toggle>
+          </div>
+
+          <div class="activity-item">
+            <span class="activity-label">Campana</span>
+            <ion-toggle [(ngModel)]="p.actividades.campana" class="custom-toggle"></ion-toggle>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- SELECT PILA + BOTÓN AGREGAR FILA -->
+<!-- SELECT PILA (sin botón) -->
+<div class="pila-toolbar">
+  <div class="pila-select">
+    <label class="perf-label">TIPO DE PILA A AGREGAR</label>
+
+    <ion-select
+      interface="popover"
+      [(ngModel)]="form.pila_id"
+      (ionChange)="onPilaChange($event.detail.value)"
+      placeholder="Selecciona un tipo de pila"
+      class="perf-input"
+      fill="outline"
+    >
+      <ion-select-option *ngFor="let p of ctx.pilas" [value]="p.id">
+        {{ p.tipo || 'Pila' }} 
+      </ion-select-option>
+    </ion-select>
+  </div>
+</div>
+
+
+    <!-- DETALLE DE PERFORACIÓN -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">DETALLE DE PERFORACIÓN</h2>
+      </div>
+
+      <div *ngFor="let d of form.perforaciones; let i = index" class="perf-card">
+        <div class="perf-header">
+          <h3 class="perf-title">Pila {{ i + 1 }}</h3>
+          <button 
+            class="perf-remove-btn" 
+            (click)="removePerforacionRow(i)" 
+            [disabled]="form.perforaciones.length <= 1"
+          >
+            Quitar
+          </button>
+        </div>
+
+        <div class="perf-grid">
+          <div class="perf-item">
+            <label class="perf-label">DIÁMETRO</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.diametro"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">CANT.</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.cantidad"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">PROFUNDIDAD</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.profundidad"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">METROS COMISIÓN</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.metros_comision"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">KG ACERO</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.kg_acero"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">VOL. BENTONITA</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.vol_bentonita"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">VOL. CONCRETO</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.vol_concreto"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">CAMPANA (PZAS)</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.campana_pzas"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">ML ADEME BAUER</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.ml_ademe_bauer"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">ADICIONAL</label>
+            <ion-input
+              type="number"
+              [(ngModel)]="d.adicional"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">INICIO PERF.</label>
+            <ion-input
+              type="time"
+              [(ngModel)]="d.inicio_perf"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+
+          <div class="perf-item">
+            <label class="perf-label">TÉRMINO PERF.</label>
+            <ion-input
+              type="time"
+              [(ngModel)]="d.termino_perf"
+              class="perf-input"
+              fill="outline"
+            ></ion-input>
+          </div>
+        </div>
+      </div>
+
+      <button class="add-row-btn" (click)="addPerforacionRow()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Agregar fila
+      </button>
+    </div>
+
+    <!-- BOTÓN GUARDAR -->
+    <div class="action-section">
+      <ion-button expand="block" class="save-button" (click)="debugPrint()">
+        GUARDAR COMISIÓN
+      </ion-button>
+    </div>
+
+  </ng-container>
+
+  <ng-template #noctx>
+    <div class="no-context">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <p>No hay contexto cargado. Inicia sesión nuevamente.</p>
+    </div>
+  </ng-template>
+
 </ion-content>

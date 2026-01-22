@@ -1,0 +1,204 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Registro de Vehículo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && errorMsg" class="error-container">
+    <ion-card class="error-card">
+      <ion-card-content>
+        <p>{{ errorMsg }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="!loading">
+    <!-- Card de vehículo asignado -->
+    <ion-card class="asignacion-card">
+      <ion-card-header>
+        <ion-card-subtitle>VEHÍCULO ASIGNADO</ion-card-subtitle>
+
+        <!-- Si tienes datos del vehículo en asignacion, úsalo.
+             Si no, esto queda genérico y no rompe -->
+        <ion-card-title>
+          {{ asignacion?.vehiculo?.nombre || asignacion?.vehiculo?.placas || 'Vehículo asignado' }}
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-grid class="info-grid">
+          <ion-row>
+            <ion-col size="6">
+              <div class="info-item">
+                <p class="label">Estado</p>
+                <ion-badge color="success">
+                  Activo
+                </ion-badge>
+              </div>
+            </ion-col>
+
+            <ion-col size="6">
+              <div class="info-item">
+                <p class="label">KM actual</p>
+                <p class="value">{{ kmSugerido ?? 0 }} km</p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Sección de registros -->
+    <div class="section-header">
+      <h2>Historial de Registros</h2>
+      <span class="count-badge">{{ registros?.length || 0 }}</span>
+    </div>
+
+    <!-- Lista de registros -->
+    <ion-card class="registros-card" *ngIf="registros && registros.length > 0">
+      <ion-list lines="none">
+        <ion-item *ngFor="let r of registros; let i = index" class="registro-item">
+          <ion-label>
+            <div class="horometro-info">
+              <h3>{{ r.km }} km</h3>
+              <!-- Puedes reutilizar el badge para resaltar -->
+              <span class="horas-badge">ODÓMETRO</span>
+            </div>
+
+            <div class="registro-details">
+              <span class="fecha-text">{{ formatFecha(r.fecha) }}</span>
+              <span class="notas-text" *ngIf="r.notas">{{ r.notas }}</span>
+
+              <!-- Link/preview de foto (si quieres que al toque abra) -->
+              <!-- <span class="notas-text" *ngIf="r.foto_url">
+                Foto: {{ r.foto_url }}
+              </span> -->
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+    <!-- Mensaje cuando no hay registros -->
+    <ion-card *ngIf="!registros || registros.length === 0" class="empty-card">
+      <ion-card-content>
+        <p>No hay registros disponibles</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block" (click)="abrirModalNuevo()">
+      Nuevo registro
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
+
+<ion-modal
+  [isOpen]="modalOpen"
+  cssClass="nuevo-registro-modal"
+  (didDismiss)="cerrarModal()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Registrar kilometraje</ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="cerrarModal()">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-card class="modal-card">
+        <ion-card-header>
+          <ion-card-subtitle>VEHÍCULO</ion-card-subtitle>
+          <ion-card-title>
+            {{ asignacion?.vehiculo?.nombre || asignacion?.vehiculo?.placas || 'Vehículo asignado' }}
+          </ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <p class="muted">
+            Último kilometraje registrado:
+            <ion-badge color="danger" class="ultimo-badge">
+              {{ kmSugerido ?? 0 }}
+            </ion-badge>
+          </p>
+
+          <!-- Botón foto + preview -->
+          <ion-button expand="block" fill="outline" (click)="tomarFoto()" class="ion-margin-top">
+            Tomar foto del odómetro
+          </ion-button>
+
+          <div *ngIf="form.photoPreview" class="ion-margin-top">
+            <img
+              [src]="form.photoPreview"
+              alt="Foto odómetro"
+              style="width: 100%; border-radius: 12px;"
+            />
+          </div>
+
+          <!-- KM -->
+          <ion-item class="field-item ion-margin-top" lines="none">
+            <ion-label class="field-label" position="stacked">Kilometraje (odómetro)</ion-label>
+            <ion-input
+              name="km"
+              fill="outline"
+              type="number"
+              inputmode="numeric"
+              [(ngModel)]="form.km"
+              placeholder="Ej. 17550"
+            ></ion-input>
+          </ion-item>
+
+          <!-- Notas -->
+          <ion-item class="field-item ion-margin-top" lines="none">
+            <ion-label class="field-label" position="stacked">Notas (opcional)</ion-label>
+            <ion-textarea
+              name="notas"
+              fill="outline"
+              autoGrow="true"
+              rows="3"
+              [(ngModel)]="form.notas"
+              placeholder="Ej. recorrido semanal"
+            ></ion-textarea>
+          </ion-item>
+
+          <ion-card *ngIf="formError" class="error-mini ion-margin-top">
+            <ion-card-content>
+              <ion-text color="danger">{{ formError }}</ion-text>
+            </ion-card-content>
+          </ion-card>
+
+          <div class="modal-actions ion-margin-top">
+            <ion-button fill="outline" (click)="cerrarModal()" [disabled]="saving">
+              Cancelar
+            </ion-button>
+
+            <ion-button color="primary" (click)="guardarRegistro()" [disabled]="saving">
+              <ion-spinner *ngIf="saving" name="crescent" class="btn-spinner"></ion-spinner>
+              <span class="btn-text dark">{{ saving ? 'Guardando...' : 'Guardar' }}</span>
+            </ion-button>
+          </div>
+
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ng-template>
+</ion-modal>

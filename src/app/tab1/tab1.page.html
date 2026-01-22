@@ -1,17 +1,188 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
+<ion-header translucent="true">
+  <ion-toolbar color="primary">
+    <ion-title>Detalles de Obra</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content fullscreen="true" class="ion-padding">
+  <!-- Card de información de la obra -->
+  <ion-card class="obra-card">
+    <ion-card-header>
+      <ion-card-subtitle>OBRA ACTIVA</ion-card-subtitle>
+      <ion-card-title>{{ contextoObra?.nombre || 'Sin nombre' }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid class="info-grid">
+        <ion-row>
+          <ion-col size="6">
+            <div class="info-item">
+              <p class="label">Cliente</p>
+              <p class="value">{{ contextoObra?.cliente_nombre || 'N/A' }}</p>
+            </div>
+          </ion-col>
+          <ion-col size="3">
+            <div class="info-item">
+              <p class="label">Clave</p>
+              <p class="value">{{ contextoObra?.clave_obra || 'N/A' }}</p>
+            </div>
+          </ion-col>
+          <ion-col size="3">
+            <div class="info-item">
+              <p class="label">PILAS</p>
+            <p class="value">{{ contextoObra?.pilas_total_programado }}</p>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <div class="info-item">
+              <p class="label">Ubicación</p>
+              <p class="value">{{ contextoObra?.ubicacion || 'N/A' }}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Card de máquina activa -->
+  <ion-card
+  class="maquina-card"
+  *ngIf="maquinaActiva as m"
+  button
+  (click)="irMaquinaRegistro(m.maquina_id)"
+>
+  <ion-card-header class="maquina-header">
+    <ion-card-subtitle>MÁQUINA EN OBRA</ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-grid class="info-grid">
+      <ion-row>
+        <ion-col size="4">
+          <div class="info-item">
+            <p class="label">Máquina</p>
+            <p class="value">{{ m.maquina?.nombre || '_' }}</p>
+          </div>
+        </ion-col>
+
+        <ion-col size="4">
+          <div class="info-item">
+            <p class="label">Estado</p>
+            <ion-badge color="success">{{ m.estado }}</ion-badge>
+          </div>
+        </ion-col>
+
+        <ion-col size="4">
+          <div class="info-item">
+            <p class="label">Fecha Inicio</p>
+            <p class="value">{{ m.fecha_inicio | date:'dd/MM/yyyy' }}</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+
+
+  <!-- Lista de empleados -->
+  <div class="section-header">
+    <h2>Personal Asignado</h2>
+    <span class="count-badge">{{ empleados.length || 0 }}</span>
+  </div>
+
+ <ion-card class="empleados-card" *ngIf="empleados && empleados.length > 0">
+  <ion-list lines="none">
+
+    <ion-item-sliding *ngFor="let empleado of empleados">
+      
+      <!-- Opciones al deslizar (lado START = izquierda en LTR) -->
+      <ion-item-options side="start">
+        <ion-item-option color="primary" (click)="verEmpleado(empleado)">
+          Ver
+        </ion-item-option>
+      </ion-item-options>
+
+      <!-- Item normal con chevron -->
+      <ion-item
+        class="empleado-item"
+        detail="true"
+        button
+        (click)="verEmpleado(empleado)"
+      >
+        <ion-label>
+          <h3>{{ empleado.empleado?.nombre || 'Sin nombre' }}</h3>
+          <p class="empleado-details">
+            <span class="rol-text">{{ empleado.rol?.nombre || 'Sin rol' }}</span>
+            <span class="separator">•</span>
+            <span class="id-text">ID: {{ empleado.empleado?.id_Empleado || 'N/A' }}</span>
+          </p>
+        </ion-label>
+      </ion-item>
+
+      <!-- Opciones al deslizar (lado END = derecha en LTR) -->
+      <ion-item-options side="end">
+        <ion-item-option
+          color="success"  
+          (click)="checarEmpleado(empleado)"
+        >
+          <!-- <ion-icon name="camera-outline"></ion-icon> -->
+           <ion-icon name="camera-sharp"></ion-icon> <!--sharp-->
+        CHECAR
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-card>
+
+  <div class="section-header">
+    <h2>Vehiculo Asignado</h2>
+  </div>
+  <!-- Card de máquina activa -->
+  
+<ion-card
+  class="maquina-card"
+  *ngIf="vehuculoAsignado as v"
+  button
+  (click)="irVehiculoRegistro(v.vehiculo_id)">
+  <ion-card-header class="maquina-header">
+    <ion-card-subtitle>VEHICULO ASIGANDO AL RESIDENTE</ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-grid class="info-grid">
+      <ion-row>
+        <ion-col size="4">
+          <div class="info-item">
+            <p class="label">CODIGO</p>
+            <p class="value">{{ v.vehiculo?.modelo || '_' }}</p>
+          </div>
+        </ion-col>
+
+        <ion-col size="4">
+          <div class="info-item">
+            <p class="label">Marca</p>
+            <ion-badge color="success">{{ v.vehiculo?.marca }}</ion-badge>
+          </div>
+        </ion-col>
+
+        <ion-col size="4">
+          <div class="info-item">
+            <p class="label">Fecha Inicio</p>
+            <p class="value">{{ v.fecha_asignacion | date:'dd/MM/yyyy' }}</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+
+
+  <!-- Mensaje cuando no hay empleados -->
+  <ion-card *ngIf="!empleados || empleados.length === 0" class="empty-card">
+    <ion-card-content>
+      <p>No hay empleados asignados a esta obra</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

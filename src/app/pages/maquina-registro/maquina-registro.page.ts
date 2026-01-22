@@ -1,0 +1,174 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import {
+  IonBackButton,
+  IonBadge,
+  IonButton,
+  IonButtons,
+  IonCard, IonCardContent, IonCardHeader, IonCardSubtitle,
+  IonCardTitle,
+  IonCol,
+  IonContent,
+  IonFooter,
+  IonGrid,
+  IonHeader,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonModal,
+  IonRow,
+  IonSpinner,
+  IonText, IonTextarea,
+  IonTitle, IonToolbar
+} from '@ionic/angular/standalone';
+import { Subscription } from 'rxjs';
+import { ApiService } from 'src/app/services/api';
+import { MaquinaRegistroIndexResponse } from 'src/app/services/auth'; // ajusta si lo moviste
+// AuthService no es necesario aquí para el GET (lo puedes quitar si no lo usas)
+
+@Component({
+  selector: 'app-maquina-registro',
+  templateUrl: './maquina-registro.page.html',
+  styleUrls: ['./maquina-registro.page.scss'],
+  standalone: true,
+  imports: [IonBackButton, IonContent, IonHeader,IonTextarea, IonInput,IonTitle, IonToolbar,IonCol,IonBadge,IonList,IonItem,IonLabel,IonButton,IonFooter,IonText,IonModal,
+    IonCardTitle,IonRow,IonGrid,IonCardHeader,IonCardSubtitle, CommonModule, FormsModule,IonSpinner,IonCard,IonCardContent,IonButtons],
+})
+
+
+export class MaquinaRegistroPage implements OnInit, OnDestroy {
+  obraMaquinaId!: number;
+
+  loading = true;
+  errorMsg: string | null = null;
+  
+
+  asignacion: MaquinaRegistroIndexResponse['asignacion'] | null = null;
+  horometroSugerido: number | null = null;
+  registros: MaquinaRegistroIndexResponse['registros'] = [];
+
+  modalOpen=false;
+  saving= false;
+
+  formError: string | null = null;
+
+    form = {
+    horometro_fin: null as number | null,
+    notas: '' as string
+  };
+
+
+  private sub?: Subscription;
+
+  constructor(
+    private route: ActivatedRoute,
+    private api: ApiService
+  ) {}
+
+  ngOnInit() {
+    this.obraMaquinaId = Number(this.route.snapshot.paramMap.get('maquina_id')); 
+    // IMPORTANTE: si cambiaste la ruta a :obra_maquina_id, cambia aquí también.
+
+    if (!this.obraMaquinaId) {
+      this.loading = false;
+      this.errorMsg = 'ID de asignación no válido.';
+      return;
+    }
+
+    this.cargar();
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();this.route.snapshot.paramMap.get('obra_maquina_id')
+
+  }
+
+  cargar() {
+    this.loading = true;
+    this.errorMsg = null;
+
+    this.sub = this.api.getRegistros(this.obraMaquinaId).subscribe({
+      
+      next: (res) => {
+        
+        this.asignacion = res.asignacion;
+        this.horometroSugerido = res.horometro_sugerido;
+        this.registros = res.registros ?? [];
+        this.loading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMsg = err?.message || 'Error al cargar registros.';
+      },
+    });
+  }
+  // ===== Modal =====
+
+  abrirModalNuevo() {
+    this.formError = null;
+    // Precargar con el sugerido
+    this.form.horometro_fin = this.horometroSugerido ?? 0;
+    this.form.notas = '';
+    this.modalOpen = true;
+  }
+
+  cerrarModal() {
+    this.modalOpen = false;
+    this.saving = false;
+    this.formError = null;
+  }
+
+  guardarRegistro() {
+    this.formError = null;
+
+    const fin = Number(this.form.horometro_fin);
+    const inicio = Number(this.horometroSugerido ?? 0);
+
+    if (Number.isNaN(fin) || fin < 0) {
+      this.formError = 'Captura un horómetro final válido.';
+      return;
+    }
+
+    if (fin < inicio) {
+      this.formError = `El horómetro final no puede ser menor al último registrado (${inicio}).`;
+      return;
+    }
+
+    this.saving = true;
+
+    const payload: any = {
+      horometro_fin: fin,
+      notas: (this.form.notas || '').trim() || null,
+      // inicio/fin opcionales: si luego los quieres desde app, los agregamos
+    };
+
+    this.api.post<any>(`maquinas/${this.obraMaquinaId}/registros`, payload).subscribe({
+      next: () => {
+        this.saving = false;
+        this.cerrarModal();
+        this.cargar(); // refrescar lista y sugerido
+      },
+      error: (err) => {
+        this.saving = false;
+        this.formError = err?.message || 'No se pudo guardar el registro.';
+      }
+    });
+  }
+
+
+  formatFecha(fechaISO: string): string {
+  if (!fechaISO) return 'N/A';
+  
+  const fecha = new Date(fechaISO);
+  const dia = fecha.getDate().toString().padStart(2, '0');
+  const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+  const anio = fecha.getFullYear();
+  const horas = fecha.getHours().toString().padStart(2, '0');
+  const minutos = fecha.getMinutes().toString().padStart(2, '0');
+  
+  return `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+}
+}

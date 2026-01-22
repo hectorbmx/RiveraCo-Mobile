@@ -1,7 +1,10 @@
 import { Component, EnvironmentInjector, inject } from '@angular/core';
-import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular/standalone';
+import { AlertController } from '@ionic/angular';
+import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { triangle, ellipse, square } from 'ionicons/icons';
+import { cash, construct, ellipse, exitOutline, logOutOutline, people, square, triangle } from 'ionicons/icons';
+import { AuthService } from '../services/auth';
+
 
 @Component({
   selector: 'app-tabs',
@@ -12,7 +15,31 @@ import { triangle, ellipse, square } from 'ionicons/icons';
 export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);
 
-  constructor() {
-    addIcons({ triangle, ellipse, square });
+  constructor(
+    private authService: AuthService,
+    private alertController: AlertController
+  ) {
+    addIcons({ triangle, ellipse, square,people,construct,cash,exitOutline,logOutOutline });
+  }
+   async presentLogoutConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Cerrar Sesión',
+      message: '¿Estás seguro de que quieres salir del sistema?',
+      cssClass: 'custom-alert', // Para darle estilo de construcción
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary'
+        }, {
+          text: 'Salir',
+          handler: () => {
+            this.authService.logout();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }

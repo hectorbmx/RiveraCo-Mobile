@@ -1,0 +1,78 @@
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-container">
+    <!-- Header con logo -->
+    <div class="header-section">
+      <div class="company-badge">
+        <div class="logo-circle">RC</div>
+        <div class="company-info">
+          <p class="company-name">RIVERA CONSTRUCCIONES</p>
+          <h1 class="portal-title">Portal de Construcción</h1>
+        </div>
+      </div>
+    </div>
+
+    <!-- Título de bienvenida -->
+    <div class="welcome-section">
+      <h2 class="welcome-title">Bienvenido</h2>
+      <p class="welcome-subtitle">
+        Gestiona tus proyectos, equipos y recursos desde una sola plataforma moderna e intuitiva.
+      </p>
+    </div>
+
+    <!-- Sección de login (sin card) -->
+    <div class="login-section">
+      <div class="section-header">
+        <h3 class="section-title">Iniciar Sesión</h3>
+        <p class="section-subtitle">Ingresa tus credenciales para continuar.</p>
+      </div>
+
+      <form (ngSubmit)="onLogin()" class="login-form">
+        <!-- Email Input -->
+        <div class="input-group">
+          <label class="input-label">CORREO ELECTRÓNICO</label>
+          <ion-input
+            type="email"
+            [(ngModel)]="credentials.email"
+            name="email"
+            placeholder="nombre@ejemplo.com"
+            class="custom-input"
+          ></ion-input>
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-group">
+          <div class="label-row">
+            <label class="input-label">CONTRASEÑA</label>
+            <a routerLink="/forgot-password" class="forgot-link">¿OLVIDASTE TU CONTRASEÑA?</a>
+          </div>
+          <ion-input
+            type="password"
+            [(ngModel)]="credentials.password"
+            name="password"
+            placeholder="••••••••"
+            class="custom-input"
+          ></ion-input>
+        </div>
+
+        <!-- Remember me checkbox -->
+        <div class="remember-section">
+          <ion-item lines="none" class="remember-item">
+            <ion-checkbox slot="start" class="remember-checkbox"></ion-checkbox>
+            <ion-label class="remember-label">Recuérdame</ion-label>
+          </ion-item>
+        </div>
+
+        <!-- Login Button -->
+        <ion-button expand="block" type="submit" class="login-button">
+          INICIAR SESIÓN
+        </ion-button>
+
+        <!-- Register Link -->
+        <div class="register-section">
+          <span class="register-text">¿Eres nuevo? </span>
+          <a routerLink="/register" class="register-link">Registra tu cuenta</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>
