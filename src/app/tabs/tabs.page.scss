@@ -1,19 +1,17 @@
-
 ion-tab-bar {
-  // Fondo de la barra (blanco como pediste)
   --background: #ffffff;
-  
-  // Línea superior decorativa (opcional, le da un toque profesional)
   border-top: 1px solid rgba(5, 59, 117, 0.1);
-  height: 65px; // Un poco más alta para que luzca mejor
-  
+  height: 65px;
+
   ion-tab-button {
-    // Color del icono y texto cuando NO están seleccionados (Azul Login)
-    --color: #053b75; 
-    --color-selected: #ffcc00; // Amarillo cuando se selecciona
+    --color: #053b75;
+    --color-selected: #ffcc00;
+
+    position: relative; // <-- clave para el pseudo-elemento
+    overflow: hidden;   // opcional, para que el indicador no “se salga”
 
     ion-icon {
-      font-size: 26px; // Iconos un poco más grandes
+      font-size: 26px;
       margin-bottom: 2px;
     }
 
@@ -24,30 +22,32 @@ ion-tab-bar {
       letter-spacing: 0.5px;
     }
 
-    // Efecto visual cuando la pestaña está activa
     &.tab-selected {
       ion-icon {
-        // Un azul más intenso o el mismo para el seleccionado
-        color: #053b75; 
-        filter: drop-shadow(0 0 5px rgba(255, 204, 0, 0.4));
+        color: #053b75;
+        filter: drop-shadow(0 0 5px rgba(255, 204, 0, 0.35));
       }
+
       ion-label {
         color: #053b75;
       }
-      
-      // Indicador amarillo debajo o encima del icono activo
-      &::before {
+
+      // ✅ Indicador AMARILLO ABAJO (como tu diseño)
+      &::after {
         content: '';
         position: absolute;
-        top: 0;
-        width: 40%;
+        left: 50%;
+        bottom: 0;              // <-- abajo
+        transform: translateX(-50%);
+        width: 55%;             // ajusta 45–70% según te guste
         height: 3px;
-        background: #ffcc00; // Amarillo construcción
-        border-radius: 0 0 4px 4px;
+        background: #ffcc00;
+        border-radius: 4px 4px 0 0; // redondeo hacia arriba (se ve pro)
       }
     }
   }
-}// Añade esto a tu archivo scss de los tabs
+}
+
 .exit-icon {
   color: #eb445a; // Color rojo suave para indicar "salida" o peligro
 }

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { ToastController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
+// ❌ ELIMINAR: import imageCompression from 'browser-image-compression';
 
 import {
   IonBackButton,
@@ -33,6 +35,7 @@ import {
   businessOutline,
   cameraOutline,
   cameraSharp,
+  checkmarkCircleOutline,
   chevronForwardOutline,
   constructOutline,
   keyOutline,
@@ -42,7 +45,8 @@ import {
 } from 'ionicons/icons';
 import { Subscription } from 'rxjs';
 import { ApiService } from '../services/api';
-import { AuthService, EmpleadoAsignado } from '../services/auth'; // ajusta ruta real
+import { AuthService, EmpleadoAsignado } from '../services/auth';
+
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
@@ -54,7 +58,6 @@ import { AuthService, EmpleadoAsignado } from '../services/auth'; // ajusta ruta
     IonItemOption,
     IonBadge,
     IonItemOptions,
-    
     IonCard,
     IonCardContent,
     IonCardHeader,
@@ -84,99 +87,97 @@ export class Tab1Page implements OnInit, OnDestroy {
     private auth: AuthService,
     private router: Router,
     private apiService: ApiService,
-     private toastController: ToastController
+    private toastController: ToastController,
+    private loadingCtrl: LoadingController
   ) {
-    // Registrar los iconos que vamos a usar
-    addIcons({chevronForwardOutline,cameraSharp,cameraOutline,businessOutline,keyOutline,locationOutline,constructOutline,peopleOutline,personOutline,briefcaseOutline,});
+    addIcons({
+      chevronForwardOutline,
+      cameraSharp,checkmarkCircleOutline,
+      cameraOutline,
+      businessOutline,
+      keyOutline,
+      locationOutline,
+      constructOutline,
+      peopleOutline,
+      personOutline,
+      briefcaseOutline,
+    });
   }
 
   ngOnInit() {
-    // 1) Cargar rápido desde lo que ya está en memoria (si existe)
     const ctx = this.auth.contextoValue;
     if (ctx) {
       this.empleados = ctx.empleados ?? [];
       this.obraNombre = ctx.obra?.nombre ?? null;
       const pilas = ctx.pilas ?? [];
       this.pilasCantidadProgramada = pilas.reduce((acc, p: any) => {
-      const n = Number(p.cantidad_programada ?? 0);
-      return acc + (isNaN(n) ? 0 : n);
-    }, 0);
+        const n = Number(p.cantidad_programada ?? 0);
+        return acc + (isNaN(n) ? 0 : n);
+      }, 0);
 
-      // console.log('Empleados cargados:', this.empleados);
       console.log('Contexto obra:', ctx.empleados);
       console.log('Contexto obra:', this.contextoObra);
       console.log('Máquina activa:', ctx.maquina);
       console.log('Vehiculo asignado:', ctx.vehiculo);
       console.log('Vehiculo catálogo:', ctx.vehiculo?.vehiculo);
       console.log('Pilas:', ctx.pilas);
-
     }
 
-    // 2) Mantenerlo actualizado si cambia (ej. cuando llames getMe())
     this.sub = this.auth.contexto$.subscribe((contexto) => {
       if (!contexto) return;
       this.empleados = contexto.empleados ?? [];
       this.obraNombre = contexto.obra?.nombre ?? null;
-      
     });
   }
-private async showToast(
-  message: string,
-  color: 'success' | 'danger' | 'warning' = 'success'
-) {
-  const toast = await this.toastController.create({
-    message,
-    duration: 2000,
-    position: 'top',
-    color,
-    icon: 'checkmark-circle-outline',
-  });
-  await toast.present();
-}
+
+  private async showToast(
+    message: string,
+    color: 'success' | 'danger' | 'warning' = 'success'
+  ) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      position: 'top',
+      color,
+      icon: 'checkmark-circle-outline',
+    });
+    await toast.present();
+  }
 
   ngOnDestroy() {
     this.sub?.unsubscribe();
   }
 
-  // Getter para acceder a la obra completa
   get contextoObra() {
     return this.auth.contextoValue?.obra;
-    console.log('Contexto obra desde getter:', this.auth.contextoValue?.obra);
   }
 
-  // Getter para acceder a la máquina activa
   get maquinaActiva() {
     return this.auth.contextoValue?.maquina;
   }
+
   get vehuculoAsignado() {
     return this.auth.contextoValue?.vehiculo;
   }
 
-verEmpleado(empleado: EmpleadoAsignado) {
-  // aquí después lo podemos abrir en modal o navegar a detalle
-  console.log('Ver empleado:', empleado);
-   const id = empleado.empleado_id || empleado.empleado?.id_Empleado;
-  if (!id) return;
+  verEmpleado(empleado: EmpleadoAsignado) {
+    console.log('Ver empleado:', empleado);
+    const id = empleado.empleado_id || empleado.empleado?.id_Empleado;
+    if (!id) return;
 
-  // this.router.navigate(['/empleado-detalles', id]);
-  this.router.navigate(['/empleado-detalles', id], {
-  state: { obraId: this.contextoObra?.id } // o contextoObra.id
-});
+    this.router.navigate(['/empleado-detalles', id], {
+      state: { obraId: this.contextoObra?.id }
+    });
+  }
 
-}
+  async llamarEmpleado(empleado: EmpleadoAsignado) {
+    const tel = empleado.empleado?.telefono;
+    if (!tel) return;
 
-async llamarEmpleado(empleado: EmpleadoAsignado) {
-  const tel = empleado.empleado?.telefono;
-  if (!tel) return;
+    const clean = tel.replace(/[^\d+]/g, '');
+    window.location.href = `tel:${clean}`;
+  }
 
-  // Normalizar a algo marcable (opcional)
-  const clean = tel.replace(/[^\d+]/g, '');
-
-  // En móvil, esto dispara la llamada (en web puede no hacer nada)
-  window.location.href = `tel:${clean}`;
-}
-
-  // Método para asignar colores según el rol
   getRolColor(rolNombre: string | undefined): string {
     if (!rolNombre) return 'medium';
     
@@ -190,10 +191,19 @@ async llamarEmpleado(empleado: EmpleadoAsignado) {
     return 'medium';
   }
 
- async checarEmpleado(empleado: EmpleadoAsignado) {
+  async checarEmpleado(empleado: EmpleadoAsignado) {
+  const loading = await this.loadingCtrl.create({
+    message: 'Registrando asistencia...',
+    spinner: 'crescent',
+    backdropDismiss: false
+  });
+
   try {
+    await loading.present();
+
+    // 1) Tomar foto
     const photo = await Camera.getPhoto({
-      quality: 70,
+      quality: 90,
       resultType: CameraResultType.Uri,
       source: CameraSource.Camera,
       allowEditing: false,
@@ -201,86 +211,151 @@ async llamarEmpleado(empleado: EmpleadoAsignado) {
       saveToGallery: false,
     });
 
-    // 1) Convertir foto a File
-    const file = await this.fileFromWebPath(
+    // 2) Convertir a File
+    const originalFile = await this.fileFromWebPath(
       photo.webPath!,
       `asistencia_${empleado.empleado_id}_${Date.now()}.jpg`
     );
 
-    // 2) Construir FormData
+    console.log(`📸 Foto original: ${(originalFile.size / 1024 / 1024).toFixed(2)} MB`);
+
+    // 3) Comprimir imagen
+    const compressedFile = await this.compressImage(originalFile);
+
+    console.log(`📸 Foto comprimida: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+    console.log(`📸 Reducción: ${(((originalFile.size - compressedFile.size) / originalFile.size) * 100).toFixed(1)}%`);
+
+    // 4) FormData
     const formData = new FormData();
     formData.append('empleado_id', empleado.empleado_id.toString());
     formData.append('checked_at', new Date().toISOString());
-    formData.append('foto', file);
+    formData.append('foto', compressedFile);
 
-    // (opcional) ubicación si ya la tienes
-    // formData.append('lat', this.lat.toString());
-    // formData.append('lng', this.lng.toString());
     const obraId = this.contextoObra?.id;
 
     if (!obraId) {
-      console.error('No hay obra activa en contexto');
+      await loading.dismiss();
+      this.showToast('No hay obra activa', 'danger');
       return;
     }
-    // 3) Llamar API
+
+    // 5) Enviar a API
     this.apiService.postAsistencia(obraId, formData).subscribe({
-      next: (res) => {
-        console.log('Asistencia registrada:', res);
-          const tipo = res?.data?.tipo; // 'entrada' | 'salida' (según tu API)
+      next: async (res) => {
+        await loading.dismiss();
+
+        const tipo = res?.data?.tipo;
         const mensaje =
           tipo === 'salida'
             ? 'Salida registrada con éxito'
             : 'Entrada registrada con éxito';
 
-         this.showToast(mensaje, 'success');
-        // aquí puedes mostrar toast:
-        // “Entrada registrada” o “Salida registrada” según res.data.tipo
+        this.showToast(mensaje, 'success');
       },
-      error: (err) => {
-        console.error('Error al registrar asistencia:', err.message);
-             this.showToast('Error al registrar asistencia', 'danger');
-
+      error: async (err) => {
+        console.error('❌ Error al registrar asistencia:', err);
+        await loading.dismiss();
+        this.showToast('Error al registrar asistencia', 'danger');
       }
     });
 
   } catch (err) {
-    // Cancelación de cámara o error
     console.log('Cámara cancelada o error:', err);
+    await loading.dismiss();
   }
 }
-// checarEmpleadoDesdeArchivo(event: any, empleado: EmpleadoAsignado) {
-//   const file: File = event.target.files[0];
-//   if (!file) return;
 
-//   const formData = new FormData();
-//   formData.append('empleado_id', empleado.empleado_id.toString());
-//   formData.append('checked_at', new Date().toISOString());
-//   formData.append('foto', file);
-// const obraNombre = this.contextoObra?.nombre;
+  /**
+   * 🔥 COMPRESIÓN DE IMAGEN CON CANVAS NATIVO
+   * No requiere dependencias externas - funciona perfecto
+   */
+  private async compressImage(file: File): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        const img = new Image();
+        
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) {
+            reject(new Error('No se pudo crear contexto canvas'));
+            return;
+          }
+          
+          // Calcular dimensiones manteniendo aspect ratio
+          let width = img.width;
+          let height = img.height;
+          const maxSize = 1920; // Full HD
+          
+          if (width > height && width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          } else if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          // Dibujar imagen redimensionada con suavizado
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convertir a Blob con compresión JPEG
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                });
+                
+                resolve(compressedFile);
+              } else {
+                // Si falla, devolver original
+                resolve(file);
+              }
+            },
+            'image/jpeg',
+            0.8 // 80% de calidad
+          );
+        };
+        
+        img.onerror = () => {
+          console.error('Error al cargar imagen');
+          resolve(file); // Devolver original si falla
+        };
+        
+        img.src = e.target?.result as string;
+      };
+      
+      reader.onerror = () => {
+        console.error('Error al leer archivo');
+        resolve(file); // Devolver original si falla
+      };
+      
+      reader.readAsDataURL(file);
+    });
+  }
 
-// if (!obraNombre) {
-//   console.error('No hay obra activa en contexto');
-//   return;
-// }
-//   this.apiService.postAsistencia(obraNombre, formData).subscribe({
-//     next: (res) => console.log('Asistencia registrada:', res),
-//     error: (err) => console.error(err),
-//   });
-// }
+  async fileFromWebPath(webPath: string, filename = 'foto.jpg'): Promise<File> {
+    const res = await fetch(webPath);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: blob.type });
+  }
 
-async fileFromWebPath(webPath: string, filename = 'foto.jpg'): Promise<File> {
-  const res = await fetch(webPath);
-  const blob = await res.blob();
-  return new File([blob], filename, { type: blob.type });
-}
+  irMaquinaRegistro(maquinaId: number) {
+    if (!maquinaId) return;
+    this.router.navigate(['/maquina-registro', maquinaId]);
+  }
 
-//registrar las horas maquina diario
-irMaquinaRegistro(maquinaId: number) {
-  if (!maquinaId) return;
-  this.router.navigate(['/maquina-registro', maquinaId]);
-}
-irVehiculoRegistro(vehiculoId: number) {
-  if (!vehiculoId) return;
-  this.router.navigate(['/vehiculo-registro', vehiculoId]); 
-}
+  irVehiculoRegistro(vehiculoId: number) {
+    if (!vehiculoId) return;
+    this.router.navigate(['/vehiculo-registro', vehiculoId]); 
+  }
 }
