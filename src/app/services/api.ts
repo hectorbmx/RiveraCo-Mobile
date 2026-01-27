@@ -182,6 +182,19 @@ getAsistenciasEmpleadoObra(obraId: number, empleadoId: number) {
     { headers: this.getHeaders() }
   );
 }
+// ✅ Eliminar asistencia (por id) dentro de una obra
+deleteAsistenciaObra(obraId: number, asistenciaId: number, reason?: string) {
+  const body: any = {};
+  if (reason && reason.trim().length > 0) body.reason = reason.trim();
+
+  return this.http.delete<any>(
+    `${this.apiUrl}/obras/${obraId}/asistencias/${asistenciaId}`,
+    {
+      headers: this.getHeaders(),
+      body, // 👈 Angular permite body en DELETE (HttpClient)
+    }
+  );
+}
 
   
 

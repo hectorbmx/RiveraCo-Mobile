@@ -5,6 +5,7 @@ import { AsistenciaDiaEmpleado, AsistenciasResponse } from 'src/app/models/asist
 import { ApiService } from 'src/app/services/api';
 
 import {
+  AlertController,
   IonBackButton,
   IonButton,
   IonButtons,
@@ -12,22 +13,31 @@ import {
   IonFooter,
   IonHeader,
   IonIcon,
-  IonItem, IonLabel,
+  IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
+  IonLabel,
   IonList,
   IonModal,
   IonSpinner,
-  IonTitle, IonToolbar
+  IonTitle,
+  IonToolbar,
+  ToastController
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { cameraOutline, clipboardOutline, closeOutline, constructOutline, logInOutline, logOutOutline, searchOutline } from 'ionicons/icons';
+import {
+  cameraOutline, clipboardOutline, closeOutline, constructOutline, logInOutline,
+  logOutOutline, searchOutline, trashOutline
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-empleado-detalles',
   templateUrl: './empleado-detalles.page.html',
   styleUrls: ['./empleado-detalles.page.scss'],
   standalone: true,
-  imports: [IonFooter, 
+  imports: [IonItemOption, IonItemSliding, IonFooter,IonItemOptions,
     CommonModule,
     IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton,
     IonList, IonItem, IonLabel, IonSpinner, IonModal, IonButton, IonIcon
@@ -51,8 +61,13 @@ export class EmpleadoDetallesPage implements OnInit {
   modalPhotoUrl: string | null = null;
   modalTitle = '';
 
-  constructor(private route: ActivatedRoute, private api: ApiService) {
-    addIcons({searchOutline,constructOutline,clipboardOutline,logOutOutline,cameraOutline,closeOutline,logInOutline});
+  constructor(
+    private route: ActivatedRoute,
+    private api: ApiService,
+    private alertController: AlertController,
+    private toastController: ToastController
+  ) {
+    addIcons({trashOutline,searchOutline,constructOutline,clipboardOutline,logOutOutline,cameraOutline,closeOutline,logInOutline});
   }
 
   ngOnInit() {
@@ -108,6 +123,69 @@ export class EmpleadoDetallesPage implements OnInit {
     });
   }
 
+async deleteAttendance(item: AsistenciaDiaEmpleado) {
+    console.log('🔍 Item a eliminar:', item);
+  console.log('🔍 Obra ID:', this.obraId);
+  console.log('🔍 Entrada ID:', item.entrada?.id);
+  console.log('🔍 Salida ID:', item.salida?.id);
+  // Recopilar los IDs a eliminar (entrada y/o salida)
+  const idsToDelete: number[] = [];
+  
+  if (item.entrada?.id) {
+    idsToDelete.push(item.entrada.id);
+  }
+  
+  if (item.salida?.id) {
+    idsToDelete.push(item.salida.id);
+  }
+
+  if (idsToDelete.length === 0) {
+    await this.showToast('No hay registros para eliminar', 'warning');
+    return;
+  }
+
+  // Eliminar cada registro (entrada y/o salida)
+  let eliminadosCount = 0;
+  let erroresCount = 0;
+
+  for (const asistenciaId of idsToDelete) {
+    try {
+      // Llamada a tu API
+      await this.api.deleteAsistenciaObra(this.obraId, asistenciaId).toPromise();
+      eliminadosCount++;
+      console.log(`✅ Asistencia ${asistenciaId} eliminada`);
+    } catch (error) {
+      console.error(`❌ Error eliminando asistencia ${asistenciaId}:`, error);
+      erroresCount++;
+    }
+  }
+
+  // Mostrar resultado
+  if (erroresCount === 0) {
+    // Todo se eliminó correctamente
+    this.items = this.items.filter(i => i.checked_date !== item.checked_date);
+    await this.showToast('Registro eliminado correctamente', 'success');
+  } else if (eliminadosCount > 0) {
+    // Se eliminó parcialmente (entrada O salida, pero no ambas)
+    this.load(); // Recargar desde el servidor para tener datos actualizados
+    await this.showToast(`${eliminadosCount} de ${idsToDelete.length} registros eliminados`, 'warning');
+  } else {
+    // Todo falló
+    await this.showToast('Error al eliminar el registro', 'danger');
+  }
+}
+async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {
+  const toast = await this.toastController.create({
+    message: message,
+    duration: 2000,
+    position: 'bottom',
+    color: color,
+    cssClass: 'custom-toast'
+  });
+
+  await toast.present();
+}
+
   openPhoto(url: string | null, title: string) {
     if (!url) return;
     this.modalPhotoUrl = url;
@@ -142,7 +220,8 @@ export class EmpleadoDetallesPage implements OnInit {
     if (st === 'FALTA SALIDA' || st === 'FALTA ENTRADA') return 'badge warn';
     return 'badge';
   }
-  
 
-  trackByDate = (_: number, a: AsistenciaDiaEmpleado) => a.checked_date;
+  trackByDate(index: number, a: AsistenciaDiaEmpleado) {
+    return a.checked_date;
+  }
 }
