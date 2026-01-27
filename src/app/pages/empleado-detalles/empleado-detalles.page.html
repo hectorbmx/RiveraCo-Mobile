@@ -1,14 +1,65 @@
-<ion-header [translucent]="true">
+
+<!-- <ion-header>
+
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tasb/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Resgistros de Asistencia</ion-title>
+  </ion-toolbar>
+</ion-header> -->
+<ion-header class="custom-header">
   <ion-toolbar>
-    <ion-back-button></ion-back-button>
-    <ion-title>empleado-detalles</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+    <ion-title>REGISTROS</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">empleado-detalles</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <!-- Header de la tabla -->
+  <div class="table-header">
+    <div class="header-employee">EMPLEADO</div>
+    <div class="header-times">
+      <div class="header-checkin">ENTRADA</div>
+      <div class="header-checkout">SALIDA</div>
+    </div>
+  </div>
+
+  <!-- Loading spinner -->
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  }
+
+  <!-- Lista de asistencias -->
+  @if (!loading && items.length > 0) {
+    <ion-list class="attendance-list">
+      @for (item of items; track trackByDate($index, item)) {
+        <ion-item lines="full" class="attendance-item">
+          <div class="attendance-content">
+            <div class="employee-info">
+              <div class="employee-name">
+                {{ empleadoNombre }}
+              </div>
+              <div class="employee-date">{{ item.checked_date }}</div>
+            </div>
+            <div class="time-info">
+              <div class="check-in">{{ item.entrada?.hora || '--:--' }}</div>
+              <div class="check-out">{{ item.salida?.hora || '--:--' }}</div>
+            </div>
+          </div>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <!-- Empty state -->
+  @if (!loading && items.length === 0) {
+    <div class="empty-state">
+      <p>No hay registros de asistencia</p>
+    </div>
+  }
 </ion-content>

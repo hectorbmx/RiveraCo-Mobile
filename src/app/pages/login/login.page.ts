@@ -60,11 +60,7 @@ export class LoginPage {
     this.authService.login(this.credentials).subscribe({
       next: async (response) => {
         await loading.dismiss();
-          // Guardar user_id para usarlo después
-        // localStorage.setItem('user_id', String(response.user.id));
-
-        // (opcional) guardar el usuario completo
-        // localStorage.setItem('user', JSON.stringify(response.user));
+       // localStorage.setItem('user', JSON.stringify(response.user));
         await this.showToast('Bienvenido ' + response.user.name, 'success');
 
 

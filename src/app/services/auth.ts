@@ -31,7 +31,6 @@ export interface ObraContexto {
   fecha_inicio_programada: string | null; // viene como "YYYY-MM-DD"
   fecha_inicio_real: string | null;
   pilas_total_programado?: number;
-
 }
 
 export interface RolInfo {

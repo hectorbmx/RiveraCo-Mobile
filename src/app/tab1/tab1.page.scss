@@ -2,7 +2,10 @@
 ion-content {
   --background: #f8f9fa;
 }
-
+ion-toolbar {
+    --background: #1a3a5c;
+    --color: #ffffff;
+}
 // Encabezado de sección minimalista
 .section-header {
   display: flex;

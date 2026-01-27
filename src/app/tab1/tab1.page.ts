@@ -5,7 +5,9 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { ToastController } from '@ionic/angular';
 
 import {
+  IonBackButton,
   IonBadge,
+  IonButtons,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -46,7 +48,7 @@ import { AuthService, EmpleadoAsignado } from '../services/auth'; // ajusta ruta
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonBackButton, IonButtons, 
     CommonModule,
     IonItemSliding,
     IonItemOption,
@@ -75,7 +77,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   empleados: EmpleadoAsignado[] = [];
   obraNombre: string | null = null;
   pilasCantidadProgramada  = 0;
-
+  empleadoId: number | null = null;
   private sub?: Subscription;
 
   constructor(
@@ -139,6 +141,7 @@ private async showToast(
   // Getter para acceder a la obra completa
   get contextoObra() {
     return this.auth.contextoValue?.obra;
+    console.log('Contexto obra desde getter:', this.auth.contextoValue?.obra);
   }
 
   // Getter para acceder a la máquina activa
@@ -155,7 +158,11 @@ verEmpleado(empleado: EmpleadoAsignado) {
    const id = empleado.empleado_id || empleado.empleado?.id_Empleado;
   if (!id) return;
 
-  this.router.navigate(['/empleado-detalles', id]);
+  // this.router.navigate(['/empleado-detalles', id]);
+  this.router.navigate(['/empleado-detalles', id], {
+  state: { obraId: this.contextoObra?.id } // o contextoObra.id
+});
+
 }
 
 async llamarEmpleado(empleado: EmpleadoAsignado) {

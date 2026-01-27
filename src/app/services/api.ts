@@ -3,7 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { AsistenciasResponse } from '../models/asistencias';
 import { MaquinaRegistroIndexResponse } from './auth';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -153,5 +155,34 @@ postKmLog(formData: FormData): Observable<any> {
     catchError(this.handleError)
   );
 }
+
+
+postComisiones(payload: any): Observable<any> {
+  const headers = this.getHeaders(); // tu método ya arma Content-Type + Authorization
+
+  return this.http.post(
+    `${this.apiUrl}/obras/${payload.obra_id}/comisiones`,
+    payload,
+    { headers }
+  ).pipe(
+    catchError(this.handleError)
+  );
+}
+getAsistenciasObra(obraId: number) {
+  // const params: any = {};
+
+  return this.http.get<AsistenciasResponse>(
+    `${this.apiUrl}/obras/${obraId}/asistencias`,
+    { headers: this.getHeaders() }
+  );
+}
+getAsistenciasEmpleadoObra(obraId: number, empleadoId: number) {
+  return this.http.get<any>(
+    `${this.apiUrl}/obras/${obraId}/empleados/${empleadoId}/asistencias`,
+    { headers: this.getHeaders() }
+  );
+}
+
+  
 
 }

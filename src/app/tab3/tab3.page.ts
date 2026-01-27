@@ -14,11 +14,18 @@ import {
   IonTextarea,
   IonTitle,
   IonToggle,
-  IonToolbar
+  IonToolbar,
+  LoadingController,
+  ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addCircleOutline, alertCircleOutline, chevronForwardOutline } from 'ionicons/icons';
+import { firstValueFrom } from 'rxjs';
 import { AuthService, Contexto } from '../services/auth'; // donde tengas tus interfaces
+
+import { ApiService } from '../services/api';
+
+
 type ActividadKey = 'metros' | 'acero' | 'bentonita' | 'concreto' | 'campana';
 
 interface PersonalRow {
@@ -56,13 +63,11 @@ interface ComisionForm {
   numero_formato: string | null;
   cliente_nombre_formato: string | null;
   observaciones: string | null;
-
+  nombre: string | null;
   maquina_id: number | null;
   obra_maquina_id: number | null;
-
   obra_id: number;
   pila_id: number | null;
-  
   total_pilas?: number;
   personal: PersonalRow[];
   perforaciones: PerforacionRow[];
@@ -92,10 +97,24 @@ export class Tab3Page implements OnInit {
     return this.ctx?.maquina?.maquina?.nombre ?? 'N/A';
   }
 
-  constructor(private auth: AuthService) {
+  constructor(
+      private loadingCtrl: LoadingController,
+      private toastCtrl: ToastController,
+      private auth: AuthService,
+      private api: ApiService,) {
      addIcons({chevronForwardOutline,addCircleOutline,alertCircleOutline});
   }
+today = '';
 
+private toDateInput(d: Date): string {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+ionViewWillEnter() {
+  this.today = this.toDateInput(new Date());
+}
   ngOnInit() {
     this.ctx = this.auth.contextoValue ?? null;
 
@@ -112,12 +131,13 @@ export class Tab3Page implements OnInit {
     const mm = String(hoy.getMonth() + 1).padStart(2, '0');
     const dd = String(hoy.getDate()).padStart(2, '0');
 
+
     this.form = {
       fecha: `${yyyy}-${mm}-${dd}`,
       numero_formato: null,
       cliente_nombre_formato: this.ctx.obra?.cliente_nombre ?? null,
       observaciones: null,
-
+      nombre: this.ctx.obra?.nombre ?? null,
       maquina_id: this.ctx.maquina?.maquina_id ?? null,
       obra_maquina_id: this.ctx.maquina?.obra_maquina_id ?? null,
 
@@ -151,12 +171,18 @@ export class Tab3Page implements OnInit {
       ],
     };
     const first = this.ctx.pilas?.[0];
-if (first && !this.form.pila_id) {
-  this.form.pila_id = Number(first.id);
-  this.onPilaChange(this.form.pila_id);
-}
-
+      if (first && !this.form.pila_id) {
+        this.form.pila_id = Number(first.id);
+        this.onPilaChange(this.form.pila_id);
+      }
   }
+  get personalSinResidente() {
+    return (this.form?.personal ?? []).filter(p => {
+      const rol = (p?.rol_nombre ?? '').trim().toLowerCase();
+      return rol !== 'residente';
+    });
+  }
+
 onPilaChange(pilaId: number | string | null) {
   if (!this.ctx || !this.form) return;
 
@@ -260,6 +286,63 @@ addPerforacionRow() {
   get selectedPila(): any | null {
   if (!this.ctx || !this.selectedPilaId) return null;
   return (this.ctx.pilas ?? []).find(p => Number(p.id) === Number(this.selectedPilaId)) ?? null;
+}
+  private async showToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color,
+      position: 'top'
+    });
+    await toast.present();
+  }
+//guardar comision
+async guardarComision() {
+  if (!this.form) return;
+
+  // Validaciones mínimas MVP
+  if (!this.form.obra_id) {
+    await this.showToast('Falta obra_id', 'danger');
+    return;
+  }
+  if (!this.form.pila_id) {
+    await this.showToast('Selecciona una pila', 'danger');
+    return;
+  }
+  if (!this.form.perforaciones?.length) {
+    await this.showToast('Agrega al menos una perforación', 'danger');
+    return;
+  }
+
+  const loading = await this.loadingCtrl.create({
+    message: 'Guardando comisión...',
+  });
+  await loading.present();
+
+  try {
+    // Debug opcional (déjalo por ahora)
+    console.log('[COMISION PAYLOAD]', this.form);
+
+    const res = await firstValueFrom(this.api.postComisiones(this.form));
+
+    await this.showToast('Comisión guardada correctamente', 'success');
+    console.log('[COMISION RESP]', res);
+
+    // Opcional: limpiar o dejar como está
+    // this.form.observaciones = null;
+
+  } catch (e: any) {
+    console.error('[COMISION ERROR]', e);
+
+    // Si tu handleError regresa mensaje, intenta mostrarlo
+    const msg =
+      e?.error?.message ||
+      e?.message ||
+      'Error al guardar la comisión';
+    await this.showToast(msg, 'danger');
+  } finally {
+    await loading.dismiss();
+  }
 }
 
 }

@@ -13,7 +13,7 @@
     <!-- DATOS GENERALES - CARD INFORMATIVO -->
     <div class="info-card">
       <div class="info-card-header">
-        <h2 class="info-card-title">{{ form.cliente_nombre_formato || 'NOMBRE DE LA OBRA' }}</h2>
+        <h2 class="info-card-title">{{ form.nombre || 'NOMBRE DE LA OBRA' }}</h2>
         <span class="info-card-badge">OBRA ACTIVA</span>
       </div>
 
@@ -55,8 +55,17 @@
         </div>
 
         <div class="machine-item">
-          <label class="machine-label">FECHA INICIO</label>
-          <p class="machine-value">{{ form.fecha || '-' }}</p>
+          <label class="machine-label">FECHA COMISION</label>
+          <!-- <p class="machine-value">{{ form.fecha || '-' }}</p> -->
+              <input
+                type="date"
+                class="machine-date"
+                [(ngModel)]="form.fecha"
+                name="fecha"
+                [max]="today"
+                required
+              />
+
         </div>
       </div>
     </div>
@@ -86,7 +95,15 @@
         <span class="section-count">{{ form.personal?.length || 0 }}</span>
       </div>
 
-      <div *ngFor="let p of form.personal; let i = index" class="personal-card">
+      <!-- <div *ngFor="let p of form.personal; let i = index" class="personal-card">
+        <div class="personal-header">
+          <div class="personal-info">
+            <h3 class="personal-name">{{ p.nombre }}</h3>
+            <span class="personal-role">{{ p.rol_nombre || 'Sin rol' }}</span>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="chevron-icon"></ion-icon>
+        </div> -->
+        <div *ngFor="let p of personalSinResidente; let i = index" class="personal-card">
         <div class="personal-header">
           <div class="personal-info">
             <h3 class="personal-name">{{ p.nombre }}</h3>
@@ -94,6 +111,8 @@
           </div>
           <ion-icon name="chevron-forward-outline" class="chevron-icon"></ion-icon>
         </div>
+      
+
 
         <div class="time-grid">
           <div class="time-item">
@@ -331,21 +350,22 @@
         </div>
       </div>
 
-      <button class="add-row-btn" (click)="addPerforacionRow()">
+      <!-- <button class="add-row-btn" (click)="addPerforacionRow()">
         <ion-icon name="add-circle-outline"></ion-icon>
         Agregar fila
-      </button>
+      </button> -->
     </div>
 
     <!-- BOTÓN GUARDAR -->
-    <div class="action-section">
-      <ion-button expand="block" class="save-button" (click)="debugPrint()">
+    <div class="add-row-btn">
+      <!-- <ion-button expand="block" class="save-button" (click)="debugPrint()">
         GUARDAR COMISIÓN
-      </ion-button>
+      </ion-button> -->
+      <ion-button expand="block" (click)="guardarComision()" [disabled]="!form">
+  GUARDAR COMISIÓN
+</ion-button>
     </div>
-
   </ng-container>
-
   <ng-template #noctx>
     <div class="no-context">
       <ion-icon name="alert-circle-outline"></ion-icon>
