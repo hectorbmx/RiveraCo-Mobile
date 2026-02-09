@@ -1,15 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { LoadingController, ToastController } from '@ionic/angular';
 // ❌ ELIMINAR: import imageCompression from 'browser-image-compression';
 
 import {
-  IonBackButton,
   IonBadge,
-  IonButtons,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -25,6 +22,8 @@ import {
   IonItemSliding,
   IonLabel,
   IonList,
+  IonRefresher,
+  IonRefresherContent,
   IonRow,
   IonTitle,
   IonToolbar
@@ -52,7 +51,7 @@ import { AuthService, EmpleadoAsignado } from '../services/auth';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [IonBackButton, IonButtons, 
+  imports: [IonRefresherContent, IonRefresher,  
     CommonModule,
     IonItemSliding,
     IonItemOption,
@@ -226,9 +225,28 @@ export class Tab1Page implements OnInit, OnDestroy {
     console.log(`📸 Reducción: ${(((originalFile.size - compressedFile.size) / originalFile.size) * 100).toFixed(1)}%`);
 
     // 4) FormData
+    // const formData = new FormData();
+    // formData.append('empleado_id', empleado.empleado_id.toString());
+    // formData.append('checked_at', new Date().toISOString());
+    // formData.append('foto', compressedFile);
+    // 4) FormData
     const formData = new FormData();
     formData.append('empleado_id', empleado.empleado_id.toString());
-    formData.append('checked_at', new Date().toISOString());
+    
+    // Enviar hora local de México sin zona horaria
+    const now = new Date();
+    const horaLocal = now.toLocaleString('sv-SE', {
+      timeZone: 'America/Mexico_City',
+      year: 'numeric',
+      month: '2-digit', 
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).replace(' ', 'T');
+    
+    formData.append('checked_at', horaLocal);
     formData.append('foto', compressedFile);
 
     const obraId = this.contextoObra?.id;
@@ -358,4 +376,6 @@ export class Tab1Page implements OnInit, OnDestroy {
     if (!vehiculoId) return;
     this.router.navigate(['/vehiculo-registro', vehiculoId]); 
   }
+
+
 }

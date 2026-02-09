@@ -39,7 +39,8 @@
             </div>
 
             <div class="time-info">
-              <div class="check-in">{{ item.entrada?.hora || '--:--' }}</div>
+              <div class="check-out">{{ item.entrada?.hora  }}</div>
+              <!-- <div class="check-in">{{ formatHora(item.entrada?.hora || '--:--') }}</div> -->
               <div class="check-out">{{ item.salida?.hora || '--:--' }}</div>
             </div>
           </div>

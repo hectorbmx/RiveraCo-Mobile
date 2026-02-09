@@ -11,6 +11,14 @@
 </ion-header>
 
 <ion-content fullscreen="true" class="ion-padding">
+
+    <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="circles"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher> -->
   <!-- Card de información de la obra -->
   <ion-card class="obra-card">
     <ion-card-header>
@@ -95,6 +103,7 @@
   <!-- Lista de empleados -->
   <div class="section-header">
     <h2>Personal Asignado</h2>
+    
     <span class="count-badge">{{ empleados.length || 0 }}</span>
   </div>
 

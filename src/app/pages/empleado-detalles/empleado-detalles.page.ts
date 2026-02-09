@@ -206,6 +206,27 @@ async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'succ
     if (!y || !m || !d) return isoDate;
     return `${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`;
   }
+formatHora(value: string | null | undefined): string {
+  if (!value || value === '--:--') return '--:--';
+
+  try {
+    // Parsear la fecha (asume UTC si no tiene zona horaria)
+    const date = new Date(value);
+    
+    // Convertir a hora de México
+    return new Intl.DateTimeFormat('es-MX', {
+      timeZone: 'America/Mexico_City',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(date);
+  } catch (error) {
+    console.error('Error formateando hora:', error);
+    return '--:--';
+  }
+}
+
+
 
   getBadgeStatus(a: AsistenciaDiaEmpleado) {
     if (a.entrada && a.salida) return 'COMPLETA';
@@ -224,4 +245,26 @@ async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'succ
   trackByDate(index: number, a: AsistenciaDiaEmpleado) {
     return a.checked_date;
   }
+  
+  formatTimeMx(iso?: string | null): string {
+  if (!iso) return '--:--';
+
+  return new Intl.DateTimeFormat('es-MX', {
+    timeZone: 'America/Mexico_City',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(new Date(iso));
+}
+
+formatDateMx(iso?: string | null): string {
+  if (!iso) return '';
+
+  return new Intl.DateTimeFormat('es-MX', {
+    timeZone: 'America/Mexico_City',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(iso));
+}
 }
