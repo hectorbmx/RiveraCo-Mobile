@@ -104,13 +104,27 @@ export interface Contexto {
   pilas: PilaDTO[];
   
 }
+export interface Authz {
+  roles: string[];
+  permissions: string[];
+}
 
+// export interface LoginResponse {
+//   ok: boolean;
+//   token: string;
+//   user: User;
+//   app: AppInfo;
+//   contexto: Contexto;
+//   message?: string;
+// }
 export interface LoginResponse {
   ok: boolean;
   token: string;
   user: User;
   app: AppInfo;
-  contexto: Contexto;
+  contexto: Contexto | null;
+  authz: Authz;              // ✅
+  gerencial?: any | null;    // opcional si quieres guardarlo luego
   message?: string;
 }
 
@@ -119,6 +133,8 @@ export interface MeResponse {
   user: User;
   app: AppInfo;
   contexto: Contexto;
+  authz: Authz;              // ✅
+  gerencial?: any | null;
   message?: string;
 }
 
@@ -150,6 +166,14 @@ export interface MaquinaRegistroIndexResponse {
   providedIn: 'root'
 })
 export class AuthService {
+
+  private storageKeyToken = 'auth_token';
+  private storageKeyUser = 'current_user';
+  private storageKeyApp = 'app_info';
+  private storageKeyContexto = 'app_contexto';
+  private storageKeyAuthz = 'authz';
+  private storageKeyRemember = 'remember_me';
+
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
@@ -163,26 +187,47 @@ export class AuthService {
   private appInfoSubject = new BehaviorSubject<AppInfo | null>(null);
   public appInfo$ = this.appInfoSubject.asObservable();
 
+  private authzSubject = new BehaviorSubject<Authz | null>(null);
+  public authz$ = this.authzSubject.asObservable();
+
+
   constructor(
     private apiService: ApiService,
     private router: Router
   ) {
-    const storedUser = localStorage.getItem('current_user');
+    const storedUser =
+      localStorage.getItem(this.storageKeyUser) ?? sessionStorage.getItem(this.storageKeyUser);
+
+    this.currentUserSubject = new BehaviorSubject<User | null>(
+      storedUser ? JSON.parse(storedUser) : null
+    );
+    this.currentUser = this.currentUserSubject.asObservable();
     this.currentUserSubject = new BehaviorSubject<User | null>(
       storedUser ? JSON.parse(storedUser) : null
     );
     this.currentUser = this.currentUserSubject.asObservable();
 
-    const token = localStorage.getItem('auth_token');
+    // const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem(this.storageKeyToken) ?? sessionStorage.getItem(this.storageKeyToken);
+
+    
+
     this.isAuthenticatedSubject = new BehaviorSubject<boolean>(!!token);
     this.isAuthenticated = this.isAuthenticatedSubject.asObservable();
 
     // Rehidratar contexto/app si ya existen
-    const storedContexto = localStorage.getItem('app_contexto');
+    const storedContexto =
+      localStorage.getItem(this.storageKeyContexto) ?? sessionStorage.getItem(this.storageKeyContexto);
     if (storedContexto) this.contextoSubject.next(JSON.parse(storedContexto));
 
-    const storedAppInfo = localStorage.getItem('app_info');
+    const storedAppInfo =
+      localStorage.getItem(this.storageKeyApp) ?? sessionStorage.getItem(this.storageKeyApp);
     if (storedAppInfo) this.appInfoSubject.next(JSON.parse(storedAppInfo));
+
+   const storedAuthz =
+      localStorage.getItem(this.storageKeyAuthz) ?? sessionStorage.getItem(this.storageKeyAuthz);
+    if (storedAuthz) this.authzSubject.next(JSON.parse(storedAuthz));
+
   }
 
   public get currentUserValue(): User | null {
@@ -201,19 +246,25 @@ export class AuthService {
     return this.appInfoSubject.value;
   }
 
-  login(credentials: LoginCredentials): Observable<LoginResponse> {
+  login(credentials: LoginCredentials, rememberMe: boolean): Observable<LoginResponse> {
     return this.apiService.post<LoginResponse>('login', credentials).pipe(
       tap(response => {
-        localStorage.setItem('auth_token', response.token);
+       this.setRemember(rememberMe);
+        const storage = rememberMe ? localStorage : sessionStorage;
 
-        localStorage.setItem('current_user', JSON.stringify(response.user));
+        storage.setItem(this.storageKeyToken, response.token);
+
+        storage.setItem(this.storageKeyUser, JSON.stringify(response.user));
         this.currentUserSubject.next(response.user);
 
-        localStorage.setItem('app_info', JSON.stringify(response.app));
+        storage.setItem(this.storageKeyApp, JSON.stringify(response.app));
         this.appInfoSubject.next(response.app);
 
-        localStorage.setItem('app_contexto', JSON.stringify(response.contexto));
+        storage.setItem(this.storageKeyContexto, JSON.stringify(response.contexto));
         this.contextoSubject.next(response.contexto);
+
+        storage.setItem(this.storageKeyAuthz, JSON.stringify(response.authz));
+        this.authzSubject.next(response.authz);
 
         this.isAuthenticatedSubject.next(true);
       })
@@ -223,31 +274,57 @@ export class AuthService {
   getMe(): Observable<MeResponse> {
     return this.apiService.get<MeResponse>('me').pipe(
       tap(res => {
-        localStorage.setItem('current_user', JSON.stringify(res.user));
-        this.currentUserSubject.next(res.user);
 
-        localStorage.setItem('app_info', JSON.stringify(res.app));
+        const storage = this.getStorage();
+       
+        storage.setItem(this.storageKeyUser, JSON.stringify(res.user));
+        this.currentUserSubject.next(res.user);
+        
+        storage.setItem(this.storageKeyApp, JSON.stringify(res.app));
         this.appInfoSubject.next(res.app);
 
-        localStorage.setItem('app_contexto', JSON.stringify(res.contexto));
+        storage.setItem(this.storageKeyContexto, JSON.stringify(res.contexto));
         this.contextoSubject.next(res.contexto);
+
+        storage.setItem(this.storageKeyAuthz, JSON.stringify(res.authz));
+        this.authzSubject.next(res.authz);
+
+        // localStorage.setItem('current_user', JSON.stringify(res.user));
+        // this.currentUserSubject.next(res.user);
+        // localStorage.setItem('authz', JSON.stringify(res.authz));
+        // this.authzSubject.next(res.authz);
+
+        // localStorage.setItem('app_info', JSON.stringify(res.app));
+        // this.appInfoSubject.next(res.app);
+
+        // localStorage.setItem('app_contexto', JSON.stringify(res.contexto));
+        // this.contextoSubject.next(res.contexto);
       })
     );
   }
 
-  logout(): void {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('current_user');
-    localStorage.removeItem('app_info');
-    localStorage.removeItem('app_contexto');
+    logout(): void {
+    // limpia ambos
+    [localStorage, sessionStorage].forEach(s => {
+      s.removeItem(this.storageKeyToken);
+      s.removeItem(this.storageKeyUser);
+      s.removeItem(this.storageKeyApp);
+      s.removeItem(this.storageKeyContexto);
+      s.removeItem(this.storageKeyAuthz);
+    });
+
+    // opcional: si quieres que al logout también se olvide el remember
+    localStorage.removeItem(this.storageKeyRemember);
 
     this.currentUserSubject.next(null);
     this.appInfoSubject.next(null);
     this.contextoSubject.next(null);
+    this.authzSubject.next(null);
     this.isAuthenticatedSubject.next(false);
 
     this.router.navigate(['/login']);
   }
+
 
   hasToken(): boolean {
     return !!localStorage.getItem('auth_token');
@@ -256,6 +333,25 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('auth_token');
   }
+  authzValue(): Authz | null {
+    return this.authzSubject.value;
+  }
 
-  
+    hasPermission(permission: string): boolean {
+    const authz = this.authzSubject.value;
+    return !!authz?.permissions?.includes(permission);
+  }
+  isGerencial(): boolean {
+    return this.hasPermission('app.gerencial.access');
+  }
+private getStorage(): Storage {
+    // Si el usuario eligió "recordarme", usamos localStorage; si no, sessionStorage
+    const remember = localStorage.getItem(this.storageKeyRemember) === '1';
+    return remember ? localStorage : sessionStorage;
+  }
+
+  private setRemember(remember: boolean) {
+    // guardamos esta preferencia en localStorage para decidir en arranque
+    localStorage.setItem(this.storageKeyRemember, remember ? '1' : '0');
+  }
 }

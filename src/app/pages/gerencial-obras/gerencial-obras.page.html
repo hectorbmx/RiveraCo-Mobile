@@ -1,0 +1,53 @@
+<ion-content class="obras-content">
+
+  <!-- HEADER tipo Dashboard -->
+  <section class="header-section">
+    <div class="header-top">
+      <div class="header-info">
+        <p class="welcome-text">BIENVENIDO</p>
+        <h1 class="dashboard-title">Obras</h1>
+
+        <!-- Aquí va el search en lugar del subtitle -->
+        <div class="header-search">
+          <ion-searchbar
+            placeholder="Buscar obra..."
+            mode="ios"
+            (ionInput)="onSearchChange($event.detail.value)"
+            [debounce]="300">
+          </ion-searchbar>
+        </div>
+      </div>
+
+      <div class="profile-icon">
+        <ion-icon name="person-circle"></ion-icon>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTA (con overlap como en dashboard) -->
+  <div class="obras-list-wrap">
+    <ion-list class="obras-list" lines="none">
+      <ion-item
+        button
+        detail="true"
+        class="obra-item"
+        *ngFor="let o of obras"
+        (click)="goToDetalle(o)"
+      >
+        <ion-label>
+          <div class="obra-nombre">{{ o.nombre }}</div>
+          <div class="obra-clave">{{ o.clave_obra }}</div>
+          <div class="obra-cliente">{{ o.cliente?.nombre || 'Sin cliente' }}</div>
+          <div class="obra-ubicacion">{{ o.ubicacion }}</div>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+    <div class="bottom-spacer"></div>
+  </div>
+
+</ion-content>

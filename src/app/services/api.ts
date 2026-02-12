@@ -52,13 +52,36 @@ export class ApiService {
   /**
    * GET request
    */
-  get<T>(endpoint: string): Observable<T> {
-    return this.http.get<T>(`${this.apiUrl}/${endpoint}`, {
-      headers: this.getHeaders()
-    }).pipe(
-      catchError(this.handleError)
-    );
+  // get<T>(endpoint: string): Observable<T> {
+  //   return this.http.get<T>(`${this.apiUrl}/${endpoint}`, {
+  //     headers: this.getHeaders()
+  //   }).pipe(
+  //     catchError(this.handleError)
+  //   );
+  // }
+
+  //actualizacio
+get<T>(endpoint: string, params?: Record<string, any>): Observable<T> {
+  const cleanParams: Record<string, any> = {};
+
+  if (params) {
+    Object.keys(params).forEach((key) => {
+      const v = (params as any)[key];
+      // no mandar undefined, null, '' ni 'undefined' string
+      if (v === undefined || v === null) return;
+      if (typeof v === 'string' && v.trim() === '') return;
+      if (v === 'undefined') return;
+
+      cleanParams[key] = v;
+    });
   }
+
+  return this.http.get<T>(`${this.apiUrl}/${endpoint}`, {
+    headers: this.getHeaders(),
+    params: cleanParams
+  }).pipe(catchError(this.handleError));
+}
+
 
   /**
    * POST request

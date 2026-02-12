@@ -1,0 +1,160 @@
+<ion-content class="obra-detalle-content">
+
+  <!-- HEADER tipo Dashboard -->
+  <section class="header-section" *ngIf="obra">
+    <div class="header-top">
+      <div class="header-info">
+        <p class="welcome-text">OBRA</p>
+        <h1 class="dashboard-title">{{ obra.nombre }}</h1>
+
+        <div class="subtitle-lines">
+          <div class="subtitle-row">
+            <span class="subtitle-label">Clave:</span>
+            <span class="subtitle-value">{{ obra.clave_obra }}</span>
+          </div>
+          <div class="subtitle-row">
+            <span class="subtitle-label">Ubicación:</span>
+            <span class="subtitle-value">{{ obra.ubicacion }}</span>
+          </div>
+          <div class="subtitle-row">
+            <span class="subtitle-label">Cliente:</span>
+            <span class="subtitle-value">{{ obra.cliente?.nombre || 'Sin cliente' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-icon">
+        <ion-icon name="business-outline"></ion-icon>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENIDO -->
+  <div class="content-wrap">
+
+    <!-- Loading -->
+    <div class="loading-wrap" *ngIf="loading">
+      <ion-spinner></ion-spinner>
+      <div class="loading-text">Cargando obra...</div>
+    </div>
+
+    <!-- KPIs -->
+    <section class="card" *ngIf="!loading && kpis">
+      <div class="card-header">
+        <div class="card-title">KPIs</div>
+        <ion-icon class="card-icon" name="stats-chart-outline"></ion-icon>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-label">Empleados activos</div>
+          <div class="kpi-value">{{ kpis.empleados_activos ?? 0 }}</div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-label">Pilas programadas</div>
+          <div class="kpi-value">{{ kpis.pilas_total_programado ?? 0 }}</div>
+        </div>
+
+        <div class="kpi kpi-full">
+          <div class="kpi-label">Rows pilas</div>
+          <div class="kpi-value">{{ kpis.pilas_total_rows ?? 0 }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Máquina activa -->
+    <section class="card tappable" (click)="goToMaquinaDetalle()">
+
+      <div class="card-header">
+        <div class="card-title">Máquina activa</div>
+        <ion-icon class="card-icon" name="hammer-outline"></ion-icon>
+      </div>
+
+      <ng-container *ngIf="maquinaActiva; else noMaquina">
+        <div class="row-main">
+          <div class="row-primary">
+            {{ maquinaActiva?.maquina?.nombre || ('Maquina #' + maquinaActiva?.maquina_id) }}
+          </div>
+          <div class="pill pill-green">{{ maquinaActiva?.estado }}</div>
+        </div>
+
+        <div class="row-meta">
+          <div><span class="muted">Inicio:</span> {{ maquinaActiva?.fecha_inicio }}</div>
+          <div><span class="muted">Horómetro:</span> {{ maquinaActiva?.horometro_inicio }}</div>
+        </div>
+      </ng-container>
+
+      <ng-template #noMaquina>
+        <div class="empty-state">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <div>Sin máquina activa</div>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Empleados preview -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title">Empleados</div>
+        <ion-icon class="card-icon" name="people-outline"></ion-icon>
+      </div>
+
+      <ng-container *ngIf="empleadosPreview?.length; else noEmpleados">
+        <div class="list">
+          <div class="list-item" *ngFor="let e of empleadosPreview">
+            <div class="li-left">
+              <div class="li-title">{{ e.empleado?.nombre }}</div>
+              <div class="li-sub">
+                {{ e.rol?.nombre }}
+                <span *ngIf="e.empleado?.telefono"> • {{ e.empleado.telefono }}</span>
+              </div>
+            </div>
+            <ion-icon class="li-arrow" name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noEmpleados>
+        <div class="empty-state">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <div>Sin empleados asignados</div>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Pilas preview -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title">Pilas</div>
+        <ion-icon class="card-icon" name="cube-outline"></ion-icon>
+      </div>
+
+      <ng-container *ngIf="pilasPreview?.length; else noPilas">
+        <div class="list">
+          <div class="list-item" *ngFor="let p of pilasPreview">
+            <div class="li-left">
+              <div class="li-title">
+                {{ p.tipo }} — {{ p.cantidad_programada }}
+              </div>
+              <div class="li-sub">
+                {{ p.diametro }}cm • {{ p.profundidad }}m
+                <span *ngIf="p.ubicacion"> • {{ p.ubicacion }}</span>
+              </div>
+            </div>
+            <ion-icon class="li-arrow" name="chevron-forward-outline"></ion-icon>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noPilas>
+        <div class="empty-state">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <div>Sin pilas registradas</div>
+        </div>
+      </ng-template>
+    </section>
+
+    <div class="bottom-spacer"></div>
+  </div>
+</ion-content>

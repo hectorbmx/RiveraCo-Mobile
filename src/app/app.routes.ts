@@ -1,12 +1,26 @@
 import { Routes } from '@angular/router';
+import { appShellGuard } from './guards/app-shell.guard';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   {
+  path: 'home',
+  canActivate: [authGuard, appShellGuard],
+    loadComponent: () => import('./pages/landing/landing.page').then(m => m.LandingPage),
+
+}
+,
+  {
     path:'',
-    redirectTo: 'login',
+    redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+  path: 'tabs-gerencial',
+  loadChildren: () => import('./tabs-gerencial/tabs-gerencial.routes').then(m => m.routes),
+  canActivate: [authGuard],
+},
+
   {
     path: 'login',
     loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
@@ -28,5 +42,30 @@ export const routes: Routes = [
     path: 'vehiculo-registro/:vehiculo_id',
     loadComponent: () => import('./pages/vehiculo-registro/vehiculo-registro.page').then( m => m.VehiculoRegistroPage)
   },
-  
+ 
+  {
+    path: 'gerencial-home',
+    loadComponent: () => import('./pages/gerencial-home/gerencial-home.page').then( m => m.GerencialHomePage)
+  },
+  {
+    path: 'gerencial-obras',
+    loadComponent: () => import('./pages/gerencial-obras/gerencial-obras.page').then( m => m.GerencialObrasPage)
+  },
+  {
+    path: 'gerencial-empleados',
+    loadComponent: () => import('./pages/gerencial-empleados/gerencial-empleados.page').then( m => m.GerencialEmpleadosPage)
+  },
+  {
+    path: 'gerencial-maquinas',
+    loadComponent: () => import('./pages/gerencial-maquinas/gerencial-maquinas.page').then( m => m.GerencialMaquinasPage)
+  },
+  {
+    path: 'gerencial-inventario',
+    loadComponent: () => import('./pages/gerencial-inventario/gerencial-inventario.page').then( m => m.GerencialInventarioPage)
+  },
+  {
+    path: 'maquinas-detalles',
+    loadComponent: () => import('./pages/gerencial-obras/obras-detalles/maquinas-detalles/maquinas-detalles.page').then( m => m.MaquinasDetallesPage)
+  },
+ 
 ];

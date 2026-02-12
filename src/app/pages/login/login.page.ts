@@ -37,6 +37,7 @@ export class LoginPage {
     email: '',
     password: ''
   };
+rememberMe = true; // o false por default, como prefieras
 
   constructor(
     private authService: AuthService,
@@ -57,7 +58,7 @@ export class LoginPage {
     });
     await loading.present();
 
-    this.authService.login(this.credentials).subscribe({
+    this.authService.login(this.credentials, this.rememberMe).subscribe({
       next: async (response) => {
         await loading.dismiss();
        // localStorage.setItem('user', JSON.stringify(response.user));
@@ -70,7 +71,9 @@ export class LoginPage {
         console.log('Contexto obra:', response.contexto?.obra);
         console.log('Maquina activa:', response.contexto?.maquina);
         // this.router.navigate(['/tabs/tab1']);
-        this.router.navigate(['/tabs', 'tab1']);
+        // this.router.navigate(['/tabs', 'tab1']);
+        this.router.navigate(['/home']);
+
       },
       error: async (error) => {
         await loading.dismiss();

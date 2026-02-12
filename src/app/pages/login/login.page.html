@@ -57,7 +57,14 @@
         <!-- Remember me checkbox -->
         <div class="remember-section">
           <ion-item lines="none" class="remember-item">
-            <ion-checkbox slot="start" class="remember-checkbox"></ion-checkbox>
+            <!-- <ion-checkbox slot="start" class="remember-checkbox"></ion-checkbox> -->
+             <ion-checkbox
+              slot="start"
+              class="remember-checkbox"
+              [(ngModel)]="rememberMe"
+              name="rememberMe"
+            ></ion-checkbox>
+
             <ion-label class="remember-label">Recuérdame</ion-label>
           </ion-item>
         </div>

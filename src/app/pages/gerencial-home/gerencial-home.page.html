@@ -1,0 +1,103 @@
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-top">
+      <div class="header-info">
+        <p class="welcome-text">BIENVENIDO</p>
+        <h1 class="dashboard-title">Dashboard Ejecutivo</h1>
+      </div>
+      <div class="profile-icon">
+        <ion-icon name="person-circle"></ion-icon>
+      </div>
+    </div>
+    <p class="company-subtitle">Resumen operativo de Rivera Construcciones</p>
+  </div>
+
+  <!-- Stats Cards Grid -->
+  <div class="stats-container">
+    <!-- Proyectos Card -->
+    <div class="stat-card">
+      <div class="card-icon">
+        <ion-icon name="construct-outline"></ion-icon>
+      </div>
+      <div class="card-content">
+        <h2 class="card-label">PROYECTOS </h2>
+        <div class="card-value-row">
+          <span class="card-value">{{ dashboard?.proyectos_activos ?? 0 }} ACTIVOS</span>
+          <div class="status-indicator yellow"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empleados Card -->
+    <div class="stat-card">
+      <div class="card-icon">
+        <ion-icon name="people"></ion-icon>
+      </div>
+      <div class="card-content">
+        <h2 class="card-label">EMPLEADOS</h2>
+        <div class="card-value-row">
+          <span class="card-value">{{ dashboard?.empleados_presentes ?? 0 }} En Obra</span>
+          <div class="status-indicator green"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maquinaria Card -->
+    <div class="stat-card">
+      <div class="card-icon">
+        <ion-icon name="build-outline"></ion-icon>
+      </div>
+      <div class="card-content">
+        <h2 class="card-label">MAQUINARIA</h2>
+        <div class="card-value-row">
+          <span class="card-value">{{ dashboard?.maquinaria_en_uso ?? 0 }} En Uso</span>
+          <div class="status-indicator yellow"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventario Card -->
+    <div class="stat-card">
+      <div class="card-icon">
+        <ion-icon name="cube-outline"></ion-icon>
+      </div>
+      <div class="card-content">
+        <h2 class="card-label">PRODUCTOS CON</h2>
+        <div class="card-value-row">
+          <span class="card-value">{{ dashboard?.inventario_stock_pct ?? 0 }} Stock</span>
+          <div class="status-indicator blue"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions Section -->
+  <div class="quick-actions-section">
+    <h3 class="section-title">ACCIONES RÁPIDAS</h3>
+    
+    <div class="actions-list">
+      <button class="action-card" (click)="verReporte()">
+        <div class="action-left">
+          <ion-icon name="analytics" class="action-icon"></ion-icon>
+          <span class="action-text">Ver Reporte Mensual</span>
+        </div>
+        <ion-icon name="chevron-forward" class="action-arrow"></ion-icon>
+      </button>
+
+      <button class="action-card" (click)="verAlertas()">
+        <div class="action-left">
+          <ion-icon name="notifications-outline" class="action-icon"></ion-icon>
+          <span class="action-text">Alertas de Obra</span>
+        </div>
+        <div class="action-right">
+          <span class="badge">3</span>
+          <ion-icon name="chevron-forward" class="action-arrow"></ion-icon>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom Spacer for Tabs -->
+  <div class="bottom-spacer"></div>
+</ion-content>

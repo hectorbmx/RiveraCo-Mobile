@@ -1,0 +1,85 @@
+<ion-content class="maquina-detalle-content">
+
+  <!-- HEADER -->
+  <section class="header-section" *ngIf="maquina">
+    <div class="header-top">
+      <div class="header-info">
+        <p class="welcome-text">MÁQUINA</p>
+        <h1 class="dashboard-title">{{ maquina?.nombre }}</h1>
+
+        <div class="subtitle-lines" *ngIf="asignacion">
+          <div class="subtitle-row">
+            <span class="subtitle-label">Estado:</span>
+            <span class="subtitle-value">{{ asignacion?.estado }}</span>
+          </div>
+
+          <div class="subtitle-row">
+            <span class="subtitle-label">Inicio:</span>
+            <span class="subtitle-value">{{ asignacion?.fecha_inicio }}</span>
+          </div>
+
+          <div class="subtitle-row" *ngIf="asignacion?.horometro_inicio">
+            <span class="subtitle-label">Horómetro inicio:</span>
+            <span class="subtitle-value">{{ asignacion?.horometro_inicio }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-icon">
+        <ion-icon name="speedometer-outline"></ion-icon>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT (overlap) -->
+  <div class="content-wrap">
+
+    <div class="loading-wrap" *ngIf="loading">
+      <ion-spinner></ion-spinner>
+      <div class="loading-text">Cargando registros...</div>
+    </div>
+
+    <!-- HORAS MÁQUINA -->
+    <section class="card" *ngIf="!loading">
+      <div class="card-header">
+        <div class="card-title">Horas máquina</div>
+        <ion-icon class="card-icon" name="time-outline"></ion-icon>
+      </div>
+
+      <ng-container *ngIf="registros?.length; else empty">
+        <div class="table">
+          <div class="tr th">
+            <div>Fecha</div>
+            <div class="right">Inicio</div>
+            <div class="right">Fin</div>
+            <div class="right">Horas</div>
+          </div>
+
+          <div class="tr" *ngFor="let r of registros">
+            <div class="mono">{{ r.fin | date:'dd/MM/yyyy HH:mm' }}</div>
+            <div class="right mono">{{ r.horometro_inicio }}</div>
+            <div class="right mono">{{ r.horometro_fin }}</div>
+            <div class="right strong mono">{{ r.horas }}</div>
+            <div class="nota-text" *ngIf="r.notas">{{ r.notas }}</div>
+
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #empty>
+        <div class="empty-state">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <div>Sin registros aún</div>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Infinite scroll si aplica -->
+    <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+    <div class="bottom-spacer"></div>
+  </div>
+
+</ion-content>
