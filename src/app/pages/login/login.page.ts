@@ -14,7 +14,7 @@ import {
   ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { eyeOutline } from 'ionicons/icons';
+import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
 import { AuthService, LoginCredentials } from '../../services/auth';
 
 @Component({
@@ -50,7 +50,7 @@ showPassword = false;
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
   ) {
-    addIcons ({ eyeOutline})
+    addIcons ({ eyeOutline,eyeOffOutline})
   }
 
   async onLogin() {
