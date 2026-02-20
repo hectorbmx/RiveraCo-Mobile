@@ -67,5 +67,18 @@ export const routes: Routes = [
     path: 'maquinas-detalles',
     loadComponent: () => import('./pages/gerencial-obras/obras-detalles/maquinas-detalles/maquinas-detalles.page').then( m => m.MaquinasDetallesPage)
   },
+  {
+    path: 'empleado-detalles/:id',
+    loadComponent: () => import('./pages/gerencial-empleados/empleado-detalles/empleado-detalles.page').then( m => m.EmpleadoDetallesPage)
+  },  {
+    path: 'maquina-detalles',
+    loadComponent: () => import('./pages/gerencial-maquinas/maquina-detalles/maquina-detalles.page').then( m => m.MaquinaDetallesPage)
+  },
+  {
+    path: 'producto',
+    loadComponent: () => import('./pages/gerencial-inventario/producto/producto.page').then( m => m.ProductoPage)
+  },
+
+
  
 ];

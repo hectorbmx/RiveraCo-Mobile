@@ -1,13 +1,108 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>gerencial-empleados</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="empleados-content" [scrollEvents]="true" 
+  (ionScroll)="onContentScroll($event)">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">gerencial-empleados</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- HEADER tipo Dashboard (igual que Obras) -->
+  <section class="header-section">
+    <div class="header-top">
+      <div class="header-info">
+        <p class="welcome-text">BIENVENIDO</p>
+        <h1 class="dashboard-title">Empleados</h1>
+
+        <div class="header-search">
+          <ion-searchbar
+            placeholder="Buscar empleado..."
+            mode="ios"
+            [debounce]="300"
+            (ionInput)="onSearchChange($event.detail.value)">
+          </ion-searchbar>
+        </div>
+      </div>
+
+      <div class="profile-icon">
+        <ion-icon name="person-circle"></ion-icon>
+      </div>
+    </div>
+<div class="header-filters">
+  <!-- Segment: status -->
+  <ion-segment
+    mode="ios"
+    [value]="status"
+    (ionChange)="onStatusChange($event.detail.value)">
+    <ion-segment-button [value]="1">
+      <ion-label>Activos</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button [value]="2">
+      <ion-label>Baja</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="null">
+      <ion-label>Todos</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Select: área -->
+
+</div>
+
+  </section>
+
+  <!-- LISTA (normal, no cards por item) -->
+  <div class="empleados-list-wrap">
+
+    <div class="empleados-list-container">
+      <ion-list class="empleados-list" lines="none">
+
+        <ion-item
+          button
+          detail="true"
+          class="empleado-item"
+          *ngFor="let e of items"
+          (click)="goToDetalle(e)">
+
+          <!-- Avatar -->
+          <ion-avatar slot="start" class="emp-avatar">
+            <!-- <img *ngIf="e.foto_url; else initialsTpl" [src]="e.foto_url" /> -->
+             <img *ngIf="e.foto_url; else initialsTpl" 
+       [src]="e.foto_url" 
+       (error)="e.foto_url = null" />
+            
+            
+            <ng-template #initialsTpl>
+              
+              <div class="emp-initials">{{ getInitials(e.nombre_completo) }}</div>
+            </ng-template>
+          </ion-avatar>
+
+          <ion-label class="emp-label">
+            <div class="emp-nombre">{{ e.nombre_completo }}</div>
+
+            <div class="emp-sub">
+      
+              <span class="emp-meta">{{ getObraName(e) }}</span>
+            </div>
+
+            <div class="emp-puesto" *ngIf="e.puesto">{{ e.puesto }}</div>
+          </ion-label>
+
+          <div slot="end" class="emp-end">
+            <span
+              class="emp-badge"
+              [class.badge-ok]="e.estatus === 1"
+              [class.badge-baja]="e.estatus !== 1">
+              {{ e.estatus === 1 ? 'Activo' : 'Baja' }}
+            </span>
+          </div>
+        </ion-item>
+
+      </ion-list>
+    </div>
+
+  
+
+  </div>
+<ion-infinite-scroll (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más empleados...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>

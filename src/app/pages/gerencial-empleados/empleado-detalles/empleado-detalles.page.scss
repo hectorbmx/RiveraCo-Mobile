@@ -1,0 +1,222 @@
+:host {
+  --navy: #0b2a63;
+  --accent-yellow: #f6c300;
+  --page-bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text-muted: #8a97ad;
+
+  ion-content {
+    --background: var(--page-bg);
+  }
+}
+
+/* Reutilización del Header con ajustes */
+.header-section {
+  background: var(--navy);
+  padding: calc(env(safe-area-inset-top) + 10px) 22px 60px; /* Más padding abajo para el overlap */
+  border-bottom-left-radius: 44px;
+  border-bottom-right-radius: 44px;
+  box-shadow: 0 16px 30px rgba(11, 42, 99, 0.22);
+}
+
+.back-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  margin-left: -15px;
+}
+
+.welcome-text {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 1.6px;
+  font-weight: 800;
+  color: var(--accent-yellow);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.profile-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  ion-icon {
+    font-size: 36px;
+    color: var(--accent-yellow);
+  }
+}
+
+
+/* Overlap Card */
+.empleados-list-wrap {
+  margin-top: -40px;
+  padding: 0 18px;
+}
+
+.empleados-list-container {
+  background: var(--card-bg);
+  border-radius: 28px;
+  box-shadow: 0 10px 25px rgba(16, 24, 40, 0.08);
+}
+
+/* Detail UI Elements */
+.detail-header {
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 15px;
+}
+
+.emp-avatar-large {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 15px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  
+  img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+.emp-initials-large {
+  width: 100%; height: 100%;
+  background: rgba(11, 42, 99, 0.08);
+  color: var(--navy);
+  display: grid; place-items: center;
+  font-size: 32px; font-weight: 900;
+}
+
+.emp-nombre-detail {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--navy);
+  margin: 0 0 10px;
+}
+
+.section-divider {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 1.2px;
+  margin: 25px 0 10px 10px;
+}
+
+.detail-item {
+  --padding-start: 10px;
+  --min-height: 60px;
+  
+  ion-icon {
+    color: var(--navy);
+    font-size: 22px;
+    margin-right: 15px;
+    opacity: 0.7;
+  }
+
+  h3 {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+
+  p {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+}
+
+.emp-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 5px 14px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.badge-ok { background: rgba(34, 197, 94, 0.14); color: #14532d; }
+.badge-baja { background: rgba(239, 68, 68, 0.14); color: #7f1d1d; }
+
+.bottom-spacer { height: 40px; }
+/* Header con espacio suficiente para los textos */
+.header-section {
+  background: var(--navy);
+  /* Aumentamos el padding inferior (80px o 100px) para que el blanco no tape el título */
+  padding: calc(env(safe-area-inset-top) + 20px) 22px 100px; 
+  border-bottom-left-radius: 44px;
+  border-bottom-right-radius: 44px;
+  position: relative;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start; /* Alinea el icono con la parte superior del texto */
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* El "Overlap": Controla qué tanto sube la tarjeta blanca */
+.empleados-list-wrap {
+  /* Si tapa el nombre "Información", reduce este valor (ej. de -60px a -40px) */
+  margin-top: -50px; 
+  padding: 0 18px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Alineación del botón Back con el texto amarillo */
+.back-container {
+  display: flex;
+  align-items: center;
+  margin-left: -18px; /* Ajuste para que la flecha pegue al borde */
+  margin-bottom: 4px;
+
+  ion-back-button {
+    --icon-font-size: 20px;
+    height: 24px;
+  }
+}
+
+/* Asegurar que el fondo sea blanco y no negro */
+.empleados-list-container {
+  background: #ffffff !important;
+  border-radius: 35px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+/* Forzar fondo blanco en la lista y los items para evitar el modo oscuro */
+ion-list {
+  background: #ffffff !important;
+  --ion-background-color: #ffffff !important;
+}
+
+.detail-item {
+  --background: #ffffff !important;
+  --ion-item-background: #ffffff !important;
+  
+  /* Aseguramos que los textos mantengan su color sobre el blanco */
+  ion-label {
+    h3 { color: var(--text-muted) !important; }
+    p { color: var(--navy) !important; }
+  }
+}
+
+/* Estilo para los divisores redondeados */
+.section-divider {
+  background: #f4f7fc;
+  color: var(--navy);
+  padding: 8px 15px;
+  border-radius: 12px;
+  margin: 20px 0 10px;
+}

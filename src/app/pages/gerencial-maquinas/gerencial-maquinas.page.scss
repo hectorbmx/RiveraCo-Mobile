@@ -1,0 +1,201 @@
+:host {
+  --navy: #0b2a63;
+  --accent-yellow: #f6c300;
+  --page-bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text-muted: #8a97ad;
+}
+ion-content.maquinas-content {
+  --background: var(--page-bg);
+}
+
+
+/* Header Estilo Premium */
+/* ---------- Header ---------- */
+.header-section {
+  background: var(--navy);
+  padding: calc(env(safe-area-inset-top) + 22px) 22px 26px;
+  border-bottom-left-radius: 44px;
+  border-bottom-right-radius: 44px;
+  box-shadow: 0 16px 30px rgba(11, 42, 99, 0.22);
+  position: relative;
+  z-index: 1;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.welcome-text {
+  margin: 0 0 10px;
+  font-size: 13px;
+  letter-spacing: 1.6px;
+  font-weight: 800;
+  color: var(--accent-yellow);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* Icono a la derecha */
+.profile-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  ion-icon {
+    font-size: 36px;
+    color: var(--accent-yellow);
+  }
+}
+
+/* Search integrado */
+.header-search {
+  margin-top: 14px;
+  max-width: 420px;
+}
+
+.header-search ion-searchbar {
+  --background: rgba(255, 255, 255, 0.12);
+  --color: #fff;
+  --placeholder-color: rgba(255, 255, 255, 0.72);
+  --icon-color: rgba(255, 255, 255, 0.85);
+  --clear-button-color: rgba(255, 255, 255, 0.85);
+  --border-radius: 16px;
+  padding: 0;
+
+  .searchbar-input-container {
+    box-shadow: none !important;
+  }
+}
+
+/* Lista y Overlap */
+.maquinas-list-wrap {
+    margin-top: -20px;
+  padding: 0 18px;
+  position: relative;
+  z-index: 5;
+}
+
+.maquinas-list-container {
+   background: var(--card-bg);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(16, 24, 40, 0.06);
+}
+.maquinas-list {
+  background: transparent;
+}
+
+
+/* Forzar Fondo Blanco para evitar tabla negra */
+.info-list-white {
+  background: #ffffff !important;
+  --ion-background-color: #ffffff !important;
+}
+
+.maquina-item {
+  --background: #ffffff !important;
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
+  margin-bottom: 5px;
+
+  .maquina-icon-box {
+    width: 48px;
+    height: 48px;
+    background: #f0f4f9;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    margin-right: 15px;
+    ion-icon { color: var(--navy); font-size: 24px; }
+  }
+
+  .maquina-nombre { font-weight: 800; color: var(--navy); font-size: 16px; }
+  .maquina-obra { color: var(--text-muted); font-size: 13px; margin: 4px 0; }
+  
+  .maquina-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+    .dot { font-size: 18px; line-height: 0; }
+  }
+}
+
+/* Badges */
+.badge-ok { --background: rgba(34, 197, 94, 0.1); color: #166534; font-weight: 700; }
+.badge-patio { --background: #f1f5f9; color: #475569; font-weight: 700; }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  ion-icon { font-size: 48px; margin-bottom: 10px; }
+}
+.item-main-row {
+  display: flex;
+  justify-content: space-between; /* Esto empuja el badge a la derecha */
+  align-items: center;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.maquina-nombre {
+  font-weight: 800;
+  color: var(--navy);
+  font-size: 16px;
+  margin: 0;
+  flex: 1; /* Permite que el nombre tome el espacio necesario antes del badge */
+}
+
+/* Estilo mejorado para el Badge */
+ion-badge {
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-left: 10px;
+}
+
+.badge-ok {
+  --background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
+.badge-patio {
+  --background: #f1f5f9;
+  color: #475569;
+}
+
+/* Ajuste fino para la flecha de navegación */
+.arrow-next {
+  font-size: 16px;
+  color: #cbd5e1;
+  margin-left: 8px;
+}
+
+/* Evitar que el label recorte el contenido */
+ion-label {
+  overflow: visible !important;
+}

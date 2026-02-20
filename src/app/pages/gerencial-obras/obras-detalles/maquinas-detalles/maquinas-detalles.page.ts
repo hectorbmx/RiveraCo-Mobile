@@ -2,14 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import {
-  IonContent, IonHeader,
-  IonIcon,
-  IonInfiniteScroll,
-  IonInfiniteScrollContent,
-  IonSpinner,
-  IonTitle, IonToolbar
-} from '@ionic/angular/standalone';
+import { IonBackButton, IonContent, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { informationCircleOutline, speedometerOutline, timeOutline } from 'ionicons/icons';
 import { GerencialObrasService } from 'src/app/services/gerencial-obras.service';
@@ -18,7 +11,7 @@ import { GerencialObrasService } from 'src/app/services/gerencial-obras.service'
   templateUrl: './maquinas-detalles.page.html',
   styleUrls: ['./maquinas-detalles.page.scss'],
   standalone: true,
-  imports: [IonInfiniteScroll, IonContent,IonIcon,IonSpinner, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,IonInfiniteScrollContent]
+  imports: [IonInfiniteScroll, IonContent, IonIcon, IonSpinner,  CommonModule, FormsModule, IonInfiniteScrollContent, IonBackButton]
 })
 
 export class MaquinasDetallesPage implements OnInit {

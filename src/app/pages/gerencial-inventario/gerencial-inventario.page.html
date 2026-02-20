@@ -1,13 +1,99 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>gerencial-inventario</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="inventario-content">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="header-top">
+      <div class="header-info">
+        <p class="welcome-text">GESTIÓN</p>
+        <h1 class="dashboard-title">Inventario</h1>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">gerencial-inventario</ion-title>
-    </ion-toolbar>
-  </ion-header>
+        <div class="header-search">
+          <ion-searchbar
+            placeholder="Buscar por nombre o SKU..."
+            mode="ios"
+            [debounce]="350"
+            [(ngModel)]="q"
+            (ionInput)="reload()"
+            (ionClear)="reload()">
+          </ion-searchbar>
+        </div>
+
+        <!-- Chips / mini filtros (opcional, pero se ve premium y consistente) -->
+        <div class="header-filters">
+          <button class="chip" [class.active]="minimos === 0" (click)="minimos=0; reload()">Todos</button>
+          <button class="chip" [class.active]="minimos === 1" (click)="minimos=1; reload()">Bajo mínimo</button>
+        </div>
+      </div>
+
+      <div class="profile-icon">
+        <ion-icon name="person-circle"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista -->
+  <div class="inventario-list-wrap">
+    <div class="inventario-list-container">
+
+      <div *ngIf="loading && rows.length === 0" class="ion-text-center ion-padding">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+      </div>
+
+      <ion-list lines="none" *ngIf="!loading && rows.length > 0" class="info-list-white">
+        <ion-item
+          *ngFor="let r of rows; trackBy: trackById"
+          class="inventario-item"
+          [detail]="false"
+          (click)="openProducto(r)">
+
+       
+
+          <ion-label>
+            <div class="item-main-row">
+              <h2 class="inventario-nombre">{{ r.producto?.nombre || 'Producto' }}</h2>
+
+              <!-- Badge estado stock -->
+              <ion-badge
+                [class]="getStockBadgeClass(r)"
+                >
+                {{ getStockBadgeText(r) }}
+              </ion-badge>
+            </div>
+
+            <p class="inventario-sub">
+              SKU: <b>{{ r.producto?.sku || '—' }}</b>
+              <span class="dot">•</span>
+              {{ r.almacen?.nombre || '—' }}
+            </p>
+
+            <div class="inventario-footer">
+              <span class="meta">
+                Stock: <b>{{ r.stock?.stock_actual ?? 0 }}</b>
+                <span class="dot">•</span>
+                Prom: <b>${{ (r.stock?.costo_promedio ?? 0) | number:'1.2-2' }}</b>
+              </span>
+
+              <span class="value">
+                ${{ (r.stock?.valor_total ?? 0) | number:'1.2-2' }}
+              </span>
+            </div>
+          </ion-label>
+
+          <ion-icon name="chevron-forward" slot="end" class="arrow-next"></ion-icon>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="!loading && rows.length === 0" class="empty-state">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>No se encontraron productos</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Infinite scroll -->
+  <ion-infinite-scroll (ionInfinite)="loadMore($event)" threshold="120px">
+    <ion-infinite-scroll-content loadingText="Cargando..."></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <div class="bottom-spacer"></div>
 </ion-content>

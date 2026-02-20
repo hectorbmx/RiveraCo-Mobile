@@ -1,0 +1,154 @@
+<ion-content class="empleados-content">
+<div class="header-section">
+  <div class="header-top">
+    <div class="header-info">
+      <div class="back-container">
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="tabs-gerencial/empleados" mode="md"></ion-back-button>
+        </ion-buttons>
+        <p class="welcome-text">REGRESAR A LISTA GENERAL</p>
+      </div>
+      <h1 class="dashboard-title">Información</h1>
+    </div>
+
+    <div class="profile-icon">
+      <ion-icon name="person-circle"></ion-icon>
+    </div>
+  </div>
+</div>
+
+<div class="empleados-list-wrap" *ngIf="empleado">
+  <div class="empleados-list-container">
+    </div>
+</div>
+
+<div class="empleados-list-wrap" *ngIf="empleado">
+  <div class="empleados-list-container">
+    <ion-list lines="none" class="info-list-white">
+       </ion-list>
+  </div>
+
+  </div>
+
+  <div class="empleados-list-wrap" *ngIf="empleado">
+    <div class="empleados-list-container ion-padding">
+      
+      <div class="detail-header ion-text-center">
+        <div class="emp-avatar-large">
+          <img *ngIf="empleado.foto_url; else initials" [src]="empleado.foto_url" />
+          <ng-template #initials>
+            <div class="emp-initials-large">
+              {{ empleado.nombre_completo.substring(0,2) }}
+            </div>
+          </ng-template>
+        </div>
+        <h2 class="emp-nombre-detail">{{ empleado.nombre_completo }}</h2>
+        <span class="emp-badge" [ngClass]="empleado.estatus === 1 ? 'badge-ok' : 'badge-baja'">
+          {{ empleado.estatus === 1 ? 'Activo' : 'Baja' }}
+        </span>
+      </div>
+
+      <ion-list lines="none" class="info-list">
+        <div class="section-divider">DATOS LABORALES</div>
+        
+        <ion-item class="detail-item">
+          <ion-icon name="briefcase-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Puesto</h3>
+            <p>{{ empleado.puesto }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item class="detail-item">
+          <ion-icon name="business-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Área / Departamento</h3>
+            <p>{{ empleado.area?.nombre }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item class="detail-item">
+          <ion-icon name="construct-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Obra Actual</h3>
+            <p>{{ empleado.obra_actual?.nombre || 'Sin obra asignada' }}</p>
+            <p>{{ empleado.obra_actual?.clave_obra || '' }}</p>
+          </ion-label>
+        </ion-item>
+
+        <div class="section-divider">CONTACTO</div>
+
+        <ion-item class="detail-item" *ngIf="empleado.celular">
+          <ion-icon name="phone-portrait-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Celular</h3>
+            <p>{{ empleado.celular }}</p>
+          </ion-label>
+          <ion-button slot="end" fill="clear" [href]="'tel:' + empleado.celular">
+            <ion-icon name="call" color="success"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-item class="detail-item" *ngIf="empleado.email">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Correo Electrónico</h3>
+            <p>{{ empleado.email || 'No hay registro'}}</p>
+          </ion-label>
+        </ion-item>
+
+        <div class="section-divider">IDENTIFICACIÓN</div>
+
+        <ion-item class="detail-item">
+          <ion-label>
+            <h3>CURP</h3>
+            <p>{{ empleado.curp }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item class="detail-item">
+          <ion-label>
+            <h3>RFC</h3>
+            <p>{{ empleado.rfc }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item class="detail-item">
+          <ion-label>
+            <h3>NSS</h3>
+            <p>{{ empleado.nss || 'No hay dato registrado' }}</p>
+          </ion-label>
+        </ion-item>
+      
+      <div class="section-divider">INFORMACION GENERAL</div>
+       <ion-item class="detail-item">
+          <ion-label>
+            <h3>FEHCA INGRESO</h3>
+              <p>{{ empleado.fecha_ingreso | date:'dd/MM/yyyy' }}</p>
+          </ion-label>
+        </ion-item>
+        
+        <ion-item class="detail-item">
+          <ion-label>
+            <h3>Sueldo IMSS</h3>
+              <p>{{ empleado.sueldo }}</p>
+          </ion-label>
+        </ion-item>
+        
+        <ion-item class="detail-item">
+          <ion-label>
+            <h3>Complemento</h3>
+              <p>{{ empleado.complemento }}</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item class="detail-item">
+          <ion-label>
+            <h3>Complemento</h3>
+              <p>{{ empleado.sueldo_real }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+  
+</ion-content>

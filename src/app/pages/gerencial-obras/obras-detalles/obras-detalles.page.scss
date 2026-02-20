@@ -144,7 +144,7 @@ ion-content.obra-detalle-content {
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 14px;
 }
 
 .kpi {
@@ -154,7 +154,11 @@ ion-content.obra-detalle-content {
 }
 
 .kpi-full {
+  background: #f3f6fb;
+  border-radius: 16px;
+  padding: 12px 12px;
   grid-column: 1 / -1;
+   
 }
 
 .kpi-label {
@@ -281,4 +285,56 @@ ion-content.obra-detalle-content {
 
 @media (max-width: 360px) {
   .dashboard-title { font-size: 26px; }
+}
+/* =========================
+   KPI - Pilas 3 columnas
+========================= */
+
+
+
+.kpi-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.kpi-mini {
+  background: rgba(0, 0, 0, 0.03); // gris tenue muy ligero
+  border-radius: 12px;
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.mini-label {
+  font-size: 12px;
+  color: #7a8599; // gris azulado suave (igual línea visual que tu UI)
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.mini-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0d2b57; // azul fuerte corporativo que ya usas
+}
+
+.kpi-sub {
+  font-size: 13px;
+  margin-top: 6px;
+  color: #7a8599;
+}
+
+.kpi-foot {
+  font-size: 12px;
+  text-align: right;
+  margin-top: 4px;
+  color: #7a8599;
+}
+
+.kpi-progress {
+  margin-top: 6px;
+  height: 6px;
+  border-radius: 6px;
 }

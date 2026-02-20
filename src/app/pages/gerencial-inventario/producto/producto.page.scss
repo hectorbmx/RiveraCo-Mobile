@@ -1,0 +1,302 @@
+/* ===== producto-detail.page.scss =====
+   CSS autónomo — no depende del SCSS de inventario.
+   Replica las clases compartidas + agrega las propias.
+   ======================================= */
+
+:host {
+  --navy: #0b2a63;
+  --accent-yellow: #f6c300;
+  --page-bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text-muted: #8a97ad;
+}
+
+ion-content.inventario-content {
+  --background: var(--page-bg);
+}
+
+/* ================================================
+   HEADER  (copia exacta del inventario global)
+   ================================================ */
+.header-section {
+  background: var(--navy);
+  padding: calc(env(safe-area-inset-top) + 22px) 22px 20px;
+  border-bottom-left-radius: 44px;
+  border-bottom-right-radius: 44px;
+  box-shadow: 0 16px 30px rgba(11, 42, 99, 0.22);
+  position: relative;
+  z-index: 1;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.welcome-text {
+  margin: 0 0 10px;
+  font-size: 13px;
+  letter-spacing: 1.6px;
+  font-weight: 800;
+  color: var(--accent-yellow);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* Línea SKU / Rango */
+.header-subline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+
+  b {
+    color: #fff;
+    font-weight: 800;
+  }
+
+  .dot {
+    color: rgba(255, 255, 255, 0.35);
+  }
+}
+
+/* Ícono a la derecha */
+.profile-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 28px;
+    color: var(--accent-yellow);
+  }
+}
+
+/* ================================================
+   OVERLAP CONTAINER  (copia del inventario global)
+   ================================================ */
+.inventario-list-wrap {
+  margin-top: -20px;
+  padding: 0 18px;
+  position: relative;
+  z-index: 5;
+}
+
+.inventario-list-container {
+  background: var(--card-bg);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(16, 24, 40, 0.06);
+}
+
+/* Padding interno de esta vista */
+.producto-container {
+  padding: 20px 16px 4px;
+}
+
+/* ================================================
+   KPI GRID
+   ================================================ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.kpi-card {
+  background: var(--page-bg);
+  border-radius: 16px;
+  padding: 16px 14px 14px;
+  border: 1px solid rgba(11, 42, 99, 0.07);
+  box-shadow: 0 2px 8px rgba(11, 42, 99, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 4px rgba(11, 42, 99, 0.08);
+  }
+}
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1;
+}
+
+/* ================================================
+   SECTION TITLE
+   ================================================ */
+.section-title {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin: 0 0 12px;
+}
+
+/* ================================================
+   ÚLTIMO MOVIMIENTO CARD
+   ================================================ */
+.last-card {
+  background: var(--page-bg);
+  border-radius: 16px;
+  border: 1px solid rgba(11, 42, 99, 0.07);
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(11, 42, 99, 0.05);
+}
+
+.last-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--navy);
+}
+
+.last-date {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Badges tipo-movimiento */
+ion-badge.badge-entrada {
+  --background: rgba(34, 197, 94, 0.18);
+  color: #15803d;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+ion-badge.badge-salida {
+  --background: rgba(239, 68, 68, 0.15);
+  color: #991b1b;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+ion-badge.badge-ajuste {
+  --background: rgba(245, 158, 11, 0.15);
+  color: #92400e;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.last-body {
+  padding: 14px;
+}
+
+.last-body .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(11, 42, 99, 0.06);
+  font-size: 13px;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  b {
+    font-weight: 900;
+    color: var(--navy);
+  }
+}
+
+.last-body .muted {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.doc-line {
+  margin-top: 10px;
+  font-size: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(11, 42, 99, 0.06);
+  color: var(--text-muted);
+
+  b {
+    color: var(--navy);
+    font-weight: 800;
+  }
+}
+
+/* ================================================
+   EMPTY STATE COMPACTO
+   ================================================ */
+.empty-state.compact {
+  text-align: center;
+  padding: 28px 20px;
+  color: var(--text-muted);
+
+  ion-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+/* ================================================
+   BOTTOM HINT & SPACER
+   ================================================ */
+.bottom-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 10px 16px 18px;
+  font-weight: 600;
+}
+
+.bottom-spacer {
+  height: 24px;
+}

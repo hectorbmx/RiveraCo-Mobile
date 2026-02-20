@@ -1,0 +1,112 @@
+<ion-content class="inventario-content producto-content">
+  <!-- Header igual que Inventario -->
+  <div class="header-section">
+    <div class="header-top">
+      <div class="back-button" (click)="goBack()">
+      <ion-icon name="chevron-back"></ion-icon>
+    </div>
+      <div class="header-info">
+        <p class="welcome-text">PRODUCTO</p>
+        <h1 class="dashboard-title">
+          {{ resumen?.producto?.nombre || 'Detalle' }}
+        </h1>
+
+        <div class="header-subline">
+          <span>SKU: <b>{{ resumen?.producto?.sku || '—' }}</b></span>
+          <span class="dot">•</span>
+          <span>Rango: <b>{{ resumen?.filters?.desde || '—' }}</b> a <b>{{ resumen?.filters?.hasta || '—' }}</b></span>
+        </div>
+      </div>
+
+      <div class="profile-icon">
+        <ion-icon name="person-circle"></ion-icon>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlap container -->
+  <div class="inventario-list-wrap">
+    <div class="inventario-list-container producto-container">
+
+      <div *ngIf="loading" class="ion-text-center ion-padding">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+
+      <ng-container *ngIf="!loading && resumen">
+
+        <!-- KPI grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Movimientos</div>
+            <div class="kpi-value">{{ resumen.kpis.movimientos_total }}</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">Entradas</div>
+            <div class="kpi-value">{{ resumen.kpis.entradas_cantidad }}</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">Salidas</div>
+            <div class="kpi-value">{{ resumen.kpis.salidas_cantidad }}</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label">Neto</div>
+            <div class="kpi-value">{{ resumen.kpis.neto_cantidad }}</div>
+          </div>
+        </div>
+
+        <!-- Último movimiento -->
+        <div class="section-title">Último movimiento</div>
+
+        <div class="last-card" *ngIf="resumen.ultimo_movimiento; else noMove">
+          <div class="last-head">
+            <div class="last-date">
+              {{ resumen.ultimo_movimiento.fecha || '—' }}
+            </div>
+
+            <ion-badge [class]="getMoveBadgeClass(resumen.ultimo_movimiento.tipo_movimiento)">
+              {{ (resumen.ultimo_movimiento.tipo_movimiento || '—') }}
+            </ion-badge>
+          </div>
+
+          <div class="last-body">
+            <div class="row">
+              <span class="muted">Cantidad</span>
+              <b>{{ resumen.ultimo_movimiento.cantidad ?? 0 }}</b>
+            </div>
+            <div class="row">
+              <span class="muted">Costo unitario</span>
+              <b>${{ (resumen.ultimo_movimiento.costo_unitario ?? 0) | number:'1.2-2' }}</b>
+            </div>
+            <div class="row">
+              <span class="muted">Saldo</span>
+              <b>{{ resumen.ultimo_movimiento.saldo_cantidad ?? 0 }}</b>
+            </div>
+
+            <div class="doc-line muted">
+              Doc: <b>{{ resumen.ultimo_movimiento.documento?.tipo || '—' }}</b>
+              ({{ resumen.ultimo_movimiento.documento?.estado || '—' }})
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noMove>
+          <div class="empty-state compact">
+            <ion-icon name="time-outline"></ion-icon>
+            <p>Sin movimientos en el rango.</p>
+          </div>
+        </ng-template>
+
+        <!-- Aquí metemos Kardex en el siguiente paso -->
+        <div class="bottom-hint">
+          Próximo: Kardex (movimientos) con scroll infinito.
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="bottom-spacer"></div>
+</ion-content>

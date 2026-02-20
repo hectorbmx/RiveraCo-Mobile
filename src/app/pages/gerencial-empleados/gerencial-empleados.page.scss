@@ -1,0 +1,227 @@
+:host {
+  --navy: #0b2a63;
+  --accent-yellow: #f6c300;
+  --page-bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text-muted: #8a97ad;
+
+  ion-content {
+    --padding-bottom: 14px;
+  }
+}
+
+ion-content.empleados-content {
+  --background: var(--page-bg);
+}
+
+/* ---------- Header ---------- */
+.header-section {
+  background: var(--navy);
+  padding: calc(env(safe-area-inset-top) + 22px) 22px 26px;
+  border-bottom-left-radius: 44px;
+  border-bottom-right-radius: 44px;
+  box-shadow: 0 16px 30px rgba(11, 42, 99, 0.22);
+  position: relative;
+  z-index: 1;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.welcome-text {
+  margin: 0 0 10px;
+  font-size: 13px;
+  letter-spacing: 1.6px;
+  font-weight: 800;
+  color: var(--accent-yellow);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* Icono a la derecha */
+.profile-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  ion-icon {
+    font-size: 36px;
+    color: var(--accent-yellow);
+  }
+}
+
+/* Search integrado */
+.header-search {
+  margin-top: 14px;
+  max-width: 420px;
+}
+
+.header-search ion-searchbar {
+  --background: rgba(255, 255, 255, 0.12);
+  --color: #fff;
+  --placeholder-color: rgba(255, 255, 255, 0.72);
+  --icon-color: rgba(255, 255, 255, 0.85);
+  --clear-button-color: rgba(255, 255, 255, 0.85);
+  --border-radius: 16px;
+  padding: 0;
+
+  .searchbar-input-container {
+    box-shadow: none !important;
+  }
+}
+
+/* ---------- Lista con overlap ---------- */
+.empleados-list-wrap {
+  margin-top: -20px;
+  padding: 0 18px;
+  position: relative;
+  z-index: 5;
+}
+
+/* Contenedor único (lista “normal” con separadores) */
+.empleados-list-container {
+  background: var(--card-bg);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(16, 24, 40, 0.06);
+}
+
+.empleados-list {
+  background: transparent;
+}
+
+/* Item estilo iOS */
+.empleado-item {
+   --background: #ffffff !important;
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
+  margin-bottom: 5px;
+ .empleado-icon-box {
+    width: 48px;
+    height: 48px;
+    background: #f0f4f9;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    margin-right: 15px;
+    ion-icon { color: var(--navy); font-size: 24px; }
+  }
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  --detail-icon-color: rgba(11, 42, 99, 0.28);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Avatar */
+.emp-avatar {
+  width: 44px;
+  height: 44px;
+}
+
+.emp-initials {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(11, 42, 99, 0.08);
+  color: var(--navy);
+  font-weight: 900;
+  font-size: 13px;
+}
+
+/* Textos */
+.emp-label {
+  margin: 10px 0;
+}
+
+.emp-nombre {
+  font-weight: 900;
+  color: var(--navy);
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  margin-bottom: 4px;
+}
+
+.emp-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.2;
+}
+
+.emp-meta {
+  font-size: 13px;
+  color: rgba(11, 42, 99, 0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 42vw;
+}
+
+.emp-dot {
+  color: rgba(11, 42, 99, 0.35);
+  font-weight: 900;
+}
+
+.emp-puesto {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: rgba(11, 42, 99, 0.55);
+}
+
+/* Derecha */
+.emp-end {
+  display: flex;
+  align-items: center;
+}
+
+.emp-badge {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge-ok {
+  background: rgba(34, 197, 94, 0.14);
+  color: rgba(20, 83, 45, 0.9);
+}
+
+.badge-baja {
+  background: rgba(239, 68, 68, 0.14);
+  color: rgba(127, 29, 29, 0.9);
+}
+
+/* Separador para tabs */
+.bottom-spacer {
+  height: calc(26px + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 360px) {
+  .dashboard-title { font-size: 30px; }
+  .header-search { max-width: 280px; }
+}

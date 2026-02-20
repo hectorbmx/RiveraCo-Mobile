@@ -39,16 +39,45 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../pages/gerencial-maquinas/gerencial-maquinas.page').then(m => m.GerencialMaquinasPage),
       },
+       {
+          path: 'maquina-detalles/:id',
+          loadComponent: () => import('../pages/gerencial-maquinas/maquina-detalles/maquina-detalles.page').then( m => m.MaquinaDetallesPage)
+        },
       {
         path: 'empleados',
         loadComponent: () =>
           import('../pages/gerencial-empleados/gerencial-empleados.page').then(m => m.GerencialEmpleadosPage),
       },
-      {
-        path: 'inventario',
-        loadComponent: () =>
-          import('../pages/gerencial-inventario/gerencial-inventario.page').then(m => m.GerencialInventarioPage),
+        {
+        path: 'empleado-detalles/:id',
+        loadComponent: () => import('../pages/gerencial-empleados/empleado-detalles/empleado-detalles.page').then( m => m.EmpleadoDetallesPage)
       },
+      // {
+      //   path: 'inventario',
+      //   loadComponent: () =>
+      //     import('../pages/gerencial-inventario/gerencial-inventario.page').then(m => m.GerencialInventarioPage),
+      // },
+      //  {
+      //   path: 'producto/:id',
+      //   loadComponent: () => import('../pages/gerencial-inventario/producto/producto.page').then( m => m.ProductoPage)
+      // },
+      {
+      path: 'inventario',
+      children: [
+        {
+          path: '',
+          loadComponent: () =>
+            import('../pages/gerencial-inventario/gerencial-inventario.page')
+              .then(m => m.GerencialInventarioPage),
+        },
+        {
+          path: 'producto/:id',
+          loadComponent: () =>
+            import('../pages/gerencial-inventario/producto/producto.page')
+              .then(m => m.ProductoPage),
+        },
+      ]
+    },
       {
         path: '',
         redirectTo: 'home',

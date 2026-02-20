@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonHeader, IonIcon, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonIcon, IonProgressBar, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   alertCircleOutline,
@@ -19,7 +19,7 @@ import { GerencialObrasService } from 'src/app/services/gerencial-obras.service'
   templateUrl: './obras-detalles.page.html',
   styleUrls: ['./obras-detalles.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,IonSpinner,IonIcon]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule,IonProgressBar, FormsModule,IonSpinner,IonIcon]
 })
 export class ObrasDetallesPage implements OnInit {
   
