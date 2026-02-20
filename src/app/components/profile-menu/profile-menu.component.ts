@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { IonButton, IonContent, IonIcon, IonPopover } from '@ionic/angular/standalone';
-
+import { AuthService } from 'src/app/services/auth';
 @Component({
   selector: 'app-profile-menu',
   standalone: true,
@@ -16,6 +16,10 @@ export class ProfileMenuComponent {
   isOpen = false;
   popoverEvent: any;
 
+  constructor(
+  private auth: AuthService,
+) {}
+
   open(ev: any) {
     this.popoverEvent = ev;
     this.isOpen = true;
@@ -25,10 +29,8 @@ export class ProfileMenuComponent {
     this.isOpen = false;
   }
 
-  logout() {
-    // 🔥 aquí conectaremos tu AuthService real cuando me digas dónde lo tienes
-    // this.auth.logout();
-    this.isOpen = false;
-    console.log('logout');
-  }
+logout() {
+  this.isOpen = false;     // cierra el menú/sidebar
+  this.auth.logout();      // limpia token, subjects y navega a /login
+}
 }

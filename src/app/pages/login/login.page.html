@@ -40,19 +40,31 @@
         </div>
 
         <!-- Password Input -->
-        <div class="input-group">
-          <div class="label-row">
-            <label class="input-label">CONTRASEÑA</label>
-            <a routerLink="/forgot-password" class="forgot-link">¿OLVIDASTE TU CONTRASEÑA?</a>
-          </div>
-          <ion-input
-            type="password"
-            [(ngModel)]="credentials.password"
-            name="password"
-            placeholder="••••••••"
-            class="custom-input"
-          ></ion-input>
-        </div>
+     <!-- Password Input -->
+<div class="input-group">
+  <div class="label-row">
+    <label class="input-label">CONTRASEÑA</label>
+    <a routerLink="/forgot-password" class="forgot-link">
+      ¿OLVIDASTE TU CONTRASEÑA?
+    </a>
+  </div>
+
+  <div class="password-wrapper">
+    <ion-input
+      [type]="showPassword ? 'text' : 'password'"
+      [(ngModel)]="credentials.password"
+      name="password"
+      placeholder="••••••••"
+      class="custom-input"
+    ></ion-input>
+
+    <ion-icon
+      [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+      class="password-toggle"
+      (click)="togglePassword()"
+    ></ion-icon>
+  </div>
+</div>
 
         <!-- Remember me checkbox -->
         <div class="remember-section">

@@ -6,13 +6,15 @@ import {
   IonButton,
   IonCheckbox,
   IonContent,
+  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
-  IonText,
   LoadingController,
   ToastController
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { eyeOutline } from 'ionicons/icons';
 import { AuthService, LoginCredentials } from '../../services/auth';
 
 @Component({
@@ -29,7 +31,7 @@ import { AuthService, LoginCredentials } from '../../services/auth';
     IonLabel,
     IonInput,
     IonButton,IonCheckbox,
-    IonText
+    IonIcon
   ]
 })
 export class LoginPage {
@@ -38,13 +40,18 @@ export class LoginPage {
     password: ''
   };
 rememberMe = true; // o false por default, como prefieras
+showPassword = false;
+
+
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
-  ) {}
+  ) {
+    addIcons ({ eyeOutline})
+  }
 
   async onLogin() {
     // Validación básica
@@ -91,4 +98,7 @@ rememberMe = true; // o false por default, como prefieras
     });
     await toast.present();
   }
+  togglePassword() {
+  this.showPassword = !this.showPassword;
+}
 }

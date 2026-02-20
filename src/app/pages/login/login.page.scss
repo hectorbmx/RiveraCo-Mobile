@@ -225,3 +225,22 @@
     }
   }
 }
+
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  font-size: 20px;
+  color: #7f806b;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.custom-input {
+  width: 100%;
+}
