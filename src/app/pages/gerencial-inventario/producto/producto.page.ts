@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
-
 import {
   IonBadge,
   IonContent,
@@ -12,6 +11,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronBack, personCircle, pricetag, timeOutline } from 'ionicons/icons';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
 import { KardexResumenResponseDto } from 'src/app/models/inventario.model';
 import { GerencialInventarioService } from 'src/app/services/gerencial-inventario.service';
 
@@ -21,7 +21,7 @@ import { GerencialInventarioService } from 'src/app/services/gerencial-inventari
   styleUrls: ['./producto.page.scss'],
   standalone:true,
   imports:[
-    IonIcon,IonContent,IonSpinner,CommonModule,FormsModule,IonBadge
+    IonIcon,IonContent,IonSpinner,CommonModule,FormsModule,IonBadge,ProfileMenuComponent
   ]
 })
 export class ProductoPage implements OnInit {

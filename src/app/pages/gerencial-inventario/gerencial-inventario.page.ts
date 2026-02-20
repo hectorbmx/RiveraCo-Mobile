@@ -13,10 +13,11 @@ import {
   IonSearchbar,
   IonSkeletonText,
   IonSpinner,
-  IonTitle, IonToolbar
+  IonTitle
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronBack, chevronForward, personCircle } from 'ionicons/icons';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
 import { InventarioStockRowDto, LaravelPaginatorMeta } from 'src/app/models/inventario.model';
 import { GerencialInventarioService } from 'src/app/services/gerencial-inventario.service';
 
@@ -26,7 +27,7 @@ import { GerencialInventarioService } from 'src/app/services/gerencial-inventari
   styleUrls: ['./gerencial-inventario.page.scss'],
   standalone:true,
   imports:[
-    IonContent,IonHeader,IonToolbar,IonTitle,IonList,IonItem,IonLabel,IonSearchbar,IonNote,IonInfiniteScroll,
+    IonContent,IonHeader,ProfileMenuComponent,IonTitle,IonList,IonItem,IonLabel,IonSearchbar,IonNote,IonInfiniteScroll,
     IonInfiniteScrollContent,IonSkeletonText,FormsModule,CommonModule,IonIcon,IonSpinner,IonBadge,
   ]
 })

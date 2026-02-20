@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router'; // <--- 1. Importa esto
 import {
   IonBadge,
-  IonContent, IonHeader,
+  IonContent,
   IonIcon,
   IonItem,
   IonLabel,
@@ -13,7 +13,8 @@ import {
   IonSpinner, IonText
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { alertCircle, alertCircleOutline, bus, chevronForward, construct, person, settings } from 'ionicons/icons';
+import { alertCircle, alertCircleOutline, bus, chevronForward, construct, person, personCircle, settings } from 'ionicons/icons';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
 import { MaquinaListItemDto, MaquinasResponse } from 'src/app/models/maquina.model';
 // import { MaquinasGerencialService } from 'src/app/services/gerencial-maquinas.service';
 import { MaquinasGerencialService, } from 'src/app/services/gerencial-maquina.service';
@@ -24,7 +25,7 @@ import { MaquinasGerencialService, } from 'src/app/services/gerencial-maquina.se
   styleUrls: ['./gerencial-maquinas.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, FormsModule, IonContent, IonHeader, RouterModule,
+    CommonModule, FormsModule, IonContent, ProfileMenuComponent, RouterModule,
     IonSearchbar, IonList, IonItem, IonLabel, 
     IonBadge, IonIcon, IonSpinner, IonText
   ]
@@ -36,7 +37,7 @@ export class GerencialMaquinasPage implements OnInit {
 
   constructor(private maquinasSvc: MaquinasGerencialService) {
     // Registramos los iconos que usaremos
-    addIcons({construct,alertCircleOutline,bus,alertCircle,settings,chevronForward,person});
+    addIcons({personCircle,chevronForward,alertCircleOutline,construct,bus,alertCircle,settings,person});
   }
 
   ngOnInit() {

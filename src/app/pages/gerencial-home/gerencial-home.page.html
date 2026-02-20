@@ -7,7 +7,11 @@
         <h1 class="dashboard-title">Dashboard Ejecutivo</h1>
       </div>
       <div class="profile-icon">
-        <ion-icon name="person-circle"></ion-icon>
+        <!-- <ion-icon 
+          name="person-circle"
+          (click)="openProfile($event)">
+        </ion-icon> -->
+        <app-profile-menu [userName]="user?.name"></app-profile-menu>
       </div>
     </div>
     <p class="company-subtitle">Resumen operativo de Rivera Construcciones</p>
@@ -101,3 +105,29 @@
   <!-- Bottom Spacer for Tabs -->
   <div class="bottom-spacer"></div>
 </ion-content>
+<ion-popover 
+  [isOpen]="isProfileOpen"
+  [event]="profileEvent"
+  (didDismiss)="isProfileOpen = false">
+
+  <ng-template>
+    <ion-content class="profile-popover">
+      <div class="profile-box">
+
+        <div class="profile-name">
+          {{ user?.name }}
+        </div>
+
+        <ion-button 
+          expand="block" 
+          fill="clear" 
+          color="danger"
+          (click)="logout()">
+          Cerrar sesión
+        </ion-button>
+
+      </div>
+    </ion-content>
+  </ng-template>
+
+</ion-popover>

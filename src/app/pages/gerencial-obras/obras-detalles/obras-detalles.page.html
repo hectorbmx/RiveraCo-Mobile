@@ -3,6 +3,9 @@
   <!-- HEADER tipo Dashboard -->
   <section class="header-section" *ngIf="obra">
     <div class="header-top">
+       <div class="back-button" (click)="goBack()">
+        <ion-icon name="chevron-back"></ion-icon>
+      </div>
       <div class="header-info">
         <p class="welcome-text">OBRA</p>
         <h1 class="dashboard-title">{{ obra.nombre }}</h1>
@@ -24,7 +27,8 @@
       </div>
 
       <div class="profile-icon">
-        <ion-icon name="business-outline"></ion-icon>
+        <!-- <ion-icon name="business-outline"></ion-icon> -->
+         <app-profile-menu></app-profile-menu>
       </div>
     </div>
   </section>
@@ -38,53 +42,31 @@
       <div class="loading-text">Cargando obra...</div>
     </div>
 
-    <!-- KPIs -->
-    <!-- <section class="card" *ngIf="!loading && kpis">
-      <div class="card-header">
-        <div class="card-title">KPIs</div>
-        <ion-icon class="card-icon" name="stats-chart-outline"></ion-icon>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi">
-          <div class="kpi-label">Empleados activos</div>
-          <div class="kpi-value">{{ kpis.empleados_activos ?? 0 }}</div>
-        </div>
-
-        <div class="kpi">
-          <div class="kpi-label">Pilas programadas</div>
-          <div class="kpi-value">{{ kpis.pilas_total_programado ?? 0 }}</div>
-        </div>
-
-        <div class="kpi kpi-full">
-          <div class="kpi-label">Rows pilas</div>
-          <div class="kpi-value">{{ kpis.pilas_total_rows ?? 0 }}</div>
-        </div>
-      </div>
-    </section> -->
     <div class="kpi-grid">
   <!-- Card 1: Cobranza -->
   <div class="kpi">
     <div class="kpi-label">Monto contratado</div>
     <div class="kpi-value">
-      {{ (kpis.cobranza?.monto_contratado ?? 0) | currency:'MXN':'symbol-narrow':'1.0-0' }}
+      {{ (kpis?.cobranza?.monto_contratado ?? 0) | currency:'MXN':'symbol-narrow':'1.0-0' }}
+      
     </div>
 
     <div class="kpi-sub">
       Cobrado:
       <span class="strong">
-        {{ (kpis.cobranza?.monto_cobrado ?? 0) | currency:'MXN':'symbol-narrow':'1.0-0' }}
+        {{ (kpis?.cobranza?.monto_cobrado ?? 0) | currency:'MXN':'symbol-narrow':'1.0-0' }}
+        
       </span>
     </div>
 
     <!-- Barra -->
     <ion-progress-bar
       class="kpi-progress"
-      [value]="(kpis.cobranza?.porcentaje ?? 0) / 100">
+      [value]="(kpis?.cobranza?.porcentaje ?? 0) / 100">
     </ion-progress-bar>
 
     <div class="kpi-foot">
-      {{ (kpis.cobranza?.porcentaje ?? 0) | number:'1.0-0' }}%
+      {{ (kpis?.cobranza?.porcentaje ?? 0) | number:'1.0-0' }}%
     </div>
   </div>
 

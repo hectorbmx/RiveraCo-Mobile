@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonFooter, IonHeader, IonIcon, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonHeader, IonIcon, IonPopover, IonTitle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-// import { GerencialDashboardService } from 'src/app/services/gerencial/gerencial-dashboard.service';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
+
 import { analytics, buildOutline, chevronForward, constructOutline, cubeOutline, notificationsOutline, people, personCircle } from 'ionicons/icons';
 import { GerencialDashboardData } from 'src/app/models/gerencial/dashboard.dto';
 import { GerencialDashboardService } from 'src/app/services/gerencial-dashboard.service';
@@ -12,7 +13,7 @@ import { GerencialDashboardService } from 'src/app/services/gerencial-dashboard.
   templateUrl: './gerencial-home.page.html',
   styleUrls: ['./gerencial-home.page.scss'],
   standalone: true,
-  imports: [IonIcon, IonContent, IonHeader, IonTitle, IonToolbar,IonFooter, CommonModule, FormsModule]
+  imports: [IonIcon, IonContent, IonHeader, IonTitle, IonPopover,IonButton, CommonModule, FormsModule,ProfileMenuComponent]
 })
 
 
@@ -159,5 +160,23 @@ loadDashboard(event?: any) {
     // Aquí implementarás la lógica de logout
     // this.authService.logout();
   }
+isProfileOpen = false;
+profileEvent: any;
+user: any = {
+  name: 'Héctor Barreto' // luego lo conectamos a tu AuthService
+};
 
+openProfile(ev: any) {
+  this.profileEvent = ev;
+  this.isProfileOpen = true;
+}
+
+logout() {
+  console.log('Cerrar sesión');
+
+  // aquí luego llamamos tu AuthService
+  // this.auth.logout();
+
+  this.isProfileOpen = false;
+}
 }

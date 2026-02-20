@@ -29,6 +29,7 @@ import {
 
 import { addIcons } from 'ionicons';
 import { add, peopleCircle, person, personCircle } from 'ionicons/icons';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
 
 import { AreaDto, EmpleadoListItemDto } from 'src/app/models/empleado.model';
 import { GerencialPersonalService } from 'src/app/services/gerencial-personal.service';
@@ -45,7 +46,7 @@ import { GerencialPersonalService } from 'src/app/services/gerencial-personal.se
     IonIcon, IonContent,
     IonHeader, IonTitle, IonToolbar, IonFooter,
     IonRefresher, IonRefresherContent,
-    IonSearchbar,
+    IonSearchbar,ProfileMenuComponent,
     CommonModule, FormsModule
   ]
 })

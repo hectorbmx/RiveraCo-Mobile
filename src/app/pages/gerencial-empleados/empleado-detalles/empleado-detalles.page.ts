@@ -2,11 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonCardContent, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle } from '@ionic/angular/standalone';
-
-import { } from '@ionic/angular/standalone';
+import { IonBackButton, IonBadge, IonButton, IonButtons, IonCard, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTitle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { businessOutline, call, constructOutline, mailOutline, personCircle, phonePortraitOutline } from 'ionicons/icons';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
 import { GerencialPersonalService } from 'src/app/services/gerencial-personal.service';
 @Component({
   selector: 'app-empleado-detalles',
@@ -16,7 +15,7 @@ import { GerencialPersonalService } from 'src/app/services/gerencial-personal.se
 imports: [
     IonContent, IonHeader, IonTitle, IonItem, CommonModule, FormsModule,
     IonButton, IonBackButton, IonButtons, IonLabel, IonList, IonIcon, 
-    IonBadge, IonCard, IonCardContent
+    IonBadge, IonCard, ProfileMenuComponent
   ]})
 export class EmpleadoDetallesPage implements OnInit {
 id: string | null = null;

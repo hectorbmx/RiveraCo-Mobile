@@ -1,0 +1,28 @@
+<div class="profile-icon">
+  <ion-icon name="person-circle" (click)="open($event)"></ion-icon>
+</div>
+
+<ion-popover
+  [isOpen]="isOpen"
+  [event]="popoverEvent"
+  (didDismiss)="close()"
+>
+  <ng-template>
+    <ion-content class="profile-popover">
+      <div class="profile-box">
+        <div class="profile-name">
+          {{ userName || 'Usuario' }}
+        </div>
+
+        <ion-button
+          expand="block"
+          fill="clear"
+          color="danger"
+          (click)="logout()"
+        >
+          Cerrar sesión
+        </ion-button>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-popover>

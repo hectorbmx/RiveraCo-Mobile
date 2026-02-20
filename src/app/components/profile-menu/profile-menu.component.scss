@@ -1,0 +1,31 @@
+.profile-icon{
+  width: 60px;
+  height:60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-icon ion-icon{
+  font-size: 44px;
+  color: #ffcc00;
+
+  /* ✅ ajuste óptico para que el "muñeco" quede centrado en el círculo */
+  transform: translate(-4px, -4px);
+}
+.profile-popover {
+  --width: 220px;
+  --background: #ffffff;
+}
+
+.profile-box {
+  padding: 16px;
+}
+
+.profile-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #0b265a;
+}

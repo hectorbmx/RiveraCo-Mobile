@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonHeader, IonIcon, IonProgressBar, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { NavController } from '@ionic/angular';
+import { IonContent, IonHeader, IonIcon, IonProgressBar, IonSpinner, IonTitle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   alertCircleOutline,
@@ -13,29 +14,35 @@ import {
   peopleOutline,
   personCircle, statsChartOutline
 } from 'ionicons/icons';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
 import { GerencialObrasService } from 'src/app/services/gerencial-obras.service';
 @Component({
   selector: 'app-obras-detalles',
   templateUrl: './obras-detalles.page.html',
   styleUrls: ['./obras-detalles.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule,IonProgressBar, FormsModule,IonSpinner,IonIcon]
+  imports: [IonContent, IonHeader, IonTitle, ProfileMenuComponent, CommonModule,IonProgressBar, FormsModule,IonSpinner,IonIcon]
 })
 export class ObrasDetallesPage implements OnInit {
   
   loading = true;
 
   obra: any = null;
-  kpis: any = null;
+  
   maquinaActiva: any = null;
   empleadosPreview: any[] =[];
   pilasPreview: any[] =[];
-
+kpis = {
+  empleados_activos: 0,
+  cobranza: { monto_contratado: 0, monto_cobrado: 0, porcentaje: 0 },
+  pilas: { programadas: 0, realizadas: 0, faltan: 0, porcentaje: 0, rows: 0 },
+};
 
   constructor(
     private route: ActivatedRoute,
     private obrasSrv: GerencialObrasService,
-    private router: Router
+    private router: Router,
+    private navCtrl: NavController
   ) { 
     addIcons({businessOutline,statsChartOutline,hammerOutline,alertCircleOutline,peopleOutline,chevronForwardOutline,informationCircleOutline,cubeOutline,chevronBack,chevronForward,personCircle});
   }
@@ -73,6 +80,9 @@ export class ObrasDetallesPage implements OnInit {
 
 //   this.router.navigate(['/tabs-gerencial/obras-detalles', obraId, 'maquina-detalle', maquinaId]);
 // }
+goBack() {
+  this.navCtrl.back();
+}
 goToMaquinaDetalle() {
   const maquinaId =
     this.maquinaActiva?.maquina_id ??

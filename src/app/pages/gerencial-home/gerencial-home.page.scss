@@ -267,3 +267,24 @@ ion-content.dashboard-content {
   .card-value { font-size: 26px; }
   .stat-card { padding: 20px 16px; }
 }
+.profile-popover {
+  --width: 220px;
+  --background: #ffffff;
+}
+
+.profile-box {
+  padding: 16px;
+}
+
+.profile-name {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #0B265A; // tu azul Rivera
+}
+
+.profile-icon {
+  font-size: 32px;
+  color: #fff;
+  cursor: pointer;
+}

@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { ObraListItemDTO } from 'src/app/models/gerencial/obras.dto';
-// import { GerencialObrasService } from 'src/app/services/gerencial/gerencial-obras.service';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import {
   IonContent, IonFooter,
   IonHeader, IonIcon,
@@ -12,12 +11,14 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonRefresher, IonRefresherContent,
+  IonRefresher,
   IonSearchbar,
   IonTitle, IonToolbar
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { personCircle } from 'ionicons/icons';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
+import { ObraListItemDTO } from 'src/app/models/gerencial/obras.dto';
 import { GerencialObrasService } from 'src/app/services/gerencial-obras.service';
 @Component({
   selector: 'app-gerencial-obras',
@@ -25,7 +26,7 @@ import { GerencialObrasService } from 'src/app/services/gerencial-obras.service'
   styleUrls: ['./gerencial-obras.page.scss'],
   standalone: true,
   imports: [IonInfiniteScrollContent,IonItem,IonLabel, IonInfiniteScroll, IonIcon, IonContent, IonHeader, IonTitle, IonList,
-    IonToolbar,IonFooter, CommonModule,IonRefresher, FormsModule,IonRefresherContent,IonSearchbar]
+    IonToolbar,IonFooter, CommonModule,IonRefresher, FormsModule,ProfileMenuComponent,IonSearchbar]
 })
 export class GerencialObrasPage {
   obras: ObraListItemDTO[] = [];
@@ -42,7 +43,8 @@ export class GerencialObrasPage {
 
   constructor(
     private obrasApi: GerencialObrasService,
-    private router: Router
+    private router: Router,
+      private route: ActivatedRoute,
   ) {
     addIcons({personCircle})
   }
@@ -97,10 +99,14 @@ onSearchChange(value?: string | null) {
   this.q = value ?? '';
   this.refresh();
 }
-goToDetalle(o: ObraListItemDTO) {
-  // this.router.navigate(['/gerencial/obras-detalles', o.id]); // ajusta tu ruta real
-  // o: this.router.navigate([`/gerencial/obras/${o.id}`]);
-  this.router.navigate(['/tabs-gerencial/obras-detalles', o.id]);
+// goToDetalle(o: ObraListItemDTO) {
+//   // this.router.navigate(['/gerencial/obras-detalles', o.id]); // ajusta tu ruta real
+//   // o: this.router.navigate([`/gerencial/obras/${o.id}`]);
+//   this.router.navigate(['/tabs-gerencial/obras-detalles', o.id]);
 
+// }
+goToDetalle(o: ObraListItemDTO) {
+  // ✅ Relativo al tab actual
+  this.router.navigate(['../obras-detalles', o.id], { relativeTo: this.route });
 }
 }
