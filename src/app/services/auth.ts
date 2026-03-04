@@ -144,11 +144,21 @@ export interface MaquinaRegistroIndexResponse {
     obra_maquina_id: number;
     obra_id: number;
     maquina_id: number;
+
+    // estado de asignación (obra_maquina)
     estado: string;
+
     fecha_inicio: string | null;
     horometro_inicio: number | null;
-    maquina: { id: number; nombre: string | null } | null;
+
+    // 👇 aquí agregamos estado real de la máquina
+    maquina: {
+      id: number;
+      nombre: string | null;
+      estado: string; // 'operativa' | 'fuera_servicio' | 'en_reparacion' | 'baja_definitiva'
+    } | null;
   };
+
   horometro_sugerido: number;
   registros: Array<{
     id: number;

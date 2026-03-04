@@ -35,7 +35,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/empleado-detalles/empleado-detalles.page').then( m => m.EmpleadoDetallesPage)
   },
   {
-    path: 'maquina-registro/:maquina_id',
+    path: 'maquina-registro/:obra_maquina_id',
     loadComponent: () => import('./pages/maquina-registro/maquina-registro.page').then( m => m.MaquinaRegistroPage)
   },
   {
@@ -70,7 +70,8 @@ export const routes: Routes = [
   {
     path: 'empleado-detalles/:id',
     loadComponent: () => import('./pages/gerencial-empleados/empleado-detalles/empleado-detalles.page').then( m => m.EmpleadoDetallesPage)
-  },  {
+  },
+  {
     path: 'maquina-detalles',
     loadComponent: () => import('./pages/gerencial-maquinas/maquina-detalles/maquina-detalles.page').then( m => m.MaquinaDetallesPage)
   },

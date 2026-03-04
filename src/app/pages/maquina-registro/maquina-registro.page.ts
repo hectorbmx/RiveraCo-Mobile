@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MaquinaService } from 'src/app/services/maquina-service';
+
 import {
   IonBackButton,
   IonBadge,
@@ -44,7 +46,14 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
 
   loading = true;
   errorMsg: string | null = null;
-  
+  modalFallaOpen = false;
+  savingFalla = false;
+  fallaError: string | null = null;
+
+  fallaForm = {
+    motivo: '' as string,
+    notas: '' as string,
+  };
 
   asignacion: MaquinaRegistroIndexResponse['asignacion'] | null = null;
   horometroSugerido: number | null = null;
@@ -65,11 +74,12 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private api: ApiService
+    private api: ApiService,
+    private maquinaService: MaquinaService,
   ) {}
 
   ngOnInit() {
-    this.obraMaquinaId = Number(this.route.snapshot.paramMap.get('maquina_id')); 
+    this.obraMaquinaId = Number(this.route.snapshot.paramMap.get('obra_maquina_id')); 
     // IMPORTANTE: si cambiaste la ruta a :obra_maquina_id, cambia aquí también.
 
     if (!this.obraMaquinaId) {
@@ -82,7 +92,7 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sub?.unsubscribe();this.route.snapshot.paramMap.get('obra_maquina_id')
+    // this.sub?.unsubscribe();this.route.snapshot.paramMap.get('obra_maquina_id')
 
   }
 
@@ -120,9 +130,77 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
     this.saving = false;
     this.formError = null;
   }
+abrirModalFalla() {
+  this.fallaError = null;
+  this.fallaForm.motivo = '';
+  this.fallaForm.notas = '';
+  this.modalFallaOpen = true;
+}
+
+cerrarModalFalla() {
+  this.modalFallaOpen = false;
+  this.savingFalla = false;
+  this.fallaError = null;
+}
+reportarFalla() {
+    const motivo = (this.fallaForm.motivo || '').trim();
+    if (!motivo) {
+      this.fallaError = 'Captura el motivo de la falla.';
+      return;
+    }
+
+    this.savingFalla = true;
+    this.maquinaService.postReportarFalla(this.obraMaquinaId, motivo, this.fallaForm.notas).subscribe({
+      next: () => {
+        this.savingFalla = false;
+        this.cerrarModalFalla();
+        this.cargar();
+      },
+      error: (err) => {
+        this.savingFalla = false;
+        this.fallaError = err.message;
+      }
+    });
+  }
+  // guardarRegistro() {
+  //   this.formError = null;
+
+  //   const fin = Number(this.form.horometro_fin);
+  //   const inicio = Number(this.horometroSugerido ?? 0);
+
+  //   if (Number.isNaN(fin) || fin < 0) {
+  //     this.formError = 'Captura un horómetro final válido.';
+  //     return;
+  //   }
+
+  //   if (fin < inicio) {
+  //     this.formError = `El horómetro final no puede ser menor al último registrado (${inicio}).`;
+  //     return;
+  //   }
+
+  //   this.saving = true;
+
+  //   const payload: any = {
+  //     horometro_fin: fin,
+  //     notas: (this.form.notas || '').trim() || null,
+  //     // inicio/fin opcionales: si luego los quieres desde app, los agregamos
+  //   };
+
+  //   this.api.post<any>(`maquinas/${this.obraMaquinaId}/registros`, payload).subscribe({
+  //     next: () => {
+  //       this.saving = false;
+  //       this.cerrarModal();
+  //       this.cargar(); // refrescar lista y sugerido
+  //     },
+  //     error: (err) => {
+  //       this.saving = false;
+  //       this.formError = err?.message || 'No se pudo guardar el registro.';
+  //     }
+  //   });
+  // }
 
   guardarRegistro() {
-    this.formError = null;
+       this.formError = null;
 
     const fin = Number(this.form.horometro_fin);
     const inicio = Number(this.horometroSugerido ?? 0);
@@ -136,28 +214,26 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
       this.formError = `El horómetro final no puede ser menor al último registrado (${inicio}).`;
       return;
     }
+  // ... tus validaciones ...
+  this.saving = true;
 
-    this.saving = true;
+  const payload = {
+    horometro_fin: Number(this.form.horometro_fin),
+    notas: (this.form.notas || '').trim() || null,
+  };
 
-    const payload: any = {
-      horometro_fin: fin,
-      notas: (this.form.notas || '').trim() || null,
-      // inicio/fin opcionales: si luego los quieres desde app, los agregamos
-    };
-
-    this.api.post<any>(`maquinas/${this.obraMaquinaId}/registros`, payload).subscribe({
-      next: () => {
-        this.saving = false;
-        this.cerrarModal();
-        this.cargar(); // refrescar lista y sugerido
-      },
-      error: (err) => {
-        this.saving = false;
-        this.formError = err?.message || 'No se pudo guardar el registro.';
-      }
-    });
-  }
-
+  this.maquinaService.postRegistro(this.obraMaquinaId, payload).subscribe({
+    next: () => {
+      this.saving = false;
+      this.cerrarModal();
+      this.cargar();
+    },
+    error: (err) => {
+      this.saving = false;
+      this.formError = err.message;
+    }
+  });
+}
 
   formatFecha(fechaISO: string): string {
   if (!fechaISO) return 'N/A';

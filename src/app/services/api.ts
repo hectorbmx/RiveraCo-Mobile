@@ -130,6 +130,29 @@ get<T>(endpoint: string, params?: Record<string, any>): Observable<T> {
  getRegistros(obraMaquinaId: number): Observable<MaquinaRegistroIndexResponse> {
   return this.get<MaquinaRegistroIndexResponse>(`maquinas/${obraMaquinaId}/registros`);
 }
+postReportarFalla(obraMaquinaId: number, motivo: string, notas?: string): Observable<any> {
+  // 1. Usamos el método centralizado que YA SABEMOS que funciona para otros posts
+  const headers = this.getHeaders(); 
+
+  // 2. Limpiamos el payload
+  const payload = {
+    motivo: (motivo || '').trim(),
+    notas: (notas || '').trim() || null,
+  };
+
+  // 3. Debugging (opcional, puedes quitarlo después)
+  console.log('Enviando a:', `${this.apiUrl}/maquinas/${obraMaquinaId}/reportar-falla`);
+
+  // 4. Ejecutamos usando el método post genérico o el http directo
+  return this.http.post(
+    `${this.apiUrl}/maquinas/${obraMaquinaId}/reportar-falla`,
+    payload,
+    { headers }
+  ).pipe(
+    catchError(this.handleError)
+  );
+}
+
  /**
  * Registra asistencia (entrada/salida automática)
  * Usa multipart/form-data (foto opcional según regla backend)

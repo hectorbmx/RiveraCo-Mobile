@@ -39,8 +39,13 @@
             <ion-col size="6">
               <div class="info-item">
                 <p class="label">Estado</p>
-                <ion-badge [color]="asignacion.estado === 'activa' ? 'success' : 'medium'">
+                <!-- <ion-badge [color]="asignacion.estado === 'activa' ? 'success' : 'medium'">
                   {{ asignacion.estado }}
+                </ion-badge> -->
+                <ion-badge
+                  class="ion-margin-start"
+                  [color]="asignacion.maquina?.estado === 'operativa' ? 'success' : 'warning'">
+                  {{ asignacion.maquina?.estado || '—' }}
                 </ion-badge>
               </div>
             </ion-col>
@@ -91,14 +96,26 @@
 
 </ion-content>
 
- <ion-footer>
+<ion-footer>
   <ion-toolbar>
-    <ion-button expand="block" (click)="abrirModalNuevo()">
-      Nuevo registro
-    </ion-button>
-
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col size="6">
+          <ion-button expand="block" fill="outline" color="danger" (click)="abrirModalFalla()" class="ion-margin-horizontal">
+            Reportar Falla
+          </ion-button>
+        </ion-col>
+        
+        <ion-col size="6">
+          <ion-button expand="block" (click)="abrirModalNuevo()" class="ion-margin-horizontal">
+            Registro
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-toolbar>
 </ion-footer>
+
 <ion-modal
   [isOpen]="modalOpen"
   cssClass="nuevo-registro-modal"
@@ -171,6 +188,74 @@
             </ion-button>
 
           </div>
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+<ion-modal
+  [isOpen]="modalFallaOpen"
+  cssClass="nuevo-registro-modal"
+  (didDismiss)="cerrarModalFalla()"
+>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar color="danger">
+        <ion-title>Reportar falla</ion-title>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="cerrarModalFalla()">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-card class="modal-card">
+        <ion-card-header>
+          <ion-card-subtitle>MÁQUINA</ion-card-subtitle>
+          <ion-card-title>{{ asignacion?.maquina?.nombre || 'Máquina' }}</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+
+          <ion-item class="field-item" lines="none">
+            <ion-label class="field-label" position="stacked">Motivo</ion-label>
+            <ion-input
+              name="motivo"
+              fill="outline"
+              [(ngModel)]="fallaForm.motivo"
+              placeholder="Ej. Falla hidráulica"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item class="field-item ion-margin-top" lines="none">
+            <ion-label class="field-label" position="stacked">Notas (opcional)</ion-label>
+            <ion-textarea
+              name="notas"
+              fill="outline"
+              autoGrow="true"
+              rows="4"
+              [(ngModel)]="fallaForm.notas"
+              placeholder="Detalle breve"
+            ></ion-textarea>
+          </ion-item>
+
+          <ion-card *ngIf="fallaError" class="error-mini ion-margin-top">
+            <ion-card-content>
+              <ion-text color="danger">{{ fallaError }}</ion-text>
+            </ion-card-content>
+          </ion-card>
+
+          <div class="modal-actions ion-margin-top">
+            <ion-button fill="outline" (click)="cerrarModalFalla()" [disabled]="savingFalla">
+              Cancelar
+            </ion-button>
+
+            <ion-button color="danger" (click)="reportarFalla()" [disabled]="savingFalla">
+              <ion-spinner *ngIf="savingFalla" name="crescent" class="btn-spinner"></ion-spinner>
+              <span class="btn-text dark">{{ savingFalla ? 'Enviando...' : 'Reportar' }}</span>
+            </ion-button>
+          </div>
+
         </ion-card-content>
       </ion-card>
     </ion-content>

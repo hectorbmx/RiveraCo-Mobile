@@ -338,3 +338,7 @@ ion-badge {
     }
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  /* ... estilos que ionic pone por defecto ... */
+}
