@@ -34,4 +34,17 @@ export class MaquinaService {
     };
     return this.api.post(`maquinas/${obraMaquinaId}/reportar-falla`, payload);
   }
+/**
+ * Método genérico para transiciones de estado
+ * Ahora acepta 4 argumentos: id, estado, motivo y notas
+ */
+postCambiarEstado(obraMaquinaId: number, estado: string, motivo: string, notas?: string | null): Observable<any> {
+  const payload = {
+    estado: estado,
+    motivo: motivo.trim(),
+    notas: notas?.trim() || null // Agregamos las notas al payload
+  };
+  
+  return this.api.post(`maquinas/${obraMaquinaId}/actualizar-estado`, payload);
+}
 }

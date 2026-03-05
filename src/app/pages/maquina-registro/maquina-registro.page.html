@@ -95,21 +95,35 @@
 
 
 </ion-content>
-
 <ion-footer>
   <ion-toolbar>
     <ion-grid class="ion-no-padding">
       <ion-row>
-        <ion-col size="6">
+        <ion-col size="6" *ngIf="asignacion?.maquina?.estado === 'operativa'">
           <ion-button expand="block" fill="outline" color="danger" (click)="abrirModalFalla()" class="ion-margin-horizontal">
             Reportar Falla
           </ion-button>
         </ion-col>
         
-        <ion-col size="6">
-          <ion-button expand="block" (click)="abrirModalNuevo()" class="ion-margin-horizontal">
-            Registro
+        <ion-col [size]="asignacion?.maquina?.estado === 'operativa' ? '6' : '12'">
+          
+          <ion-button *ngIf="asignacion?.maquina?.estado === 'operativa'"
+            expand="block" (click)="abrirModalNuevo()" class="ion-margin-horizontal">
+            Registro Horas
           </ion-button>
+
+      <ion-button *ngIf="asignacion?.maquina?.estado === 'fuera_servicio'"
+        expand="block" color="warning" (click)="abrirModalCambioEstado('en_reparacion')" class="ion-margin-horizontal">
+        <ion-icon name="hammer-outline" slot="start"></ion-icon>
+        Iniciar Reparación
+      </ion-button>
+
+      <ion-button *ngIf="asignacion?.maquina?.estado === 'en_reparacion'"
+        expand="block" color="success" (click)="abrirModalCambioEstado('operativa')" class="ion-margin-horizontal">
+        <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        Finalizar Reparación
+      </ion-button>
+
         </ion-col>
       </ion-row>
     </ion-grid>

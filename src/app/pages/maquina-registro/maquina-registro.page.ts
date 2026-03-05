@@ -2,6 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { AlertController, IonIcon } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { checkmarkCircleOutline, hammerOutline } from 'ionicons/icons';
 import { MaquinaService } from 'src/app/services/maquina-service';
 
 import {
@@ -36,14 +39,14 @@ import { MaquinaRegistroIndexResponse } from 'src/app/services/auth'; // ajusta 
   templateUrl: './maquina-registro.page.html',
   styleUrls: ['./maquina-registro.page.scss'],
   standalone: true,
-  imports: [IonBackButton, IonContent, IonHeader,IonTextarea, IonInput,IonTitle, IonToolbar,IonCol,IonBadge,IonList,IonItem,IonLabel,IonButton,IonFooter,IonText,IonModal,
+  imports: [IonIcon, IonBackButton, IonContent, IonHeader,IonTextarea, IonInput,IonTitle, IonToolbar,IonCol,IonBadge,IonList,IonItem,IonLabel,IonButton,IonFooter,IonText,IonModal,
     IonCardTitle,IonRow,IonGrid,IonCardHeader,IonCardSubtitle, CommonModule, FormsModule,IonSpinner,IonCard,IonCardContent,IonButtons],
 })
 
 
 export class MaquinaRegistroPage implements OnInit, OnDestroy {
   obraMaquinaId!: number;
-
+  estadoPendiente: string | null = null;
   loading = true;
   errorMsg: string | null = null;
   modalFallaOpen = false;
@@ -76,7 +79,10 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private api: ApiService,
     private maquinaService: MaquinaService,
-  ) {}
+    private alertCtrl: AlertController
+  ) {
+    addIcons ({ hammerOutline,checkmarkCircleOutline});
+  }
 
   ngOnInit() {
     this.obraMaquinaId = Number(this.route.snapshot.paramMap.get('obra_maquina_id')); 
@@ -125,6 +131,14 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
     this.modalOpen = true;
   }
 
+  abrirModalCambioEstado(nuevoEstado: string) {
+  this.estadoPendiente = nuevoEstado;
+  this.fallaError = null;
+  this.fallaForm.motivo = '';
+  this.fallaForm.notas = '';
+  this.modalFallaOpen = true;
+}
+
   cerrarModal() {
     this.modalOpen = false;
     this.saving = false;
@@ -142,27 +156,86 @@ cerrarModalFalla() {
   this.savingFalla = false;
   this.fallaError = null;
 }
-reportarFalla() {
-    const motivo = (this.fallaForm.motivo || '').trim();
-    if (!motivo) {
-      this.fallaError = 'Captura el motivo de la falla.';
-      return;
-    }
 
-    this.savingFalla = true;
-    this.maquinaService.postReportarFalla(this.obraMaquinaId, motivo, this.fallaForm.notas).subscribe({
-      next: () => {
-        this.savingFalla = false;
-        this.cerrarModalFalla();
-        this.cargar();
-      },
-      error: (err) => {
-        this.savingFalla = false;
-        this.fallaError = err.message;
+async cambiarEstadoDirecto(nuevoEstado: string) {
+  const mensaje = nuevoEstado === 'en_reparacion' 
+    ? '¿Confirmas que la máquina entra en proceso de reparación?' 
+    : '¿Confirmas que la máquina ya está operativa nuevamente?';
+
+  const alert = await this.alertCtrl.create({
+    header: 'Confirmar cambio',
+    message: mensaje,
+    buttons: [
+      { text: 'Cancelar', role: 'cancel' },
+      {
+        text: 'Confirmar',
+        handler: () => {
+          this.ejecutarCambioEstado(nuevoEstado);
+        }
       }
-    });
+    ]
+  });
+
+  await alert.present();
+}
+
+private ejecutarCambioEstado(nuevoEstado: string) {
+  this.loading = true;
+  
+  const motivo = nuevoEstado === 'en_reparacion' 
+    ? 'Inicio de reparación desde App' 
+    : 'Reparación finalizada desde App';
+
+  // Cambiamos el envío de un objeto a parámetros individuales
+  this.maquinaService.postCambiarEstado(
+    this.obraMaquinaId, // 1. ID
+    nuevoEstado,        // 2. Estado (string)
+    motivo              // 3. Motivo (string)
+  ).subscribe({
+    next: () => {
+      this.cargar(); 
+    },
+    error: (err) => {
+      this.loading = false;
+      this.errorMsg = err.message;
+    }
+  });
+}
+
+// Modifica el método que envía la información
+reportarFalla() {
+  const motivo = (this.fallaForm.motivo || '').trim();
+  if (!motivo) {
+    this.fallaError = 'Captura el motivo del cambio.';
+    return;
   }
-  // guardarRegistro() {
+
+  this.savingFalla = true;
+
+  // Si no hay estadoPendiente, asumimos que es una falla normal (fuera_servicio)
+  
+  const estadoADisparar = this.estadoPendiente || 'fuera_servicio';
+
+  this.maquinaService.postCambiarEstado(
+    this.obraMaquinaId, 
+    estadoADisparar, 
+    motivo, 
+    this.fallaForm.notas
+  ).subscribe({
+    next: () => {
+      this.savingFalla = false;
+      this.cerrarModalFalla();
+      this.estadoPendiente = null;
+      
+      // ¡ESTO ES LO QUE FALTA PARA QUE SE ACTUALICE SOLA!
+      this.cargar();
+    },
+    error: (err) => {
+      this.savingFalla = false;
+      this.fallaError = err.message;
+    }
+  });
+}  // guardarRegistro() {
   //   this.formError = null;
 
   //   const fin = Number(this.form.horometro_fin);
