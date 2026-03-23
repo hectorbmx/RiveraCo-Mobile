@@ -1,0 +1,65 @@
+<ion-content class="empleados-content">
+  <div class="header-section">
+    <div class="header-top">
+      <div class="header-info">
+        <p class="welcome-text">HISTORIAL INDIVIDUAL</p>
+        <h1 class="dashboard-title">{{ employeeName }}</h1>
+      </div>
+      <div class="profile-icon" (click)="regresar()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </div>
+    </div>
+
+    <div class="header-search" *ngIf="kpis">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-val">{{ kpis.worked_days }}</span>
+          <span class="kpi-lab">Días</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-val">{{ kpis.total_hours }}h</span>
+          <span class="kpi-lab">Horas</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-val">{{ kpis.avg_entry }}</span>
+          <span class="kpi-lab">Promedio</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empleados-list-wrap">
+    <div class="empleados-list-container">
+      <ion-list class="empleados-list" lines="none">
+        
+        <ion-item *ngIf="loading" class="empleado-item">
+          <ion-label>Cargando historial...</ion-label>
+        </ion-item>
+
+        <ion-item class="empleado-item" *ngFor="let day of rows">
+          <div slot="start" class="empleado-icon-box">
+             <span class="day-num">{{ day.date | date:'dd' }}</span>
+          </div>
+
+          <ion-label class="emp-label">
+            <h2 class="emp-nombre">{{ day.day_name | titlecase }}</h2>
+            <div class="emp-sub">
+              <span class="emp-meta">Entrada: <strong>{{ formatTime(day.entry_at) }}</strong></span>
+              <span class="emp-dot">•</span>
+              <span class="emp-meta">Salida: <strong>{{ day.exit_at ? formatTime(day.exit_at) : '--:--' }}</strong></span>
+            </div>
+          </ion-label>
+
+          <div slot="end" class="emp-end">
+            <span class="emp-badge" [ngClass]="day.hours > 0 ? 'badge-ok' : 'badge-baja'">
+              {{ day.hours }} hrs
+            </span>
+          </div>
+        </ion-item>
+
+      </ion-list>
+    </div>
+  </div>
+
+  <div class="bottom-spacer"></div>
+</ion-content>

@@ -1,0 +1,237 @@
+:host {
+  --navy: #0b2a63;
+  --accent-yellow: #f6c300;
+  --page-bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text-muted: #8a97ad;
+
+  ion-content {
+    --padding-bottom: 14px;
+  }
+}
+
+ion-content.empleados-content {
+  --background: var(--page-bg);
+}
+
+/* ---------- Header ---------- */
+.header-section {
+  background: var(--navy);
+  padding: calc(env(safe-area-inset-top) + 22px) 22px 26px;
+  border-bottom-left-radius: 44px;
+  border-bottom-right-radius: 44px;
+  box-shadow: 0 16px 30px rgba(11, 42, 99, 0.22);
+  position: relative;
+  z-index: 1;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.welcome-text {
+  margin: 0 0 10px;
+  font-size: 13px;
+  letter-spacing: 1.6px;
+  font-weight: 800;
+  color: var(--accent-yellow);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botón regresar */
+.profile-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 28px;
+    color: var(--accent-yellow);
+  }
+}
+
+/* ---------- KPI Grid ---------- */
+.header-search {
+  margin-top: 18px;
+}
+
+.kpi-grid {
+  display: flex;
+  gap: 10px;
+}
+
+.kpi-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.kpi-val {
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.kpi-lab {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.60);
+  text-transform: uppercase;
+}
+
+/* ---------- Lista con overlap ---------- */
+.empleados-list-wrap {
+  margin-top: -20px;
+  padding: 0 18px;
+  position: relative;
+  z-index: 5;
+}
+
+.empleados-list-container {
+  background: var(--card-bg);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(16, 24, 40, 0.06);
+}
+
+.empleados-list {
+  background: transparent;
+}
+
+/* ---------- Item ---------- */
+.empleado-item {
+  --background: #ffffff !important;
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  --detail-icon-color: rgba(11, 42, 99, 0.28);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+/* Caja de día (slot start) */
+.empleado-icon-box {
+  width: 48px;
+  height: 48px;
+  background: #f0f4f9;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.day-num {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1;
+}
+
+/* Textos */
+.emp-label {
+  margin: 10px 0;
+}
+
+.emp-nombre {
+  font-weight: 900;
+  color: var(--navy);
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  margin-bottom: 4px;
+}
+
+.emp-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.2;
+  flex-wrap: wrap;
+}
+
+.emp-meta {
+  font-size: 13px;
+  color: rgba(11, 42, 99, 0.65);
+
+  strong {
+    font-weight: 700;
+    color: var(--navy);
+  }
+}
+
+.emp-dot {
+  color: rgba(11, 42, 99, 0.35);
+  font-weight: 900;
+}
+
+/* Derecha */
+.emp-end {
+  display: flex;
+  align-items: center;
+}
+
+.emp-badge {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge-ok {
+  background: rgba(34, 197, 94, 0.14);
+  color: rgba(20, 83, 45, 0.9);
+}
+
+.badge-baja {
+  background: rgba(239, 68, 68, 0.14);
+  color: rgba(127, 29, 29, 0.9);
+}
+
+/* ---------- Spacer ---------- */
+.bottom-spacer {
+  height: calc(26px + env(safe-area-inset-bottom));
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 360px) {
+  .dashboard-title { font-size: 22px; }
+  .kpi-val { font-size: 18px; }
+  .kpi-card { padding: 10px 6px; }
+}

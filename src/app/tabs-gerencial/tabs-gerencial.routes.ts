@@ -52,15 +52,7 @@ export const routes: Routes = [
         path: 'empleado-detalles/:id',
         loadComponent: () => import('../pages/gerencial-empleados/empleado-detalles/empleado-detalles.page').then( m => m.EmpleadoDetallesPage)
       },
-      // {
-      //   path: 'inventario',
-      //   loadComponent: () =>
-      //     import('../pages/gerencial-inventario/gerencial-inventario.page').then(m => m.GerencialInventarioPage),
-      // },
-      //  {
-      //   path: 'producto/:id',
-      //   loadComponent: () => import('../pages/gerencial-inventario/producto/producto.page').then( m => m.ProductoPage)
-      // },
+
       {
       path: 'inventario',
       children: [
@@ -78,6 +70,18 @@ export const routes: Routes = [
         },
       ]
     },
+  {
+  path: 'reportes/checadas',
+  loadComponent: () =>
+    import('../pages/gerencial-reportes/checadas/checadas/checadas.page')
+      .then(m => m.ChecadasPage)
+},
+{
+  path: 'gerencial-reportes/checadas/:id', // Ruta con parámetro
+  loadComponent: () =>
+    import('../pages/gerencial-reportes/checadas/detalle-empleado/detalle-empleado.page')
+      .then(m => m.DetalleEmpleadoPage)
+},
       {
         path: '',
         redirectTo: 'home',

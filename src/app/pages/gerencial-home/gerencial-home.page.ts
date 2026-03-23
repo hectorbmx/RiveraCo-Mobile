@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { IonButton, IonContent, IonHeader, IonIcon, IonPopover, IonTitle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
-
 import { analytics, buildOutline, chevronForward, constructOutline, cubeOutline, notificationsOutline, people, personCircle } from 'ionicons/icons';
+import { ProfileMenuComponent } from 'src/app/components/profile-menu/profile-menu.component';
 import { GerencialDashboardData } from 'src/app/models/gerencial/dashboard.dto';
 import { GerencialDashboardService } from 'src/app/services/gerencial-dashboard.service';
 @Component({
@@ -73,7 +73,8 @@ loading =false;
   };
 
    constructor(
-    private dashApi: GerencialDashboardService
+    private dashApi: GerencialDashboardService,
+    private router: Router
    ) {
     addIcons({
       chevronForward,
@@ -113,11 +114,10 @@ loadDashboard(event?: any) {
   /**
    * Navega a la página de reportes mensuales
    */
-  verReporte() {
-    console.log('Navegando a reportes mensuales...');
-    // Aquí implementarás la navegación real
-    // this.router.navigate(['/reportes']);
-  }
+ verReporte() {
+  console.log('Navegando a reporte de checadas...');
+ this.router.navigate(['/tabs-gerencial/reportes/checadas']);
+}
 
   /**
    * Navega a la página de alertas de obra

@@ -12,13 +12,13 @@
 
 <ion-content fullscreen="true" class="ion-padding">
 
-    <!-- <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content
       pullingText="Desliza para actualizar"
       refreshingSpinner="circles"
       refreshingText="Actualizando...">
     </ion-refresher-content>
-  </ion-refresher> -->
+  </ion-refresher>
   <!-- Card de información de la obra -->
   <ion-card class="obra-card">
     <ion-card-header>
@@ -158,7 +158,7 @@
   
 <ion-card
   class="maquina-card"
-  *ngIf="vehuculoAsignado as v"
+  *ngIf="vehiculoAsignado as v"
   button
   (click)="irVehiculoRegistro(v.vehiculo_id)">
   <ion-card-header class="maquina-header">

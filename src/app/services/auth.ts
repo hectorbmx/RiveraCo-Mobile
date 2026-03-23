@@ -57,6 +57,7 @@ export interface PilaDTO {
   obra_id: number;
   numero_pila?: number | string | null; // depende tu DB
   tipo?: string | null;
+  cantidad_programada?: number | null;
   diametro?: number | null;
   profundidad?: number | null;
   estatus?: string | number | null;

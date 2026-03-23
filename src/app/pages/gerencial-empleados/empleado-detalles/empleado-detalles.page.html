@@ -1,39 +1,35 @@
 <ion-content class="empleados-content">
-<div class="header-section">
-  <div class="header-top">
-    <div class="header-info">
-      <div class="back-container">
-        <ion-buttons slot="start">
-          <ion-back-button defaultHref="tabs-gerencial/empleados" mode="md"></ion-back-button>
-        </ion-buttons>
-        <p class="welcome-text">REGRESAR A LISTA GENERAL</p>
+  <div class="header-section">
+    <div class="header-top">
+      <div class="header-info">
+        <div class="back-container">
+          <ion-buttons slot="start">
+            <ion-back-button defaultHref="tabs-gerencial/empleados" mode="md"></ion-back-button>
+          </ion-buttons>
+          <p class="welcome-text">REGRESAR A LISTA GENERAL</p>
+        </div>
+        <h1 class="dashboard-title">Información</h1>
       </div>
-      <h1 class="dashboard-title">Información</h1>
-    </div>
 
-    <div class="profile-icon">
-      <!-- <ion-icon name="person-circle"></ion-icon> -->
-       <app-profile-menu></app-profile-menu>
+      <div class="profile-icon">
+        <app-profile-menu></app-profile-menu>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="empleados-list-wrap" *ngIf="empleado">
-  <div class="empleados-list-container">
-    </div>
-</div>
-
-<div class="empleados-list-wrap" *ngIf="empleado">
-  <div class="empleados-list-container">
-    <ion-list lines="none" class="info-list-white">
-       </ion-list>
+  <div class="empleados-list-wrap" *ngIf="empleado">
+    <div class="empleados-list-container"></div>
   </div>
 
+  <div class="empleados-list-wrap" *ngIf="empleado">
+    <div class="empleados-list-container">
+      <ion-list lines="none" class="info-list-white"></ion-list>
+    </div>
   </div>
 
   <div class="empleados-list-wrap" *ngIf="empleado">
     <div class="empleados-list-container ion-padding">
-      
+
       <div class="detail-header ion-text-center">
         <div class="emp-avatar-large">
           <img *ngIf="empleado.foto_url; else initials" [src]="empleado.foto_url" />
@@ -51,12 +47,12 @@
 
       <ion-list lines="none" class="info-list">
         <div class="section-divider">DATOS LABORALES</div>
-        
+
         <ion-item class="detail-item">
           <ion-icon name="briefcase-outline" slot="start"></ion-icon>
           <ion-label>
             <h3>Puesto</h3>
-            <p>{{ empleado.puesto }}</p>
+            <p>{{ empleado.puesto || 'Sin registro' }}</p>
           </ion-label>
         </ion-item>
 
@@ -64,7 +60,7 @@
           <ion-icon name="business-outline" slot="start"></ion-icon>
           <ion-label>
             <h3>Área / Departamento</h3>
-            <p>{{ empleado.area?.nombre }}</p>
+            <p>{{ empleado.area?.nombre || 'Sin registro' }}</p>
           </ion-label>
         </ion-item>
 
@@ -90,11 +86,22 @@
           </ion-button>
         </ion-item>
 
+        <ion-item class="detail-item" *ngIf="empleado.Telefono">
+          <ion-icon name="phone-portrait-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Telefono</h3>
+            <p>{{ empleado.Telefono }}</p>
+          </ion-label>
+          <ion-button slot="end" fill="clear" [href]="'tel:' + empleado.Telefono">
+            <ion-icon name="call" color="success"></ion-icon>
+          </ion-button>
+        </ion-item>
+
         <ion-item class="detail-item" *ngIf="empleado.email">
           <ion-icon name="mail-outline" slot="start"></ion-icon>
           <ion-label>
             <h3>Correo Electrónico</h3>
-            <p>{{ empleado.email || 'No hay registro'}}</p>
+            <p>{{ empleado.email || 'No hay registro' }}</p>
           </ion-label>
         </ion-item>
 
@@ -103,53 +110,119 @@
         <ion-item class="detail-item">
           <ion-label>
             <h3>CURP</h3>
-            <p>{{ empleado.curp }}</p>
+            <p>{{ empleado.curp || 'No hay dato registrado' }}</p>
           </ion-label>
         </ion-item>
 
         <ion-item class="detail-item">
           <ion-label>
             <h3>RFC</h3>
-            <p>{{ empleado.rfc }}</p>
+            <p>{{ empleado.rfc || 'No hay dato registrado' }}</p>
           </ion-label>
         </ion-item>
+
         <ion-item class="detail-item">
           <ion-label>
             <h3>NSS</h3>
             <p>{{ empleado.nss || 'No hay dato registrado' }}</p>
           </ion-label>
         </ion-item>
-      
-      <div class="section-divider">INFORMACION GENERAL</div>
-       <ion-item class="detail-item">
+
+        <div class="section-divider">INFORMACIÓN GENERAL</div>
+
+        <ion-item class="detail-item">
           <ion-label>
-            <h3>FEHCA INGRESO</h3>
-              <p>{{ empleado.fecha_ingreso | date:'dd/MM/yyyy' }}</p>
+            <h3>Fecha de ingreso</h3>
+            <p>{{ empleado.fecha_ingreso | date:'dd/MM/yyyy' }}</p>
+          </ion-label>
+
+          <ion-label slot="end" class="ion-text-end" *ngIf="empleado.antiguedad">
+            <h3>Antigüedad</h3>
+            <p>{{ empleado.antiguedad.anios }} años</p>
           </ion-label>
         </ion-item>
-        
+
         <ion-item class="detail-item">
           <ion-label>
             <h3>Sueldo IMSS</h3>
-              <p>{{ empleado.sueldo }}</p>
-          </ion-label>
-        </ion-item>
-        
-        <ion-item class="detail-item">
-          <ion-label>
-            <h3>Complemento</h3>
-              <p>{{ empleado.complemento }}</p>
+            <p>{{ empleado.sueldo }}</p>
           </ion-label>
         </ion-item>
 
         <ion-item class="detail-item">
           <ion-label>
             <h3>Complemento</h3>
-              <p>{{ empleado.sueldo_real }}</p>
+            <p>{{ empleado.complemento }}</p>
           </ion-label>
         </ion-item>
+
+        <ion-item class="detail-item">
+          <ion-label>
+            <h3>Sueldo Real</h3>
+            <p>{{ empleado.sueldo_real }}</p>
+          </ion-label>
+        </ion-item>
+
+        <div class="section-divider">CONTACTO DE EMERGENCIA</div>
+
+        <ng-container *ngIf="empleado.contactos_emergencia?.length; else sinContactosEmergencia">
+          <ion-item
+            class="detail-item"
+            *ngFor="let contacto of empleado.contactos_emergencia"
+          >
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+
+            <ion-label>
+              <h3>
+                {{ contacto.nombre }}
+                <ion-badge
+                  color="success"
+                  style="margin-left: 8px;"
+                  *ngIf="contacto.es_principal"
+                >
+                  Principal
+                </ion-badge>
+              </h3>
+
+              <p *ngIf="contacto.parentesco">
+                <strong>Parentesco:</strong> {{ contacto.parentesco }}
+              </p>
+
+              <p *ngIf="contacto.telefono">
+                <strong>Teléfono:</strong> {{ contacto.telefono }}
+              </p>
+
+              <p *ngIf="contacto.celular">
+                <strong>Celular:</strong> {{ contacto.celular }}
+              </p>
+
+              <p *ngIf="contacto.notas">
+                <strong>Notas:</strong> {{ contacto.notas }}
+              </p>
+            </ion-label>
+
+            <ion-button
+              *ngIf="contacto.celular"
+              slot="end"
+              fill="clear"
+              [href]="'tel:' + contacto.celular"
+            >
+              <ion-icon name="call" color="success"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ng-container>
+
+        <ng-template #sinContactosEmergencia>
+          <ion-item class="detail-item">
+            <ion-icon name="alert-circle-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Contacto de emergencia</h3>
+              <p>No hay contactos de emergencia registrados</p>
+            </ion-label>
+          </ion-item>
+        </ng-template>
+
       </ion-list>
     </div>
   </div>
-  
 </ion-content>

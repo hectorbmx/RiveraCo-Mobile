@@ -1,0 +1,160 @@
+<ion-header class="ion-no-border">
+  <div class="app-header">
+    <div class="header-inner">
+
+      <!-- HEADER TOP -->
+      <div class="header-top">
+        <div>
+          <p class="header-label">Control de Obra</p>
+          <h1 class="header-title">Asistencia</h1>
+        </div>
+        <button class="avatar-btn">
+          <ion-icon name="person"></ion-icon>
+        </button>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="search-wrap">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Buscar empleado..."
+          [(ngModel)]="searchQuery"
+        />
+      </div>
+
+    </div>
+
+    <!-- DATE NAV -->
+    <div class="date-nav">
+      <button class="date-chip" (click)="prevDay()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+        Ant.
+      </button>
+
+      <button class="date-chip active">
+        <ion-icon name="calendar-outline"></ion-icon>
+        {{ currentDateLabel }}
+      </button>
+
+      <button class="date-chip" (click)="nextDay()">
+        Sig.
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+    <!-- KPIs -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-label">Total Hrs</span>
+        <span class="stat-value">{{ totalHours }}</span>
+      </div>
+
+      <div class="stat-item">
+        <span class="stat-label">Prom. Entrada</span>
+        <span class="stat-value">{{ avgClockIn }}</span>
+      </div>
+
+      <div class="stat-badge">
+        <span class="badge-dot"></span>
+        <span class="badge-text">{{ onSiteCount }} En sitio</span>
+      </div>
+    </div>
+
+  </div>
+</ion-header>
+
+<ion-content class="page-content">
+
+  <!-- TABLA -->
+  <div class="table-card">
+
+    <!-- HEADER TABLA -->
+    <div class="table-header">
+      <span class="th">Nombre</span>
+      <span class="th center">Día</span>
+      <span class="th center">Entrada</span>
+      <span class="th center">Salida</span>
+    </div>
+
+    <!-- LOADING -->
+    <div class="empty-state" *ngIf="loading">
+      Cargando checadas...
+    </div>
+
+    <!-- VACÍO -->
+    <div class="empty-state" *ngIf="!loading && filteredWorkers.length === 0">
+      No hay checadas para esta fecha.
+    </div>
+
+    <!-- FILAS -->
+    <div
+      class="worker-row"
+      *ngFor="let worker of filteredWorkers"
+      (click)="goToHistory(worker)"
+    >
+      <div class="worker-info">
+      
+
+        <div class="worker-text">
+          <span class="worker-name">{{ worker.name }}</span>
+          
+        </div>
+      </div>
+
+      <div class="cell-day">
+        {{ worker.dayLabel }}
+      </div>
+
+      <div class="cell-time">
+        <span class="time-val">{{ worker.clockIn }}</span>
+      </div>
+
+      <div class="cell-time">
+        <span class="time-val out" *ngIf="worker.clockOut">
+          {{ worker.clockOut }}
+        </span>
+        <span class="time-empty" *ngIf="!worker.clockOut">
+          —
+        </span>
+      </div>
+      <div class="cell-action">
+    <ion-icon name="chevron-forward-outline"></ion-icon>
+  </div>
+      
+    </div>
+
+  </div>
+
+  <!-- EFICIENCIA -->
+  <p class="section-title">Eficiencia del Asistencia</p>
+
+  <div class="efficiency-card">
+    <div class="eff-row">
+      <span class="eff-label">Asistencia Semanal</span>
+      <span class="eff-pct">↑ 12%</span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill"></div>
+    </div>
+
+    <p class="eff-note">
+      Asistencia en sitio <strong>12% mayor</strong> que la semana anterior.
+      Todos los contratistas verificados por beacon.
+    </p>
+  </div>
+
+  <!-- CUMPLIMIENTO -->
+  <div class="compliance-card">
+    <div class="compliance-icon">
+      <ion-icon name="shield-checkmark"></ion-icon>
+    </div>
+    <div>
+      <div class="compliance-num">98%</div>
+      <div class="compliance-label">Tasa de Cumplimiento</div>
+    </div>
+  </div>
+
+</ion-content>
