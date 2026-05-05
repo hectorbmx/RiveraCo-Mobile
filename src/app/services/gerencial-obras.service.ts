@@ -26,5 +26,8 @@ export class GerencialObrasService {
     { page }
   );
 }
+getComisionesObra(obraId: number): Observable<any> {
+  return this.api.get<any>(`obras/${obraId}/comisiones`);
+}
 
 }

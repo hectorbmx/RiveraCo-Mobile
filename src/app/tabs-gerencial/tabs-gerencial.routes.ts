@@ -25,6 +25,12 @@ export const routes: Routes = [
           import('../pages/gerencial-obras/obras-detalles/obras-detalles.page')
             .then(m => m.ObrasDetallesPage),
       },
+      {
+        path: 'obras-detalles/:id/pilas-detalles',
+        loadComponent: () =>
+          import('../pages/gerencial-obras/obras-detalles/pilas-detalles/pilas-detalles.page')
+            .then(m => m.PilasDetallesPage),
+      },
      
       {
         path: 'maquina-detalle/:maquinaId',

@@ -1,0 +1,121 @@
+<ion-content class="pilas-content">
+
+  <section class="header-section">
+    <div class="header-top">
+      <button class="back-btn" type="button" (click)="goBack()">
+        <ion-icon name="chevron-back"></ion-icon>
+      </button>
+
+      <div class="header-info">
+        <p class="welcome-text">DESGLOSE</p>
+        <h1 class="dashboard-title">Pilas</h1>
+
+        <div class="obra-name" *ngIf="obra">
+          {{ obra.nombre }}
+        </div>
+      </div>
+
+      <div class="profile-icon">
+        <ion-icon name="cube-outline"></ion-icon>
+      </div>
+    </div>
+  </section>
+
+  <section class="summary-card">
+    <div>
+      <div class="summary-label">Total realizadas</div>
+      <div class="summary-value">{{ totalRealizadas }}</div>
+    </div>
+  </section>
+
+  <div *ngIf="loading" class="center">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <section class="pilas-list-wrap" *ngIf="!loading">
+
+    <ng-container *ngIf="rows.length; else emptyState">
+
+      <div class="fecha-card" *ngFor="let row of rows">
+        <div class="fecha-header">
+          <div>
+            <div class="fecha-label">Fecha</div>
+            <div class="fecha-title">{{ row.fecha_formateada }}</div>
+          </div>
+
+          <div class="fecha-total">
+            <strong>{{ row.total_pilas }}</strong>
+            <span>pilas</span>
+          </div>
+        </div>
+
+        <div class="fecha-sub">
+          {{ row.comisiones_registradas }} comisión(es) registradas
+        </div>
+
+        <div class="comision-card" *ngFor="let c of row.comisiones">
+          <div class="comision-top">
+            <!-- <div>
+              <div class="comision-title">Comisión #{{ c.id }}</div>
+              <div class="comision-sub">{{ c.total_pilas }} pila realizada</div>
+            </div> -->
+
+            <ion-icon name="hammer-outline"></ion-icon>
+          </div>
+
+          <div class="detalle-grid" *ngFor="let d of c.detalles">
+            <!-- <div class="detalle-item">
+              <span>Cantidad</span>
+              <strong>{{ d.cantidad }}</strong>
+            </div> -->
+
+            <div class="detalle-item">
+              <span>Profundidad</span>
+              <strong>{{ d.profundidad }} m</strong>
+            </div>
+
+            <div class="detalle-item">
+              <span>Acero</span>
+              <strong>{{ d.kg_acero }} kg</strong>
+            </div>
+
+            <div class="detalle-item">
+              <span>Bentonita</span>
+              <strong>{{ d.vol_bentonita }}</strong>
+            </div>
+
+            <div class="detalle-item">
+              <span>Concreto</span>
+              <strong>{{ d.vol_concreto }}</strong>
+            </div>
+
+            <!-- <div class="detalle-item full" *ngIf="d.maquina">
+              <span>Máquina</span>
+              <strong>{{ d.maquina.nombre }}</strong>
+            </div> -->
+            <div class="detalle-item">
+              <span>Inicio</span>
+              <strong>{{ d.hora_inicio || '—' }}</strong>
+            </div>
+
+            <div class="detalle-item">
+              <span>Fin</span>
+              <strong>{{ d.hora_fin || '—' }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <ion-icon name="cube-outline"></ion-icon>
+        <div>Sin pilas realizadas</div>
+      </div>
+    </ng-template>
+
+    <div class="bottom-spacer"></div>
+  </section>
+
+</ion-content>

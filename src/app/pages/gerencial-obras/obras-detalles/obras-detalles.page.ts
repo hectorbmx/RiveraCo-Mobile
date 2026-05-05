@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { IonContent, IonHeader, IonIcon, IonProgressBar, IonSpinner, IonTitle } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -21,7 +21,7 @@ import { GerencialObrasService } from 'src/app/services/gerencial-obras.service'
   templateUrl: './obras-detalles.page.html',
   styleUrls: ['./obras-detalles.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, ProfileMenuComponent, CommonModule,IonProgressBar, FormsModule,IonSpinner,IonIcon]
+  imports: [IonContent, IonHeader, IonTitle, ProfileMenuComponent, CommonModule,IonProgressBar, FormsModule,IonSpinner,IonIcon,RouterModule]
 })
 export class ObrasDetallesPage implements OnInit {
   
@@ -63,7 +63,7 @@ kpis = {
         this.maquinaActiva = d?.maquina_activa ?? null;
         this.empleadosPreview = d?.empleados_preview ?? [];
         this.pilasPreview = d?.pilas_preview ?? [];
-
+console.log('empleadosPreview', this.empleadosPreview);
         this.loading = false;
       },
       error: (err) => {
@@ -92,6 +92,14 @@ goToMaquinaDetalle() {
 
   this.router.navigate(['/tabs-gerencial/maquina-detalle', maquinaId]);
 }
+goToPilasDetalles() {
+  if (!this.obra?.id) return;
 
+  this.router.navigate([
+    '/tabs-gerencial/obras-detalles',
+    this.obra.id,
+    'pilas-detalles'
+  ]);
+}
 
 }

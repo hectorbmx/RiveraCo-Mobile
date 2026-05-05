@@ -1,0 +1,272 @@
+:host {
+  --navy: #0b2a63;
+  --accent-yellow: #f6c300;
+  --page-bg: #f5f7fb;
+  --card-bg: #ffffff;
+  --text-muted: #8a97ad;
+}
+
+ion-content.pilas-content {
+  --background: var(--page-bg);
+}
+
+/* Header */
+.header-section {
+  background: var(--navy);
+  padding: calc(env(safe-area-inset-top) + 18px) 22px 30px;
+  border-bottom-left-radius: 44px;
+  border-bottom-right-radius: 44px;
+  box-shadow: 0 16px 30px rgba(11, 42, 99, 0.22);
+  position: relative;
+  z-index: 1;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.back-btn {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.12);
+
+  ion-icon {
+    color: #fff;
+    font-size: 24px;
+  }
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.welcome-text {
+  margin: 0 0 8px;
+  font-size: 13px;
+  letter-spacing: 1.6px;
+  font-weight: 800;
+  color: var(--accent-yellow);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #fff;
+}
+
+.obra-name {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.profile-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+
+  ion-icon {
+    font-size: 34px;
+    color: var(--accent-yellow);
+  }
+}
+
+/* Summary */
+.summary-card {
+  margin: -22px 24px 16px;
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 18px 20px;
+  box-shadow: 0 12px 24px rgba(16, 24, 40, 0.08);
+  position: relative;
+  z-index: 5;
+}
+
+.summary-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(11, 42, 99, 0.55);
+}
+
+.summary-value {
+  margin-top: 4px;
+  font-size: 34px;
+  font-weight: 900;
+  color: var(--navy);
+}
+
+/* Loading */
+.center {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+/* Lista */
+.pilas-list-wrap {
+  padding: 0 18px;
+}
+
+.fecha-card {
+  background: var(--card-bg);
+  border-radius: 22px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 20px rgba(16, 24, 40, 0.06);
+}
+
+.fecha-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.fecha-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(11, 42, 99, 0.5);
+}
+
+.fecha-title {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--navy);
+}
+
+.fecha-total {
+  min-width: 70px;
+  border-radius: 16px;
+  background: #eef3fb;
+  padding: 8px 10px;
+  text-align: center;
+
+  strong {
+    display: block;
+    font-size: 20px;
+    color: var(--navy);
+  }
+
+  span {
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(11, 42, 99, 0.55);
+  }
+}
+
+.fecha-sub {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(11, 42, 99, 0.55);
+}
+
+/* Comisión */
+.comision-card {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #f3f6fb;
+}
+
+.comision-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  ion-icon {
+    font-size: 24px;
+    color: rgba(11, 42, 99, 0.35);
+  }
+}
+
+.comision-title {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--navy);
+}
+
+.comision-sub {
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(11, 42, 99, 0.55);
+}
+
+.detalle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.detalle-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px;
+
+  span {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(11, 42, 99, 0.45);
+  }
+
+  strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--navy);
+  }
+
+  &.full {
+    grid-column: 1 / -1;
+  }
+}
+
+.empty-state {
+  margin: 24px;
+  padding: 28px 18px;
+  border-radius: 22px;
+  background: #fff;
+  text-align: center;
+  color: rgba(11, 42, 99, 0.55);
+  font-weight: 800;
+
+  ion-icon {
+    font-size: 34px;
+    margin-bottom: 8px;
+  }
+}
+
+.bottom-spacer {
+  height: calc(28px + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 360px) {
+  .dashboard-title {
+    font-size: 30px;
+  }
+
+  .detalle-grid {
+    grid-template-columns: 1fr;
+  }
+}

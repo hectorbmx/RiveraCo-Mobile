@@ -322,6 +322,8 @@ async guardarComision() {
   try {
     // Debug opcional (déjalo por ahora)
     console.log('[COMISION PAYLOAD]', this.form);
+      
+
 
     const res = await firstValueFrom(this.api.postComisiones(this.form));
 

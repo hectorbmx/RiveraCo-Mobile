@@ -80,7 +80,7 @@
         <div class="mini-value">{{ kpis.pilas?.programadas ?? 0 }}</div>
       </div>
 
-      <div class="kpi-mini">
+      <div class="kpi-mini clickable" (click)="goToPilasDetalles()">
         <div class="mini-label">Realizadas</div>
         <div class="mini-value">{{ kpis.pilas?.realizadas ?? 0 }}</div>
       </div>
@@ -142,7 +142,11 @@
 
       <ng-container *ngIf="empleadosPreview?.length; else noEmpleados">
         <div class="list">
-          <div class="list-item" *ngFor="let e of empleadosPreview">
+          <div
+  class="list-item"
+  *ngFor="let e of empleadosPreview"
+  [routerLink]="['/tabs-gerencial/empleado-detalles', e.empleado_id]"
+>
             <div class="li-left">
               <div class="li-title">{{ e.empleado?.nombre }}</div>
               <div class="li-sub">
