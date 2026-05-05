@@ -137,16 +137,16 @@
       </ion-item>
 
       <!-- Opciones al deslizar (lado END = derecha en LTR) -->
-      <ion-item-options side="end">
-        <ion-item-option
-          color="success"  
-          (click)="checarEmpleado(empleado)"
-        >
-          <!-- <ion-icon name="camera-outline"></ion-icon> -->
-           <ion-icon name="camera-sharp"></ion-icon> <!--sharp-->
-        CHECAR
-        </ion-item-option>
-      </ion-item-options>
+     <ion-item-options side="end">
+  <ion-item-option
+    color="success"
+    expandable="true"
+    (click)="checarEmpleado(empleado); $event.stopPropagation()"
+  >
+    <ion-icon slot="start" name="camera-sharp"></ion-icon>
+    CHECAR
+  </ion-item-option>
+</ion-item-options>
     </ion-item-sliding>
   </ion-list>
 </ion-card>
