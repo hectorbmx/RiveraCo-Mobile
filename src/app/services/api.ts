@@ -18,7 +18,7 @@ export class ApiService {
    * Obtiene los headers con el token de autenticación
    */
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('auth_token') ?? sessionStorage.getItem('auth_token');
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -162,7 +162,7 @@ postAsistencia(
   formData: FormData
 ): Observable<any> {
 
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem('auth_token') ?? sessionStorage.getItem('auth_token');
 
   let headers = new HttpHeaders({
     'Accept': 'application/json'
@@ -182,7 +182,7 @@ postAsistencia(
   );
 }
 postKmLog(formData: FormData): Observable<any> {
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem('auth_token') ?? sessionStorage.getItem('auth_token');
 
   let headers = new HttpHeaders({
     'Accept': 'application/json'

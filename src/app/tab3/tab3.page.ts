@@ -114,11 +114,28 @@ private toDateInput(d: Date): string {
 }
 ionViewWillEnter() {
   this.today = this.toDateInput(new Date());
+  this.auth.getMe().subscribe({
+    next: (res) => this.cargarDesdeContexto(res.contexto ?? this.auth.contextoValue),
+    error: async (err) => {
+      console.error('Error recargando contexto de comisiones:', err);
+      this.cargarDesdeContexto(this.auth.contextoValue);
+      await this.showToast(err.message || 'No se pudo actualizar la comision', 'danger');
+    }
+  });
 }
   ngOnInit() {
-    this.ctx = this.auth.contextoValue ?? null;
+    this.today = this.toDateInput(new Date());
+    this.cargarDesdeContexto(this.auth.contextoValue);
+  }
 
-    if (!this.ctx) return;
+  private cargarDesdeContexto(contexto: Contexto | null) {
+    this.ctx = contexto ?? null;
+
+    if (!this.ctx) {
+      this.form = null;
+      this.pilasCantidadProgramada = 0;
+      return;
+    }
      const pilas = this.ctx.pilas ?? [];
       this.pilasCantidadProgramada = pilas.reduce((acc, p: any) => {
       const n = Number(p.cantidad_programada ?? 0);
@@ -126,14 +143,8 @@ ionViewWillEnter() {
     }, 0);
      console.log('Pilas:', this.ctx.pilas);
 
-    const hoy = new Date();
-    const yyyy = hoy.getFullYear();
-    const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-    const dd = String(hoy.getDate()).padStart(2, '0');
-
-
     this.form = {
-      fecha: `${yyyy}-${mm}-${dd}`,
+      fecha: this.form?.fecha ?? this.today,
       numero_formato: null,
       cliente_nombre_formato: this.ctx.obra?.cliente_nombre ?? null,
       observaciones: null,

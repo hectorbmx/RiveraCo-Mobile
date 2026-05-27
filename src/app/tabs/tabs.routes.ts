@@ -21,6 +21,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../tab3/tab3.page').then((m) => m.Tab3Page),
       },
+      {
+        path: 'reposicion-gastos',
+        loadComponent: () =>
+          import('../tab-reposicion-gastos/tab-reposicion-gastos.page').then((m) => m.TabReposicionGastosPage),
+      },
       
       {
         path: '',

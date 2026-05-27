@@ -1,0 +1,238 @@
+<ion-header class="custom-header">
+  <ion-toolbar>
+    <ion-title>Reposicion de gastos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="loadData()">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="reposicion-content">
+  <div class="loading-state" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <section class="summary-card">
+      <div class="summary-head">
+        <div>
+          <p class="eyebrow">Obra</p>
+          <h1>{{ obraNombre }}</h1>
+        </div>
+        <ion-button size="small" (click)="toggleForm()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Nueva
+        </ion-button>
+      </div>
+
+      <button class="summary-toggle" type="button" (click)="showKpis = !showKpis">
+        {{ showKpis ? 'Ocultar resumen' : 'Ver resumen' }}
+      </button>
+
+      <div class="summary-details" *ngIf="showKpis">
+        <div class="stats-grid">
+          <div class="stat">
+            <span>Total</span>
+            <strong>{{ stats.total }}</strong>
+          </div>
+          <div class="stat">
+            <span>Solicitadas</span>
+            <strong>{{ stats.solicitadas }}</strong>
+          </div>
+          <div class="stat">
+            <span>Revision</span>
+            <strong>{{ stats.en_revision }}</strong>
+          </div>
+          <div class="stat">
+            <span>Autorizadas</span>
+            <strong>{{ stats.autorizadas }}</strong>
+          </div>
+        </div>
+
+        <div class="money-grid">
+          <div>
+            <span>Solicitado</span>
+            <strong>{{ formatMoney(montos.solicitado) }}</strong>
+          </div>
+          <div>
+            <span>Autorizado</span>
+            <strong>{{ formatMoney(montos.autorizado) }}</strong>
+          </div>
+          <div>
+            <span>Pagado</span>
+            <strong>{{ formatMoney(montos.pagado) }}</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card" *ngIf="showForm">
+      <div class="section-header">
+        <h2>Nueva reposicion</h2>
+      </div>
+
+      <div class="form-grid primary-fields">
+        <label>
+          <span>Tipo de reposicion</span>
+          <select class="native-select" [(ngModel)]="form.tipo_reposicion" (change)="onTipoChange()">
+            <option [ngValue]="null">Seleccionar...</option>
+            <option value="caja_chica">Caja chica</option>
+            <option value="viaticos">Viaticos</option>
+            <option value="gastos_varios">Gastos varios</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Semana</span>
+          <input class="native-input" type="week" [(ngModel)]="form.semana" />
+        </label>
+      </div>
+
+      <div class="form-grid" *ngIf="form.tipo_reposicion">
+        <label>
+          <span>Partida de planeacion</span>
+          <select class="native-select partida-select" [(ngModel)]="form.partida_id">
+            <option [ngValue]="null">Seleccionar partida...</option>
+            <optgroup *ngFor="let grupo of groupedPartidas" [label]="grupo.partida">
+              <option *ngFor="let partida of grupo.opciones" [ngValue]="partida.id">
+                {{ conceptoLabel(partida) }}
+              </option>
+            </optgroup>
+          </select>
+        </label>
+      </div>
+
+      <div class="cfdi-box" *ngIf="form.tipo_reposicion === 'caja_chica'">
+        <div class="section-header compact">
+          <h2>CFDI SAT</h2>
+          <ion-button size="small" fill="outline" (click)="buscarCfdis()" [disabled]="searching">
+            <ion-icon name="search-outline" slot="start"></ion-icon>
+            Buscar
+          </ion-button>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            <span>RFC emisor</span>
+            <ion-input [(ngModel)]="filters.rfc_emisor"></ion-input>
+          </label>
+          <label>
+            <span>Fecha</span>
+            <input class="native-input" type="date" [(ngModel)]="filters.fecha" />
+          </label>
+          <label>
+            <span>Monto</span>
+            <ion-input type="number" [(ngModel)]="filters.monto"></ion-input>
+          </label>
+          <label>
+            <span>Ultimos 4 UUID</span>
+            <ion-input maxlength="4" [(ngModel)]="filters.uuid4"></ion-input>
+          </label>
+        </div>
+
+        <div class="cfdi-list" *ngIf="cfdis.length > 0">
+          <article class="cfdi-row" *ngFor="let cfdi of cfdis">
+            <div>
+              <strong>{{ cfdi.emisor_nombre || cfdi.rfc_emisor || 'CFDI' }}</strong>
+              <span>{{ cfdi.fecha_formateada }} · {{ cfdi.uuid_corto }}</span>
+            </div>
+            <div class="row-actions">
+              <b>{{ formatMoney(cfdi.total) }}</b>
+              <ion-button size="small" fill="solid" (click)="addCfdi(cfdi)">Agregar</ion-button>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="manual-box" *ngIf="form.tipo_reposicion && form.tipo_reposicion !== 'caja_chica'">
+        <div class="form-grid">
+          <label>
+            <span>Descripcion</span>
+            <ion-input [(ngModel)]="manual.descripcion"></ion-input>
+          </label>
+          <label>
+            <span>Proveedor</span>
+            <ion-input [(ngModel)]="manual.proveedor"></ion-input>
+          </label>
+          <label>
+            <span>Fecha</span>
+            <input class="native-input" type="date" [(ngModel)]="manual.fecha" />
+          </label>
+          <label>
+            <span>Monto</span>
+            <ion-input type="number" [(ngModel)]="manual.monto"></ion-input>
+          </label>
+        </div>
+        <ion-button expand="block" fill="outline" (click)="addManual()">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Agregar concepto
+        </ion-button>
+      </div>
+
+      <div class="concept-list" *ngIf="conceptos.length > 0">
+        <div class="section-header compact">
+          <h2>Conceptos</h2>
+          <strong>{{ formatMoney(totalConceptos) }}</strong>
+        </div>
+
+        <article class="concept-row" *ngFor="let concepto of conceptos; let i = index">
+          <div>
+            <strong>{{ concepto.proveedor || concepto.descripcion || concepto.tipo }}</strong>
+            <span>{{ concepto.fecha || 'Sin fecha' }} · {{ concepto.tipo }}</span>
+          </div>
+          <div class="row-actions">
+            <b>{{ formatMoney(concepto.monto) }}</b>
+            <ion-button size="small" fill="clear" color="danger" (click)="removeConcepto(i)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </article>
+      </div>
+
+      <label class="notes">
+        <span>Observaciones</span>
+        <ion-textarea rows="3" [(ngModel)]="form.observaciones"></ion-textarea>
+      </label>
+
+      <ion-button class="save-button" expand="block" (click)="guardar()" [disabled]="!canSubmit">
+        Guardar reposicion
+      </ion-button>
+    </section>
+
+    <section class="list-section">
+      <div class="section-header">
+        <h2>Reposiciones</h2>
+        <span>{{ reposiciones.length }}</span>
+      </div>
+
+      <article class="repo-card" *ngFor="let repo of reposiciones">
+        <div class="repo-top">
+          <div>
+            <strong>{{ repo.folio }}</strong>
+            <span>{{ repo.tipo_label }} · {{ repo.semana }}</span>
+          </div>
+          <ion-badge [color]="estatusColor(repo.estatus)">
+            {{ repo.estatus_label }}
+          </ion-badge>
+        </div>
+
+        <div class="repo-body">
+          <p>{{ partidaLabel(repo.partida) }}</p>
+          <strong>{{ formatMoney(repo.total) }}</strong>
+        </div>
+
+        <div class="repo-foot">
+          <span>{{ repo.detalles_count }} conceptos</span>
+          <span>{{ repo.solicitado_at || '' }}</span>
+        </div>
+      </article>
+
+      <div class="empty-state" *ngIf="reposiciones.length === 0">
+        <ion-icon name="receipt-outline"></ion-icon>
+        <p>Sin reposiciones registradas</p>
+      </div>
+    </section>
+  </ng-container>
+</ion-content>

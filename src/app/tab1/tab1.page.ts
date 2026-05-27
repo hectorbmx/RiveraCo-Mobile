@@ -509,6 +509,10 @@ export class Tab1Page implements OnInit, OnDestroy {
     });
   }
 
+  ionViewWillEnter() {
+    this.recargarContexto();
+  }
+
   ngOnDestroy() {
     this.sub?.unsubscribe();
   }
@@ -766,12 +770,20 @@ export class Tab1Page implements OnInit, OnDestroy {
     this.router.navigate(['/vehiculo-registro', vehiculoId]);
   }
 
-  // Se conecta cuando agreguemos recarga real en AuthService
   doRefresh(event: any) {
-    
-    console.log('Pull to refresh disparado');
-    setTimeout(() => {
-      event.target.complete();
-    }, 600);
+    this.recargarContexto(event);
+  }
+
+  private recargarContexto(event?: any) {
+    this.auth.getMe().subscribe({
+      next: () => {
+        event?.target?.complete();
+      },
+      error: async (err) => {
+        console.error('Error recargando contexto:', err);
+        event?.target?.complete();
+        await this.showToast(err.message || 'No se pudo actualizar la obra', 'danger');
+      }
+    });
   }
 }

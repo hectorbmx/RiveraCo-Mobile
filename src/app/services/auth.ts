@@ -133,7 +133,7 @@ export interface MeResponse {
   ok: boolean;
   user: User;
   app: AppInfo;
-  contexto: Contexto;
+  contexto: Contexto | null;
   authz: Authz;              // ✅
   gerencial?: any | null;
   message?: string;
@@ -338,11 +338,11 @@ export class AuthService {
 
 
   hasToken(): boolean {
-    return !!localStorage.getItem('auth_token');
+    return !!(localStorage.getItem(this.storageKeyToken) ?? sessionStorage.getItem(this.storageKeyToken));
   }
 
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    return localStorage.getItem(this.storageKeyToken) ?? sessionStorage.getItem(this.storageKeyToken);
   }
   authzValue(): Authz | null {
     return this.authzSubject.value;

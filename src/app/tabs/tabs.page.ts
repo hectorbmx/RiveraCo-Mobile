@@ -2,7 +2,7 @@ import { Component, EnvironmentInjector, inject } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cash, construct, ellipse, exitOutline, logOutOutline, people, square, triangle } from 'ionicons/icons';
+import { cash, construct, ellipse, exitOutline, logOutOutline, people, receiptOutline, square, triangle } from 'ionicons/icons';
 import { AuthService } from '../services/auth';
 
 
@@ -19,7 +19,7 @@ export class TabsPage {
     private authService: AuthService,
     private alertController: AlertController
   ) {
-    addIcons({ triangle, ellipse, square,people,construct,cash,exitOutline,logOutOutline });
+    addIcons({ triangle, ellipse, square,people,construct,cash,exitOutline,logOutOutline,receiptOutline });
   }
    async presentLogoutConfirm() {
     const alert = await this.alertController.create({
