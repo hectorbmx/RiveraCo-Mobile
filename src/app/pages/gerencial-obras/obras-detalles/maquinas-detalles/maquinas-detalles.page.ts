@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonBackButton, IonContent, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { informationCircleOutline, speedometerOutline, timeOutline } from 'ionicons/icons';
+import { chevronBack, informationCircleOutline, speedometerOutline, timeOutline } from 'ionicons/icons';
 import { GerencialObrasService } from 'src/app/services/gerencial-obras.service';
 @Component({
   selector: 'app-maquinas-detalles',
@@ -19,6 +19,7 @@ export class MaquinasDetallesPage implements OnInit {
 
   obraId!: number;
   maquinaId!: number;
+  returnObraId?: number;
   hasNotas = false;
 
   maquina: any = null;
@@ -32,14 +33,17 @@ export class MaquinasDetallesPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private srv: GerencialObrasService
+    private srv: GerencialObrasService,
+    private router: Router
   ) { 
-    addIcons({speedometerOutline,timeOutline,informationCircleOutline});
+    addIcons({chevronBack,speedometerOutline,timeOutline,informationCircleOutline});
   }
 
   ngOnInit() {
     this.obraId = Number(this.route.snapshot.paramMap.get('id')); // no lo usamos aún, pero queda para breadcrumb
     this.maquinaId = Number(this.route.snapshot.paramMap.get('maquinaId'));
+    const returnObraId = Number(this.route.snapshot.queryParamMap.get('returnObraId'));
+    this.returnObraId = returnObraId || (this.obraId || undefined);
     this.load(1, true);
 
     console.log(this.obraId)
@@ -77,7 +81,7 @@ this.srv.maquinaRegistros(this.maquinaId, page).subscribe({
       }
     });
   }
-loadMore(ev: any) {
+  loadMore(ev: any) {
     const next = this.page + 1;
     if (next > this.lastPage) {
       ev.target.complete();
@@ -89,5 +93,14 @@ loadMore(ev: any) {
       ev.target.complete();
       ev.target.disabled = this.page >= this.lastPage;
     });
+  }
+
+  goBackToObra() {
+    if (this.returnObraId) {
+      this.router.navigate(['/tabs-gerencial/obras-detalles', this.returnObraId]);
+      return;
+    }
+
+    this.router.navigate(['/tabs-gerencial/maquinas']);
   }
 }

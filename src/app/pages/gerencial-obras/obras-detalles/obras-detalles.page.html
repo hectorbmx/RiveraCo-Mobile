@@ -176,7 +176,7 @@
 
       <ng-container *ngIf="pilasPreview?.length; else noPilas">
         <div class="list">
-          <div class="list-item" *ngFor="let p of pilasPreview">
+          <div class="list-item" *ngFor="let p of pilasPreview" (click)="goToPilasDetalles()">
             <div class="li-left">
               <div class="li-title">
                 {{ p.tipo }} — {{ p.cantidad_programada }}

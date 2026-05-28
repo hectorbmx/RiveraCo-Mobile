@@ -20,12 +20,13 @@ export class MaquinasGerencialService {
   /**
    * Obtiene la lista de máquinas con filtros opcionales
    */
-getMaquinas(page?: number, q?: string) {
+getMaquinas(page?: number, q?: string, enUso?: boolean) {
   const params: any = {};
 
   // Solo agrega los params si tienen valor real
   if (page && page > 1) params['page'] = page;
   if (q && q.trim() !== '') params['q'] = q.trim();
+  if (enUso) params['en_uso'] = 1;
 
   return this.api.get('gerencial/maquinas', params);
 }

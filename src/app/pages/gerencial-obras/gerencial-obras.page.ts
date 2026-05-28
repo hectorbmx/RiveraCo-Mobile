@@ -40,6 +40,7 @@ export class GerencialObrasPage {
   // filtros
   q = '';
   estatus?: number;
+  soloActivas = false;
 
   constructor(
     private obrasApi: GerencialObrasService,
@@ -50,6 +51,7 @@ export class GerencialObrasPage {
   }
 
   ionViewWillEnter() {
+    this.soloActivas = this.route.snapshot.queryParamMap.get('solo_activas') === '1';
     this.refresh();
   }
 
@@ -67,6 +69,7 @@ export class GerencialObrasPage {
       per_page: this.perPage,
       q: this.q?.trim() || undefined,
       estatus: this.estatus ?? undefined,
+      solo_activas: this.soloActivas || undefined,
     }).subscribe({
       next: (res) => {
         const items = res.data.data ?? [];

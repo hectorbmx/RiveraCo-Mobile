@@ -19,19 +19,19 @@
 
   <!-- Stats Cards Grid -->
   <div class="stats-container">
-    <!-- Proyectos Card -->
-    <div class="stat-card">
+    <!-- Obras Card -->
+    <button class="stat-card stat-button" type="button" (click)="verDetalleEstadistica('obras')">
       <div class="card-icon">
         <ion-icon name="construct-outline"></ion-icon>
       </div>
       <div class="card-content">
-        <h2 class="card-label">PROYECTOS </h2>
+        <h2 class="card-label">OBRAS</h2>
         <div class="card-value-row">
-          <span class="card-value">{{ dashboard?.proyectos_activos ?? 0 }} ACTIVOS</span>
+          <span class="card-value">{{ dashboard?.obras_activas ?? dashboard?.proyectos_activos ?? 0 }} ACTIVAS</span>
           <div class="status-indicator yellow"></div>
         </div>
       </div>
-    </div>
+    </button>
 
     <!-- Empleados Card -->
     <div class="stat-card">
@@ -48,7 +48,7 @@
     </div>
 
     <!-- Maquinaria Card -->
-    <div class="stat-card">
+    <button class="stat-card stat-button" type="button" (click)="verDetalleEstadistica('maquinaria')">
       <div class="card-icon">
         <ion-icon name="build-outline"></ion-icon>
       </div>
@@ -59,7 +59,7 @@
           <div class="status-indicator yellow"></div>
         </div>
       </div>
-    </div>
+    </button>
 
     <!-- Inventario Card -->
     <div class="stat-card">

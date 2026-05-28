@@ -134,7 +134,19 @@ loadDashboard(event?: any) {
    */
   verDetalleEstadistica(tipo: string) {
     console.log(`Mostrando detalle de: ${tipo}`);
-    // Aquí implementarás la navegación o modal con más detalles
+
+    if (tipo === 'obras' || tipo === 'proyectos') {
+      this.router.navigate(['/tabs-gerencial/obras'], {
+        queryParams: { solo_activas: 1 }
+      });
+      return;
+    }
+
+    if (tipo === 'maquinaria') {
+      this.router.navigate(['/tabs-gerencial/maquinas'], {
+        queryParams: { en_uso: 1 }
+      });
+    }
   }
 
   /**

@@ -3,6 +3,10 @@
   <!-- HEADER -->
   <section class="header-section" *ngIf="maquina">
     <div class="header-top">
+      <button class="back-btn" type="button" (click)="goBackToObra()">
+        <ion-icon name="chevron-back"></ion-icon>
+      </button>
+
       <div class="header-info">
         <p class="welcome-text">MÁQUINA</p>
         <h1 class="dashboard-title">{{ maquina?.nombre }}</h1>

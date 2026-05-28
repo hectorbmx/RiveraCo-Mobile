@@ -90,7 +90,9 @@ goToMaquinaDetalle() {
 
   if (!maquinaId) return;
 
-  this.router.navigate(['/tabs-gerencial/maquina-detalle', maquinaId]);
+  this.router.navigate(['/tabs-gerencial/maquina-detalle', maquinaId], {
+    queryParams: { returnObraId: this.obra?.id }
+  });
 }
 goToPilasDetalles() {
   if (!this.obra?.id) return;

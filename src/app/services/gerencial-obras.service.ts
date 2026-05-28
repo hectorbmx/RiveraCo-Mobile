@@ -8,6 +8,7 @@ export interface ObrasIndexParams {
   per_page?: number;
   q?: string;
   estatus?: number;
+  solo_activas?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

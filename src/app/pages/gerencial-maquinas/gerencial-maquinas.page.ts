@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router'; // <--- 1. Importa esto
+import { ActivatedRoute, RouterModule } from '@angular/router'; // <--- 1. Importa esto
 import {
   IonBadge,
   IonContent,
@@ -34,15 +34,33 @@ export class GerencialMaquinasPage implements OnInit {
   maquinas: MaquinaListItemDto[] = [];
   loading: boolean = false;
   searchTerm: string = '';
+  enUso = false;
 
-  constructor(private maquinasSvc: MaquinasGerencialService) {
+  constructor(
+    private maquinasSvc: MaquinasGerencialService,
+    private route: ActivatedRoute
+  ) {
     // Registramos los iconos que usaremos
     addIcons({personCircle,chevronForward,alertCircleOutline,construct,bus,alertCircle,settings,person});
   }
 
   ngOnInit() {
     this.searchTerm = '';
+    this.syncFiltersFromRoute();
     this.cargarMaquinas();
+  }
+
+  ionViewWillEnter() {
+    const prevEnUso = this.enUso;
+    this.syncFiltersFromRoute();
+
+    if (prevEnUso !== this.enUso) {
+      this.cargarMaquinas();
+    }
+  }
+
+  private syncFiltersFromRoute() {
+    this.enUso = this.route.snapshot.queryParamMap.get('en_uso') === '1';
   }
 
 cargarMaquinas(event?: any) {
@@ -51,7 +69,7 @@ cargarMaquinas(event?: any) {
   const page = this.searchTerm ? 1 : undefined;
   const q = this.searchTerm?.trim() || undefined;
 
-  this.maquinasSvc.getMaquinas(page, q).subscribe({
+  this.maquinasSvc.getMaquinas(page, q, this.enUso).subscribe({
    next: (res) => {
   const response = res as MaquinasResponse;
   this.maquinas = response.data.data;

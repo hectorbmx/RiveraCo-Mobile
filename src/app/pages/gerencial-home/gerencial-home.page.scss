@@ -95,6 +95,7 @@ ion-content.dashboard-content {
 }
 
 .stat-card {
+  border: 0;
   background: var(--card-bg);
   border-radius: 28px;
   padding: 22px 18px;
@@ -104,6 +105,17 @@ ion-content.dashboard-content {
   flex-direction: column;
   justify-content: flex-start;
   gap: 14px;
+}
+
+.stat-button {
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.stat-button:active {
+  transform: scale(0.98);
 }
 
 .card-icon {

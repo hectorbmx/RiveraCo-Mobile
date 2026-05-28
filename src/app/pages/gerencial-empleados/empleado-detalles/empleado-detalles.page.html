@@ -222,6 +222,40 @@
           </ion-item>
         </ng-template>
 
+        <div class="section-divider">ASISTENCIAS RECIENTES</div>
+
+        <ng-container *ngIf="empleado.asistencias?.length; else sinAsistencias">
+          <ion-item
+            class="detail-item"
+            *ngFor="let asistencia of empleado.asistencias"
+          >
+            <ion-icon name="time-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>
+                {{ asistencia.tipo | titlecase }}
+                <ion-badge
+                  style="margin-left: 8px;"
+                  [color]="asistencia.tipo === 'entrada' ? 'success' : 'medium'"
+                >
+                  {{ asistencia.hora || '--:--' }}
+                </ion-badge>
+              </h3>
+              <p>{{ asistencia.checked_at | date:'dd/MM/yyyy HH:mm' }}</p>
+              <p *ngIf="asistencia.ubicacion_texto">{{ asistencia.ubicacion_texto }}</p>
+            </ion-label>
+          </ion-item>
+        </ng-container>
+
+        <ng-template #sinAsistencias>
+          <ion-item class="detail-item">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Asistencias</h3>
+              <p>No hay asistencias registradas.</p>
+            </ion-label>
+          </ion-item>
+        </ng-template>
+
       </ion-list>
     </div>
   </div>
