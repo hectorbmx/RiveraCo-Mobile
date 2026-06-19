@@ -214,6 +214,42 @@ postComisiones(payload: any): Observable<any> {
     catchError(this.handleError)
   );
 }
+
+getResidenteComisiones(): Observable<any> {
+  return this.get<any>('residente/comisiones');
+}
+
+getResidenteComision(comisionId: number): Observable<any> {
+  return this.get<any>(`residente/comisiones/${comisionId}`);
+}
+
+postResidenteComision(payload: any): Observable<any> {
+  return this.post<any>('residente/comisiones', payload);
+}
+
+patchResidenteComisionEtapa(comisionId: number, etapa: string, payload: any): Observable<any> {
+  return this.patch<any>(`residente/comisiones/${comisionId}/etapas/${etapa}`, payload);
+}
+
+postResidenteComisionEtapaFoto(comisionId: number, etapa: string, formData: FormData): Observable<any> {
+  const token = localStorage.getItem('auth_token') ?? sessionStorage.getItem('auth_token');
+
+  let headers = new HttpHeaders({
+    'Accept': 'application/json'
+  });
+
+  if (token) {
+    headers = headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return this.http.post(
+    `${this.apiUrl}/residente/comisiones/${comisionId}/etapas/${etapa}/fotos`,
+    formData,
+    { headers }
+  ).pipe(
+    catchError(this.handleError)
+  );
+}
 getAsistenciasObra(obraId: number) {
   // const params: any = {};
 

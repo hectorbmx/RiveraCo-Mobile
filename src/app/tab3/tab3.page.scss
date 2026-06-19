@@ -63,7 +63,7 @@
   text-align: left;
 }
 
-// Pila Toolbar (después de los estilos de .perf-card)
+// Pila Toolbar (despuÃ©s de los estilos de .perf-card)
 .pila-toolbar {
   display: flex;
   flex-direction: column;
@@ -225,6 +225,58 @@
       }
     }
 
+    .pile-progress {
+      padding-top: 16px;
+      border-top: 1px solid #e8eaed;
+
+      .pile-progress-head,
+      .pile-progress-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .pile-progress-head {
+        margin-bottom: 10px;
+
+        span {
+          font-size: 12px;
+          font-weight: 800;
+          letter-spacing: 0.8px;
+          color: #1a3a5c;
+          text-transform: uppercase;
+        }
+
+        strong {
+          font-size: 18px;
+          color: #1a3a5c;
+        }
+      }
+
+      .pile-progress-track {
+        height: 10px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e8edf3;
+      }
+
+      .pile-progress-fill {
+        height: 100%;
+        min-width: 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #16a34a 0%, #facc15 100%);
+        transition: width 0.25s ease;
+      }
+
+      .pile-progress-meta {
+        margin-top: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #637487;
+      }
+    }
+
     .info-location {
       padding-top: 16px;
       border-top: 1px solid #e8eaed;
@@ -249,7 +301,7 @@
     }
   }
 
-  // Máquina en Obra Card
+  // MÃ¡quina en Obra Card
   .machine-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -330,6 +382,378 @@
       font-size: 13px;
       color: #8a9099;
     }
+  }
+
+  .list-block {
+    margin-top: 18px;
+
+    .list-title {
+      margin: 0 0 10px;
+      color: #5a6c7d;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+  }
+
+  .commission-card {
+    width: 100%;
+    border: 1px solid #e1e4e8;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+
+    strong {
+      display: block;
+      color: #1a3a5c;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    span,
+    small {
+      display: block;
+      color: #5a6c7d;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    &.closed {
+      background: #f8fafc;
+    }
+
+    &.pending-card,
+    &.visual-ambar {
+      border-color: #fed7aa;
+      background: #fffaf3;
+      box-shadow: 0 4px 14px rgba(194, 65, 12, 0.08);
+    }
+
+    &.visual-verde {
+      border-color: #bbf7d0;
+      background: #f7fef9;
+    }
+  }
+
+  .progress-box {
+    min-width: 86px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+
+    b {
+      color: #1a3a5c;
+      font-size: 18px;
+    }
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #e8eaed;
+    color: #5a6c7d;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+
+    &.estado-pendiente,
+    &.estado-en_proceso {
+      background: #fff7ed;
+      color: #c2410c;
+    }
+
+    &.estado-completada,
+    &.estado-cerrada {
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    &.estado-no_aplica,
+    &.estado-cancelada {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+  }
+
+  .detail-progress {
+    border: 1px solid #e1e4e8;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    color: #1a3a5c;
+
+    strong {
+      font-size: 22px;
+    }
+  }
+
+  .next-stage {
+    border: 1px solid #fed7aa;
+    background: #fff7ed;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    span {
+      color: #9a3412;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    strong {
+      color: #1a3a5c;
+      font-size: 15px;
+      text-align: right;
+    }
+  }
+
+  .stage-card {
+    border: 1px solid #e1e4e8;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+
+    .stage-main,
+    .stage-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h3 {
+      margin: 0;
+      color: #1a3a5c;
+      font-size: 15px;
+    }
+
+    .stage-meta {
+      margin-top: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+
+      span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #5a6c7d;
+        font-size: 12px;
+      }
+    }
+
+    p {
+      margin: 10px 0 0;
+      color: #5a6c7d;
+      font-size: 13px;
+    }
+
+    .stage-actions {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .stage-action-btn {
+      border: 0;
+      border-radius: 10px;
+      background: #1a3a5c;
+      color: #ffffff;
+      min-height: 40px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+
+      ion-icon {
+        font-size: 18px;
+      }
+
+      &.stage-disable-btn {
+        background: #fff7ed;
+        color: #c2410c;
+        border: 1px solid #fed7aa;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .etapa-time-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+
+    &.has-production {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .perf-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #5a6c7d;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .perf-input {
+      --background: #ffffff;
+      --border-color: #e1e4e8;
+      --border-radius: 8px;
+      --border-width: 1px;
+      --padding-start: 8px;
+      --padding-end: 8px;
+      --color: #0f172a;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 800;
+      min-height: 44px;
+
+      &::part(native) {
+        color: #0f172a;
+        font-weight: 800;
+        opacity: 1;
+      }
+    }
+
+    .production-field .perf-label {
+      color: #1a3a5c;
+    }
+
+    .production-input {
+      --background: #f8fafc;
+      --border-color: #94a3b8;
+      --color: #0f172a;
+      color: #0f172a;
+    }
+  }
+
+  .photo-button {
+    width: 100%;
+    min-height: 46px;
+    border: 2px dashed #1a3a5c;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #1a3a5c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  .photo-grid {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .photo-thumb {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #e2e8f0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    button {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 30px;
+      height: 30px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.74);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    span {
+      position: absolute;
+      left: 6px;
+      bottom: 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.74);
+      color: #ffffff;
+      padding: 3px 7px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+  }
+
+  .empty-state {
+    padding: 36px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #5a6c7d;
+
+    ion-icon {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .custom-textarea {
+    --background: #f8f9fb;
+    --border-color: #e1e4e8;
+    --border-radius: 8px;
+    --border-width: 1px;
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    --placeholder-color: #a0aab5;
+    --color: #1a3a5c;
+    font-size: 15px;
   }
 
   // Form Groups
@@ -517,7 +941,28 @@
     }
   }
 
-  // Perforación Cards
+  .compact-personal {
+    padding: 0;
+
+    .single-activity {
+      background: #f8f9fb;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .activity-label {
+        color: #1a3a5c;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.25;
+        padding-right: 12px;
+      }
+    }
+  }
+
+  // PerforaciÃ³n Cards
   .perf-card {
     background: #f8f9fb;
     border-radius: 12px;
@@ -633,6 +1078,20 @@
       font-size: 14px;
       letter-spacing: 1px;
       text-transform: uppercase;
+    }
+
+    .native-save-button {
+      width: 100%;
+      border: 0;
+      background: #1a3a5c;
+      color: #ffffff;
+      border-radius: 12px;
+      height: 52px;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(26, 58, 92, 0.2);
     }
   }
 
