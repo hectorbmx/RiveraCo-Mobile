@@ -81,6 +81,12 @@
             <div class="registro-details">
               <span class="fecha-text">{{ formatFecha(r.fecha) }}</span>
               <span class="notas-text" *ngIf="r.notas">{{ r.notas }}</span>
+              <span class="gasolina-text" *ngIf="r.monto_gasolina !== null && r.monto_gasolina !== undefined">
+                Gasolina: {{ r.monto_gasolina | currency:'MXN':'symbol':'1.2-2' }}
+              </span>
+              <a class="ticket-link" *ngIf="r.foto_ticket_gasolina_url" [href]="r.foto_ticket_gasolina_url" target="_blank" rel="noopener">
+                Ver ticket de gasolina
+              </a>
 
               <!-- Link/preview de foto (si quieres que al toque abra) -->
               <!-- <span class="notas-text" *ngIf="r.foto_url">
@@ -150,7 +156,7 @@
             <img
               [src]="form.photoPreview"
               alt="Foto odómetro"
-              style="width: 100%; border-radius: 12px;"
+              class="preview-image"
             />
           </div>
 
@@ -164,6 +170,31 @@
               inputmode="numeric"
               [(ngModel)]="form.km"
               placeholder="Ej. 17550"
+            ></ion-input>
+          </ion-item>
+
+          <!-- Gasolina -->
+          <ion-button expand="block" fill="outline" (click)="tomarFotoTicketGasolina()" class="ion-margin-top">
+            Tomar foto del ticket de gasolina
+          </ion-button>
+
+          <div *ngIf="form.ticketPhotoPreview" class="ion-margin-top">
+            <img
+              [src]="form.ticketPhotoPreview"
+              alt="Foto ticket gasolina"
+              class="preview-image"
+            />
+          </div>
+
+          <ion-item class="field-item ion-margin-top" lines="none">
+            <ion-label class="field-label" position="stacked">Monto gasolina (opcional)</ion-label>
+            <ion-input
+              name="montoGasolina"
+              fill="outline"
+              type="number"
+              inputmode="decimal"
+              [(ngModel)]="form.montoGasolina"
+              placeholder="Ej. 850.00"
             ></ion-input>
           </ion-item>
 

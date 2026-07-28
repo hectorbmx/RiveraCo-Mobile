@@ -41,6 +41,8 @@ type VehiculoKmLog = {
   fecha: string;
   km: number;
   foto_url: string;
+  foto_ticket_gasolina_url?: string | null;
+  monto_gasolina?: number | string | null;
   notas?: string | null;
 };
 
@@ -80,6 +82,9 @@ export class VehiculoRegistroPage implements OnInit, OnDestroy {
     // foto
     photoFile: null as File | null,
     photoPreview: '' as string, // webPath para mostrar preview en HTML si quieres
+    ticketPhotoFile: null as File | null,
+    ticketPhotoPreview: '' as string,
+    montoGasolina: null as number | string | null,
   };
 
   private sub?: Subscription;
@@ -154,6 +159,9 @@ export class VehiculoRegistroPage implements OnInit, OnDestroy {
     this.form.notas = '';
     this.form.photoFile = null;
     this.form.photoPreview = '';
+    this.form.ticketPhotoFile = null;
+    this.form.ticketPhotoPreview = '';
+    this.form.montoGasolina = null;
     this.modalOpen = true;
   }
 
@@ -197,6 +205,34 @@ export class VehiculoRegistroPage implements OnInit, OnDestroy {
     }
   }
 
+  async tomarFotoTicketGasolina() {
+    this.formError = null;
+
+    try {
+      const photo = await Camera.getPhoto({
+        quality: 70,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        allowEditing: false,
+        correctOrientation: true,
+        saveToGallery: false,
+      });
+
+      if (!photo.webPath) {
+        this.formError = 'No se pudo obtener la foto del ticket.';
+        return;
+      }
+
+      this.form.ticketPhotoPreview = photo.webPath;
+      this.form.ticketPhotoFile = await this.fileFromWebPath(
+        photo.webPath,
+        `ticket_gasolina_${this.vehiculoId}_${Date.now()}.jpg`
+      );
+    } catch (e) {
+      this.formError = 'No se pudo tomar la foto del ticket.';
+    }
+  }
+
   private async fileFromWebPath(webPath: string, filename: string): Promise<File> {
     const res = await fetch(webPath);
     const blob = await res.blob();
@@ -210,6 +246,9 @@ export class VehiculoRegistroPage implements OnInit, OnDestroy {
 
     const km = Number(this.form.km);
     const minimo = Number(this.kmSugerido ?? 0);
+    const montoGasolina = this.form.montoGasolina === null || this.form.montoGasolina === undefined || this.form.montoGasolina === ''
+      ? null
+      : Number(this.form.montoGasolina);
 
     if (!this.form.photoFile) {
       this.formError = 'Toma una foto del odómetro.';
@@ -226,6 +265,11 @@ export class VehiculoRegistroPage implements OnInit, OnDestroy {
       return;
     }
 
+    if (montoGasolina !== null && (Number.isNaN(montoGasolina) || montoGasolina < 0)) {
+      this.formError = 'Captura un monto de gasolina valido.';
+      return;
+    }
+
     this.saving = true;
 
 const fd = new FormData();
@@ -234,6 +278,8 @@ fd.append('foto', this.form.photoFile);
 
 const notas = (this.form.notas || '').trim();
 if (notas) fd.append('notas', notas);
+if (this.form.ticketPhotoFile) fd.append('foto_ticket_gasolina', this.form.ticketPhotoFile);
+if (montoGasolina !== null) fd.append('monto_gasolina', String(montoGasolina));
 
     // IMPORTANTE: Tu ApiService debe soportar FormData.
     // Si tu ApiService tiene un método especial (ej. postFormData), lo usamos.

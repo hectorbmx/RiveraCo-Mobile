@@ -338,3 +338,23 @@ ion-badge {
     }
   }
 }
+
+.preview-image {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e8eaed;
+  object-fit: cover;
+}
+
+.gasolina-text {
+  font-size: 0.78rem;
+  color: #1e8e3e;
+  font-weight: 700;
+}
+
+.ticket-link {
+  color: #1a73e8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
