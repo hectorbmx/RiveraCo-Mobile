@@ -26,6 +26,26 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../tab-reposicion-gastos/tab-reposicion-gastos.page').then((m) => m.TabReposicionGastosPage),
       },
+      {
+        path: 'avance-civil',
+        loadComponent: () =>
+          import('../tab-avance-civil/tab-avance-civil.page').then((m) => m.TabAvanceCivilPage),
+      },
+      {
+        path: 'reportes-avance',
+        loadComponent: () =>
+          import('../tab-reportes-avance/tab-reportes-avance.page').then((m) => m.TabReportesAvancePage),
+      },
+      {
+        path: 'solicitud-material',
+        loadComponent: () =>
+          import('../tab-solicitud-material/tab-solicitud-material.page').then((m) => m.TabSolicitudMaterialPage),
+      },
+      {
+        path: 'solicitudes-material',
+        loadComponent: () =>
+          import('../tab-solicitudes-material/tab-solicitudes-material.page').then((m) => m.TabSolicitudesMaterialPage),
+      },
       
       {
         path: '',
@@ -35,3 +55,5 @@ export const routes: Routes = [
     ],
   },
 ];
+
+

@@ -1,0 +1,103 @@
+<ion-header class="custom-header">
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" color="light" routerLink="/tabs/solicitud-material">
+      <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-title>Mis solicitudes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="requests-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="circles"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <section class="summary-card">
+    <div>
+      <span>Material obra civil</span>
+      <h1>Solicitudes generadas</h1>
+      <p>{{ total }} folio(s) enviados para revisión.</p>
+    </div>
+    <ion-icon name="document-text-outline"></ion-icon>
+  </section>
+
+  <app-company-loading-overlay [active]="loading" message="Cargando solicitudes..."></app-company-loading-overlay>
+
+  <section class="requests-list" *ngIf="!loading">
+    <ion-card class="request-card" *ngFor="let solicitud of solicitudes">
+      <ion-card-content>
+        <div class="request-topline">
+          <div>
+            <strong>{{ solicitud.folio || ('Solicitud #' + solicitud.id) }}</strong>
+            <p>{{ solicitud.submitted_at | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <ion-badge [color]="statusColor(solicitud.status)">{{ statusLabel(solicitud.status) }}</ion-badge>
+        </div>
+
+        <div class="request-metrics">
+          <div>
+            <small>Partidas</small>
+            <strong>{{ solicitud.items_count }}</strong>
+          </div>
+          <div>
+            <small>Aprobadas</small>
+            <strong>{{ solicitud.approved_items_count }}</strong>
+          </div>
+          <div>
+            <small>OC</small>
+            <ion-badge [color]="ocColor(solicitud)">{{ ocResumen(solicitud) }}</ion-badge>
+          </div>
+        </div>
+
+        <div class="order-pills" *ngIf="solicitud.ordenes_compra.length > 0">
+          <span *ngFor="let oc of solicitud.ordenes_compra">
+            {{ oc.folio || ('OC #' + oc.id) }} · {{ oc.estado || 'BORRADOR' }}
+          </span>
+        </div>
+
+        <p class="request-notes" *ngIf="solicitud.notes">{{ solicitud.notes }}</p>
+
+        <ion-button expand="block" fill="outline" class="detail-button" (click)="toggle(solicitud.id)">
+          {{ isExpanded(solicitud.id) ? 'Ocultar detalle' : 'Ver detalle' }}
+        </ion-button>
+
+        <div class="items-list" *ngIf="isExpanded(solicitud.id)">
+          <div class="item-row" *ngFor="let item of solicitud.items">
+            <div>
+              <ion-badge color="primary">{{ itemCodigo(item) }}</ion-badge>
+              <h2>{{ itemConcepto(item) }}</h2>
+              <p>
+                Solicitado: {{ item.quantity | number:'1.2-4' }} {{ itemUnidad(item) }}
+                <span *ngIf="item.approved_quantity !== null">
+                  · Autorizado: {{ item.approved_quantity | number:'1.2-4' }} {{ itemUnidad(item) }}
+                </span>
+              </p>
+              <small *ngIf="item.approval_notes">{{ item.approval_notes }}</small>
+            </div>
+            <div class="item-oc">
+              <ion-badge *ngIf="item.has_final_order" color="success">OC autorizada</ion-badge>
+              <ion-badge *ngIf="!item.has_final_order && item.has_draft_order" color="warning">OC borrador</ion-badge>
+              <ion-badge *ngIf="!item.ordenes_compra.length" color="medium">Sin OC</ion-badge>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="empty-state" *ngIf="solicitudes.length === 0">
+      <ion-icon name="hourglass-outline"></ion-icon>
+      <h2>Sin solicitudes</h2>
+      <p>Cuando envies una solicitud de material, podras ver aqui su avance.</p>
+    </div>
+
+    <ion-button expand="block" fill="outline" class="load-more" *ngIf="hasMore" [disabled]="loadingMore" (click)="loadMore()">
+      <ion-spinner name="crescent" *ngIf="loadingMore"></ion-spinner>
+      <span *ngIf="!loadingMore">Cargar más</span>
+    </ion-button>
+  </section>
+</ion-content>
+

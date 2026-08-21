@@ -19,7 +19,9 @@
       refreshingText="Actualizando...">
     </ion-refresher-content>
   </ion-refresher>
-  <!-- Card de información de la obra -->
+  
+  <app-company-loading-overlay [active]="loadingContext" message="Actualizando obra..."></app-company-loading-overlay>
+<!-- Card de información de la obra -->
   <ion-card class="obra-card">
     <ion-card-header>
       <ion-card-subtitle>OBRA ACTIVA</ion-card-subtitle>

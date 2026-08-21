@@ -1,0 +1,55 @@
+.company-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(242, 242, 247, 0.56);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  pointer-events: all;
+}
+
+.company-loading-card {
+  width: min(220px, 72vw);
+  min-height: 172px;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 24px 20px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 48px rgba(15, 39, 66, 0.22);
+  text-align: center;
+}
+
+.company-loading-card img {
+  max-width: 104px;
+  max-height: 72px;
+  object-fit: contain;
+}
+
+.company-loading-card p {
+  margin: 0;
+  color: #1a3a5c;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.company-loading-spinner {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 3px solid rgba(26, 58, 92, 0.16);
+  border-top-color: #1a3a5c;
+  animation: company-loading-spin 0.85s linear infinite;
+}
+
+@keyframes company-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

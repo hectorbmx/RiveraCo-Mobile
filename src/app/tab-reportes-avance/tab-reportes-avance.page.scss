@@ -1,0 +1,241 @@
+$brand-blue: #1a3a5c;
+$brand-blue-gradient: linear-gradient(135deg, #1a3a5c, #0f2742);
+$apple-bg: #f2f2f7;
+$apple-card-bg: rgba(255, 255, 255, 0.9);
+$apple-text-primary: #1c1c1e;
+$apple-text-secondary: #8e8e93;
+$apple-border: rgba(60, 60, 67, 0.12);
+$apple-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+.custom-header ion-toolbar {
+  --background: #{$brand-blue};
+  --color: #ffffff;
+}
+
+.reports-content {
+  --background: #{$apple-bg};
+  --padding-bottom: 84px;
+}
+
+.summary-card {
+  margin: 16px;
+  padding: 20px;
+  border-radius: 20px;
+  background: $brand-blue-gradient;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(26, 58, 92, 0.28);
+
+  span {
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.75;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 4px 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.85;
+    font-size: 13px;
+  }
+
+  ion-icon {
+    font-size: 38px;
+    opacity: 0.88;
+  }
+}
+
+.loading-state,
+.empty-state {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: $apple-text-secondary;
+  padding: 24px;
+
+  ion-icon {
+    color: $brand-blue;
+    font-size: 46px;
+  }
+
+  h2 {
+    margin: 12px 0 4px;
+    color: $apple-text-primary;
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  p {
+    max-width: 320px;
+    margin: 0;
+    line-height: 1.4;
+    font-size: 13px;
+  }
+}
+
+.reports-list {
+  padding-bottom: 24px;
+}
+
+.report-card {
+  margin: 12px 16px;
+  border: 1px solid $apple-border;
+  border-radius: 18px;
+  background: $apple-card-bg;
+  box-shadow: $apple-shadow;
+}
+
+.report-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+
+  strong {
+    color: $apple-text-primary;
+    font-size: 16px;
+  }
+
+  p {
+    margin: 3px 0 0;
+    color: $apple-text-secondary;
+    font-size: 12px;
+  }
+}
+
+.report-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 14px 0;
+
+  div {
+    min-height: 54px;
+    padding: 10px 8px;
+    border-radius: 12px;
+    background: rgba(118, 118, 128, 0.08);
+  }
+
+  small {
+    display: block;
+    color: $apple-text-secondary;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  strong {
+    display: block;
+    margin-top: 4px;
+    color: $apple-text-primary;
+    font-size: 15px;
+  }
+}
+
+.report-notes {
+  margin: 0 0 12px;
+  color: $apple-text-secondary;
+  font-size: 12px;
+}
+
+.action-row {
+  display: grid;
+  gap: 8px;
+}
+
+.detail-button,
+.edit-button,
+.load-more {
+  --border-radius: 12px;
+  font-weight: 700;
+}
+
+.edit-button {
+  --background: #{$brand-blue};
+  --color: #ffffff;
+}
+
+.items-list {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.item-row {
+  border-radius: 14px;
+  background: rgba(118, 118, 128, 0.06);
+  padding: 12px;
+}
+
+.item-main {
+  h2 {
+    margin: 7px 0 4px;
+    color: $apple-text-primary;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  p,
+  small {
+    display: block;
+    margin: 0 0 5px;
+    color: $apple-text-secondary;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  strong {
+    display: block;
+    margin-bottom: 5px;
+    color: $brand-blue;
+    font-size: 13px;
+  }
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.photo-thumb {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid $apple-border;
+  aspect-ratio: 1;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  ion-icon {
+    color: $brand-blue;
+    font-size: 22px;
+  }
+}
+
+@media (min-width: 720px) {
+  .summary-card,
+  .reports-list {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

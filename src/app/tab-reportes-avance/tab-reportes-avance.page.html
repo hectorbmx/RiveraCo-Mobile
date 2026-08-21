@@ -1,0 +1,103 @@
+<ion-header class="custom-header">
+  <ion-toolbar>
+    <ion-button slot="start" fill="clear" color="light" routerLink="/tabs/avance-civil">
+      <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-title>Mis avances</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="reports-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="circles"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <section class="summary-card">
+    <div>
+      <span>Obra civil</span>
+      <h1>Reportes enviados</h1>
+      <p>{{ total }} reporte(s) capturados en campo.</p>
+    </div>
+    <ion-icon name="bar-chart-outline"></ion-icon>
+  </section>
+
+  <app-company-loading-overlay [active]="loading" message="Cargando reportes..."></app-company-loading-overlay>
+
+  <section class="reports-list" *ngIf="!loading">
+    <ion-card class="report-card" *ngFor="let reporte of reportes">
+      <ion-card-content>
+        <div class="report-topline">
+          <div>
+            <strong>Reporte #{{ reporte.id }}</strong>
+            <p>{{ reporte.submitted_at | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <ion-badge [color]="statusColor(reporte.status)">{{ statusLabel(reporte.status) }}</ion-badge>
+        </div>
+
+        <div class="report-metrics">
+          <div>
+            <small>Partidas</small>
+            <strong>{{ reporte.items.length }}</strong>
+          </div>
+          <div>
+            <small>Fotos</small>
+            <strong>{{ photosCount(reporte) }}</strong>
+          </div>
+          <div>
+            <small>Edición</small>
+            <ion-badge [color]="reporte.is_editable ? 'primary' : 'medium'">
+              {{ reporte.is_editable ? 'Editable' : 'Revisado' }}
+            </ion-badge>
+          </div>
+        </div>
+
+        <p class="report-notes" *ngIf="reporte.notes">{{ reporte.notes }}</p>
+
+        <div class="action-row">
+          <ion-button expand="block" fill="outline" class="detail-button" (click)="toggle(reporte.id)">
+            {{ isExpanded(reporte.id) ? 'Ocultar detalle' : 'Ver detalle' }}
+          </ion-button>
+          <ion-button expand="block" class="edit-button" *ngIf="reporte.is_editable" disabled>
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Editar pronto
+          </ion-button>
+        </div>
+
+        <div class="items-list" *ngIf="isExpanded(reporte.id)">
+          <div class="item-row" *ngFor="let item of reporte.items">
+            <div class="item-main">
+              <ion-badge color="primary">{{ conceptoClave(item) }}</ion-badge>
+              <h2>{{ conceptoDescripcion(item) }}</h2>
+              <p>{{ conceptoRuta(item) }}</p>
+              <strong>{{ item.quantity | number:'1.2-4' }} {{ item.unit || '' }}</strong>
+              <small *ngIf="item.notes">{{ item.notes }}</small>
+            </div>
+
+            <div class="photos-grid" *ngIf="item.photos.length > 0">
+              <a class="photo-thumb" *ngFor="let photo of item.photos" [href]="photo.url || '#'" target="_blank" rel="noopener">
+                <img [src]="photo.url" alt="Foto del reporte" *ngIf="photo.url">
+                <ion-icon name="camera-outline" *ngIf="!photo.url"></ion-icon>
+              </a>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="empty-state" *ngIf="reportes.length === 0">
+      <ion-icon name="hourglass-outline"></ion-icon>
+      <h2>Sin reportes</h2>
+      <p>Cuando captures avances, aparecerán aquí para darles seguimiento.</p>
+    </div>
+
+    <ion-button expand="block" fill="outline" class="load-more" *ngIf="hasMore" [disabled]="loadingMore" (click)="loadMore()">
+      <ion-spinner name="crescent" *ngIf="loadingMore"></ion-spinner>
+      <span *ngIf="!loadingMore">Cargar más</span>
+    </ion-button>
+  </section>
+</ion-content>
+

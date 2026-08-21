@@ -1,0 +1,156 @@
+<ion-header class="custom-header">
+  <ion-toolbar>
+    <ion-title>Material</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="civil-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="circles"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <section class="obra-summary">
+    <div>
+      <span>OBRA CIVIL</span>
+      <h1>{{ obra?.nombre || 'Obra civil' }}</h1>
+      <p>{{ obra?.clave_obra || 'Sin clave' }}</p>
+    </div>
+    <ion-icon name="document-text-outline"></ion-icon>
+  </section>
+
+  <section class="history-link-section">
+    <ion-button expand="block" fill="outline" class="history-button" routerLink="/tabs/solicitudes-material">
+      <ion-icon name="document-text-outline" slot="start"></ion-icon>
+      Ver solicitudes generadas
+    </ion-button>
+  </section>
+
+  <section class="search-section">
+    <ion-searchbar
+      placeholder="Buscar material por código o concepto"
+      [debounce]="0"
+      (ionInput)="onSearch($event.detail.value)">
+    </ion-searchbar>
+  </section>
+
+  <section class="cart-panel" *ngIf="cartCount > 0">
+    <div class="cart-header">
+      <div>
+        <strong>{{ cartCount }} material(es) agregado(s)</strong>
+        <p>Se enviarán para revisión de oficina.</p>
+      </div>
+      <ion-badge color="primary">Solicitud</ion-badge>
+    </div>
+
+    <div class="cart-items">
+      <div class="cart-item" *ngFor="let item of cart">
+        <div>
+          <strong>{{ item.material.codigo || 'S/C' }}</strong>
+          <p>{{ item.material.concepto }}</p>
+          <small>{{ item.quantity | number:'1.2-4' }} {{ item.material.unidad || '' }}</small>
+        </div>
+        <ion-button fill="clear" color="danger" size="small" (click)="removeFromCart(item.material.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="form-group compact">
+      <label>Notas generales</label>
+      <ion-textarea autoGrow="true" [(ngModel)]="requestNotes" placeholder="Comentarios para compras/oficina"></ion-textarea>
+    </div>
+
+    <ion-button expand="block" class="send-button" [disabled]="!canSubmit" (click)="submitRequest()">
+      <ion-icon name="send-outline" slot="start"></ion-icon>
+      Enviar solicitud
+    </ion-button>
+  </section>
+
+  <app-company-loading-overlay [active]="loading" message="Actualizando materiales..."></app-company-loading-overlay>
+
+  <section class="material-list" *ngIf="!loading">
+    <ion-card class="material-card" *ngFor="let material of materiales">
+      <ion-card-content>
+        <div class="material-topline">
+          <ion-badge color="primary">{{ material.codigo || 'S/C' }}</ion-badge>
+          <span>{{ material.unidad || 'Unidad' }}</span>
+        </div>
+
+        <h2>{{ material.concepto }}</h2>
+
+        <div class="metrics">
+          <div>
+            <small>Cantidad</small>
+            <strong>{{ material.cantidad | number:'1.2-4' }}</strong>
+          </div>
+          <div>
+            <small>Usado</small>
+            <strong>{{ material.usado | number:'1.2-4' }}</strong>
+          </div>
+          <div>
+            <small>Disponible</small>
+            <strong>{{ material.disponible | number:'1.2-4' }}</strong>
+          </div>
+        </div>
+
+        <ion-button expand="block" class="request-button" (click)="openMaterial(material)">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Solicitar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="empty-state" *ngIf="materiales.length === 0">
+      <ion-icon name="search-outline"></ion-icon>
+      <h2>Sin materiales</h2>
+      <p>Busca por código o concepto para agregar materiales a la solicitud.</p>
+    </div>
+
+    <ion-button expand="block" fill="outline" class="load-more" *ngIf="hasMore" [disabled]="loadingMore" (click)="loadMore()">
+      <ion-spinner name="crescent" *ngIf="loadingMore"></ion-spinner>
+      <span *ngIf="!loadingMore">Cargar más</span>
+    </ion-button>
+  </section>
+
+  <ion-modal [isOpen]="modalOpen" (didDismiss)="closeModal()">
+    <ng-template>
+      <ion-header class="custom-header">
+        <ion-toolbar>
+          <ion-title>Solicitar material</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-content">
+        <section class="selected-material" *ngIf="selected">
+          <ion-badge color="primary">{{ selected.codigo || 'S/C' }}</ion-badge>
+          <h2>{{ selected.concepto }}</h2>
+          <p>{{ selected.unidad || 'Unidad' }} · Disponible {{ selected.disponible | number:'1.2-4' }}</p>
+        </section>
+
+        <div class="form-group">
+          <label>Cantidad solicitada</label>
+          <ion-input type="number" min="0" inputmode="decimal" [(ngModel)]="quantity" placeholder="0.0000"></ion-input>
+        </div>
+
+        <div class="form-group">
+          <label>Notas</label>
+          <ion-textarea autoGrow="true" [(ngModel)]="itemNotes" placeholder="Uso, ubicación o urgencia"></ion-textarea>
+        </div>
+
+        <ion-button expand="block" [disabled]="!canAdd" (click)="addToCart()">
+          Agregar a solicitud
+        </ion-button>
+        <ion-button expand="block" fill="clear" color="medium" (click)="closeModal()">
+          Cancelar
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
+
+
+

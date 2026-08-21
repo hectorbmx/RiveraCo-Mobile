@@ -94,6 +94,21 @@ get<T>(endpoint: string, params?: Record<string, any>): Observable<T> {
     );
   }
 
+  postMultipart<T>(endpoint: string, formData: FormData): Observable<T> {
+    const token = localStorage.getItem('auth_token') ?? sessionStorage.getItem('auth_token');
+
+    let headers = new HttpHeaders({
+      'Accept': 'application/json'
+    });
+
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, formData, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
   /**
    * PUT request
    */
@@ -281,3 +296,4 @@ deleteAsistenciaObra(obraId: number, asistenciaId: number, reason?: string) {
   
 
 }
+

@@ -1,0 +1,161 @@
+<ion-header class="custom-header">
+  <ion-toolbar>
+    <ion-title>Avance</ion-title>
+    <ion-button slot="end" fill="clear" color="light" class="toolbar-history-button" routerLink="/tabs/reportes-avance">
+      <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+      Historial
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="civil-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="circles"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <section class="obra-summary">
+    <div>
+      <span>OBRA CIVIL</span>
+      <h1>{{ obra?.nombre || 'Obra civil' }}</h1>
+      <p>{{ obra?.clave_obra || 'Sin clave' }}</p>
+    </div>
+    <ion-icon name="bar-chart-outline"></ion-icon>
+  </section>
+
+  <section class="history-link-section">
+    <ion-button expand="block" fill="outline" class="history-button" routerLink="/tabs/reportes-avance">
+      <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+      Ver reportes enviados
+    </ion-button>
+  </section>
+
+  <section class="search-section">
+    <ion-searchbar
+      placeholder="Buscar por clave o descripción"
+      [debounce]="0"
+      (ionInput)="onSearch($event.detail.value)">
+    </ion-searchbar>
+  </section>
+
+  <app-company-loading-overlay [active]="loading" message="Actualizando catálogo..."></app-company-loading-overlay>
+
+  <section class="concept-list" *ngIf="!loading">
+    <ion-card class="concept-card" *ngFor="let concepto of conceptos">
+      <ion-card-content>
+        <div class="concept-topline">
+          <ion-badge color="primary">{{ concepto.clave || 'S/C' }}</ion-badge>
+          <span>{{ concepto.unidad || 'Unidad' }}</span>
+        </div>
+
+        <h2>{{ concepto.descripcion }}</h2>
+        <p class="concept-path">{{ concepto.edificio || 'Edificio' }} / {{ concepto.partida || 'Partida' }}</p>
+
+        <div class="metrics">
+          <div>
+            <small>Cantidad</small>
+            <strong>{{ concepto.cantidad | number:'1.2-4' }}</strong>
+          </div>
+          <div class="reported-metric">
+            <small>Reportado</small>
+            <strong>{{ concepto.reportado | number:'1.2-4' }}</strong>
+          </div>
+          <div>
+            <small>Estimado</small>
+            <strong>{{ concepto.estimado | number:'1.2-4' }}</strong>
+          </div>
+          <div>
+            <small>Disponible</small>
+            <strong>{{ concepto.disponible | number:'1.2-4' }}</strong>
+          </div>
+        </div>
+
+        <ion-button expand="block" class="report-button" (click)="openCapture(concepto)">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Reportar avance
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="empty-state" *ngIf="conceptos.length === 0">
+      <ion-icon name="search-outline"></ion-icon>
+      <h2>Sin conceptos</h2>
+      <p>Busca por clave o descripción para localizar el trabajo realizado.</p>
+    </div>
+
+    <ion-button expand="block" fill="outline" class="load-more" *ngIf="hasMore" [disabled]="loadingMore" (click)="loadMore()">
+      <ion-spinner name="crescent" *ngIf="loadingMore"></ion-spinner>
+      <span *ngIf="!loadingMore">Cargar más</span>
+    </ion-button>
+  </section>
+
+  <ion-modal [isOpen]="captureOpen" (didDismiss)="closeCapture()">
+    <ng-template>
+      <ion-header class="custom-header">
+        <ion-toolbar>
+          <ion-title>Reportar avance</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-content">
+        <section class="selected-concept" *ngIf="selected">
+          <ion-badge color="primary">{{ selected.clave || 'S/C' }}</ion-badge>
+          <h2>{{ selected.descripcion }}</h2>
+          <p>{{ selected.unidad || 'Unidad' }} · Disponible {{ selected.disponible | number:'1.2-4' }}</p>
+        </section>
+
+        <div class="form-group">
+          <label>Cantidad trabajada</label>
+          <ion-input type="number" min="0" inputmode="decimal" [(ngModel)]="quantity" placeholder="0.0000"></ion-input>
+        </div>
+
+        <div class="form-group">
+          <label>Notas del concepto</label>
+          <ion-textarea autoGrow="true" [(ngModel)]="itemNotes" placeholder="Describe brevemente qué se trabajó"></ion-textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Notas generales</label>
+          <ion-textarea autoGrow="true" [(ngModel)]="notes" placeholder="Comentarios adicionales"></ion-textarea>
+        </div>
+
+        <div class="form-group file-group">
+          <label>Fotos</label>
+          <input type="file" accept="image/*" multiple (change)="onFilesSelected($event)">
+          <small *ngIf="compressingPhotos">Optimizando fotos...</small>
+          <small *ngIf="!compressingPhotos && photos.length === 0">Sin fotos seleccionadas</small>
+          <small *ngIf="!compressingPhotos && photos.length > 0">
+            {{ photos.length }} foto(s) lista(s) · {{ formatBytes(totalOriginalPhotoSize) }} → {{ formatBytes(totalCompressedPhotoSize) }}
+          </small>
+
+          <div class="photo-preview-grid" *ngIf="photos.length > 0">
+            <div class="photo-preview" *ngFor="let photo of photos; let i = index">
+              <img [src]="photo.previewUrl" alt="Foto seleccionada">
+              <button type="button" (click)="removePhoto(i)" aria-label="Quitar foto">
+                <ion-icon name="close-circle-outline"></ion-icon>
+              </button>
+              <span>{{ formatBytes(photo.compressedSize) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <ion-button expand="block" [disabled]="!canSubmit" (click)="submit()">
+          Guardar avance
+        </ion-button>
+        <ion-button expand="block" fill="clear" color="medium" (click)="closeCapture()">
+          Cancelar
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
+
+
+
+
+
+
+

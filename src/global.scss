@@ -35,3 +35,40 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* Loading corporativo: blur + logo Rivera */
+ion-loading.company-loading {
+  --background: rgba(255, 255, 255, 0.86);
+  --spinner-color: #1a3a5c;
+  --backdrop-opacity: 0.42;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+ion-loading.company-loading::part(backdrop) {
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+ion-loading.company-loading .loading-wrapper {
+  border-radius: 24px;
+  padding: 28px 24px 22px;
+  box-shadow: 0 18px 48px rgba(15, 39, 66, 0.22);
+}
+
+ion-loading.company-loading .loading-wrapper::before {
+  content: '';
+  display: block;
+  width: 112px;
+  height: 76px;
+  margin: 0 auto 14px;
+  background-image: url('/assets/icon/logo.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+ion-loading.company-loading .loading-content {
+  color: #1a3a5c;
+  font-weight: 700;
+}

@@ -26,6 +26,7 @@ export interface ObraContexto {
   cliente_nombre: string;
   nombre: string;
   clave_obra: string;
+  tipo_obra?: string | null;
   ubicacion: string | null;
   estatus_nuevo: number;
   fecha_inicio_programada: string | null; // viene como "YYYY-MM-DD"

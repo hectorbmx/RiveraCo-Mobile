@@ -43,6 +43,7 @@
 //   personOutline
 // } from 'ionicons/icons';
 // import { Subscription } from 'rxjs';
+// import { CompanyLoadingOverlayComponent } from '../shared/company-loading-overlay/company-loading-overlay.component';
 // import { ApiService } from '../services/api';
 // import { AuthService, EmpleadoAsignado } from '../services/auth';
 
@@ -425,6 +426,7 @@ import {
   personOutline
 } from 'ionicons/icons';
 import { Subscription } from 'rxjs';
+import { CompanyLoadingOverlayComponent } from '../shared/company-loading-overlay/company-loading-overlay.component';
 import { ApiService } from '../services/api';
 import { AuthService, Contexto, EmpleadoAsignado, PilaDTO } from '../services/auth';
 
@@ -435,6 +437,7 @@ import { AuthService, Contexto, EmpleadoAsignado, PilaDTO } from '../services/au
   standalone: true,
   imports: [
     CommonModule,
+    CompanyLoadingOverlayComponent,
     IonRefresher,
     IonRefresherContent,
     IonItemSliding,
@@ -461,6 +464,7 @@ import { AuthService, Contexto, EmpleadoAsignado, PilaDTO } from '../services/au
 })
 export class Tab1Page implements OnInit, OnDestroy {
   contexto: Contexto | null = null;
+  loadingContext = false;
   private sub?: Subscription;
 
   constructor(
@@ -602,6 +606,7 @@ export class Tab1Page implements OnInit, OnDestroy {
     const loading = await this.loadingCtrl.create({
       message: 'Registrando asistencia...',
       spinner: 'crescent',
+      cssClass: 'company-loading',
       backdropDismiss: false
     });
 
@@ -775,11 +780,14 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   private recargarContexto(event?: any) {
+    this.loadingContext = true;
     this.auth.getMe().subscribe({
       next: () => {
+        this.loadingContext = false;
         event?.target?.complete();
       },
       error: async (err) => {
+        this.loadingContext = false;
         console.error('Error recargando contexto:', err);
         event?.target?.complete();
         await this.showToast(err.message || 'No se pudo actualizar la obra', 'danger');
@@ -787,3 +795,5 @@ export class Tab1Page implements OnInit, OnDestroy {
     });
   }
 }
+
+
