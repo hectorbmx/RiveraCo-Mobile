@@ -2,6 +2,36 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api';
 
+export interface ObraCivilMaterialGroup {
+  id: number;
+  code: string;
+  name: string;
+  family: string;
+  grade: string | null;
+}
+
+export interface ObraCivilCommercialMaterial {
+  id: number;
+  sku: string | null;
+  descripcion: string;
+  category: string | null;
+  subcategory: string | null;
+  grade: string | null;
+  medida: string | null;
+  diametro: string | null;
+  calibre_espesor: string | null;
+  longitud: number | null;
+  unidad_compra: string;
+  conversion_type: string;
+  peso_por_metro: number | null;
+  peso_por_pieza: number | null;
+  peso_por_m2: number | null;
+  peso_por_rollo: number | null;
+  factor_conversion: number | null;
+  tolerance: string | null;
+  validation_status: string | null;
+}
+
 export interface ObraCivilMaterial {
   id: number;
   codigo: string | null;
@@ -10,6 +40,13 @@ export interface ObraCivilMaterial {
   cantidad: number;
   usado: number;
   disponible: number;
+  has_commercial_products: boolean;
+  commercial_resolution_status: 'ready' | 'group_found_no_active_products' | 'not_resolved' | 'ambiguous' | string;
+  commercial_resolution_reason: string | null;
+  commercial_resolution_confidence: string | null;
+  material_group: ObraCivilMaterialGroup | null;
+  commercial_products_count: number;
+  commercial_products: ObraCivilCommercialMaterial[];
 }
 
 export interface ObraCivilMaterialCatalogoResponse {
@@ -85,9 +122,17 @@ export interface ObraCivilMaterialSolicitudesResponse {
     total: number;
   };
 }
+export interface ObraCivilMaterialCommercialItemPayload {
+  commercial_material_id: number;
+  commercial_quantity: number;
+}
+
 export interface ObraCivilMaterialSolicitudItemPayload {
   obra_civil_insumo_id: number;
   quantity: number;
+  commercial_items?: ObraCivilMaterialCommercialItemPayload[];
+  commercial_material_id?: number | null;
+  commercial_quantity?: number | null;
   notes?: string | null;
 }
 
@@ -132,4 +177,7 @@ export class ObraCivilMaterialService {
     return this.api.post<ObraCivilMaterialSolicitudResponse>('residente/obra-civil/materiales/solicitudes', payload);
   }
 }
+
+
+
 

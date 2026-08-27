@@ -40,7 +40,7 @@
   <section class="cart-panel" *ngIf="cartCount > 0">
     <div class="cart-header">
       <div>
-        <strong>{{ cartCount }} material(es) agregado(s)</strong>
+        <strong>{{ cartCount }} partida(s) agregada(s)</strong>
         <p>Se enviarán para revisión de oficina.</p>
       </div>
       <ion-badge color="primary">Solicitud</ion-badge>
@@ -49,9 +49,16 @@
     <div class="cart-items">
       <div class="cart-item" *ngFor="let item of cart">
         <div>
-          <strong>{{ item.material.codigo || 'S/C' }}</strong>
-          <p>{{ item.material.concepto }}</p>
-          <small>{{ item.quantity | number:'1.2-4' }} {{ item.material.unidad || '' }}</small>
+          <strong>{{ item.material.codigo || 'S/C' }} · {{ item.material.concepto }}</strong>
+          <ng-container *ngIf="item.commercialItems.length > 0; else parentQuantity">
+            <p *ngFor="let child of item.commercialItems">
+              {{ child.quantity | number:'1.0-4' }} {{ child.material.unidad_compra }} · {{ child.material.descripcion }}
+            </p>
+            <small>{{ item.quantity | number:'1.2-4' }} {{ item.material.unidad || '' }} internos</small>
+          </ng-container>
+          <ng-template #parentQuantity>
+            <small>{{ item.quantity | number:'1.2-4' }} {{ item.material.unidad || '' }}</small>
+          </ng-template>
         </div>
         <ion-button fill="clear" color="danger" size="small" (click)="removeFromCart(item.material.id)">
           <ion-icon name="trash-outline"></ion-icon>
@@ -81,6 +88,13 @@
         </div>
 
         <h2>{{ material.concepto }}</h2>
+
+        <div class="resolver-chip" *ngIf="material.has_commercial_products">
+          {{ material.material_group?.name || 'Material comercial' }} · {{ material.commercial_products_count }} opciones
+        </div>
+        <div class="resolver-chip muted" *ngIf="!material.has_commercial_products && material.commercial_resolution_status === 'group_found_no_active_products'">
+          Grupo identificado sin opciones activas
+        </div>
 
         <div class="metrics">
           <div>
@@ -129,12 +143,98 @@
           <ion-badge color="primary">{{ selected.codigo || 'S/C' }}</ion-badge>
           <h2>{{ selected.concepto }}</h2>
           <p>{{ selected.unidad || 'Unidad' }} · Disponible {{ selected.disponible | number:'1.2-4' }}</p>
+          <div class="resolver-chip" *ngIf="selected.has_commercial_products">
+            {{ selected.material_group?.name || 'Grupo comercial' }} · pedir por piezas
+          </div>
         </section>
 
-        <div class="form-group">
-          <label>Cantidad solicitada</label>
-          <ion-input type="number" min="0" inputmode="decimal" [(ngModel)]="quantity" placeholder="0.0000"></ion-input>
-        </div>
+        <section class="commercial-builder" *ngIf="selectedUsesCommercialMaterial; else parentQuantityForm">
+          <div class="form-group">
+            <label>Material a agregar</label>
+            <button type="button" class="commercial-picker-trigger" (click)="openCommercialPicker()">
+              <span [class.placeholder]="!pendingCommercialMaterial">
+                {{ pendingCommercialMaterial ? commercialMaterialLabel(pendingCommercialMaterial) : 'Selecciona una pieza' }}
+              </span>
+              <ion-icon name="chevron-down-outline"></ion-icon>
+            </button>
+          </div>
+
+          <ion-modal class="commercial-picker-modal" [isOpen]="commercialPickerOpen" (didDismiss)="closeCommercialPicker()">
+            <ng-template>
+              <ion-header class="custom-header">
+                <ion-toolbar>
+                  <ion-title>Material a agregar</ion-title>
+                </ion-toolbar>
+              </ion-header>
+
+              <ion-content class="commercial-picker-content">
+                <div class="commercial-picker-list">
+                  <button
+                    type="button"
+                    class="commercial-picker-option"
+                    [class.selected]="product.id === selectedCommercialMaterialId"
+                    *ngFor="let product of selected?.commercial_products"
+                    (click)="selectCommercialMaterial(product)">
+                    {{ commercialMaterialLabel(product) }}
+                  </button>
+                </div>
+
+                <button type="button" class="commercial-picker-cancel" (click)="closeCommercialPicker()">
+                  Cancelar
+                </button>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
+
+          <div class="form-group">
+            <label>Piezas</label>
+            <ion-input type="number" min="0" inputmode="decimal" [(ngModel)]="commercialQuantity" placeholder="0"></ion-input>
+          </div>
+
+          <div class="pending-summary" *ngIf="pendingCommercialMaterial">
+            <span>{{ (pendingCommercialMaterial.peso_por_pieza || pendingCommercialMaterial.factor_conversion || 0) | number:'1.2-4' }} kg/pza</span>
+            <strong>{{ pendingKg | number:'1.2-4' }} kg</strong>
+          </div>
+
+          <ion-button expand="block" fill="outline" [disabled]="!canAddCommercialLine" (click)="addCommercialLine()">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            Agregar pieza
+          </ion-button>
+
+          <div class="commercial-lines" *ngIf="commercialLines.length > 0">
+            <div class="commercial-line" *ngFor="let line of commercialLines">
+              <div>
+                <strong>{{ line.material.descripcion }}</strong>
+                <p>{{ line.quantity | number:'1.0-4' }} {{ line.material.unidad_compra }} · {{ line.kg | number:'1.2-4' }} kg</p>
+              </div>
+              <ion-button fill="clear" color="danger" size="small" (click)="removeCommercialLine(line.material.id)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+
+          <section class="conversion-summary" *ngIf="commercialLines.length > 0">
+            <div>
+              <small>Piezas</small>
+              <strong>{{ totalCommercialPieces | number:'1.0-4' }}</strong>
+            </div>
+              <!-- <div>
+                <small>Kg informativos</small>
+                <strong>{{ totalCommercialKg | number:'1.2-4' }} kg</strong>
+              </div> -->
+            <!-- <div>
+              <small>Consumo interno</small>
+              <strong>{{ convertedQuantity | number:'1.2-4' }} {{ selected?.unidad || '' }}</strong>
+            </div> -->
+          </section>
+        </section>
+
+        <ng-template #parentQuantityForm>
+          <div class="form-group">
+            <label>Cantidad solicitada</label>
+            <ion-input type="number" min="0" inputmode="decimal" [(ngModel)]="quantity" placeholder="0.0000"></ion-input>
+          </div>
+        </ng-template>
 
         <div class="form-group">
           <label>Notas</label>

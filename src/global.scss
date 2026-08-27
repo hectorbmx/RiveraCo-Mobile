@@ -72,3 +72,159 @@ ion-loading.company-loading .loading-content {
   color: #1a3a5c;
   font-weight: 700;
 }
+
+ion-action-sheet.commercial-material-action-sheet {
+  --background: #ffffff;
+  --backdrop-opacity: 0.28;
+  --button-color: #1c1c1e;
+  --color: #1c1c1e;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-wrapper,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-container,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group {
+  background: #ffffff;
+  color: #1c1c1e;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-button,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-button-inner {
+  color: #1c1c1e;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-title,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-sub-title {
+  color: #1a3a5c;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel {
+  color: #8e8e93;
+}
+
+ion-action-sheet.commercial-material-action-sheet {
+  --button-background-activated: rgba(26, 58, 92, 0.14);
+  --button-background-focused: rgba(26, 58, 92, 0.1);
+  --button-background-hover: rgba(26, 58, 92, 0.08);
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-button.activated,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-button:active,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-button:focus {
+  background: rgba(26, 58, 92, 0.14);
+  color: #1a3a5c;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-button.activated .action-sheet-button-inner,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-button:active .action-sheet-button-inner,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-button:focus .action-sheet-button-inner {
+  color: #1a3a5c;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-selected {
+  background: rgba(26, 58, 92, 0.14);
+  color: #1a3a5c;
+  font-weight: 700;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel {
+  margin-top: 8px;
+  border-radius: 12px;
+  background: #f6c343;
+  color: #1c1c1e;
+  font-weight: 700;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel .action-sheet-button-inner {
+  color: #1c1c1e;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel.activated,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel:active,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel:focus {
+  background: #eab42f;
+  color: #1c1c1e;
+}
+
+ion-action-sheet.commercial-material-action-sheet::part(cancel-button) {
+  background: #f6c343;
+  color: #1c1c1e;
+  font-weight: 700;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+ion-action-sheet.commercial-material-action-sheet::part(button) {
+  color: #1c1c1e;
+}
+
+ion-action-sheet.commercial-material-action-sheet::part(button active),
+ion-action-sheet.commercial-material-action-sheet::part(selected) {
+  background: rgba(26, 58, 92, 0.14);
+  color: #1a3a5c;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel {
+  background: transparent !important;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel .action-sheet-button {
+  --button-background: #f6c343 !important;
+  --button-color: #1c1c1e !important;
+  background: #f6c343 !important;
+  color: #1c1c1e !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel .action-sheet-button-inner {
+  color: #1c1c1e !important;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel .action-sheet-button.activated,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel .action-sheet-button:active,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel .action-sheet-button:focus {
+  --button-background: #eab42f !important;
+  background: #eab42f !important;
+  color: #1c1c1e !important;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group:not(.action-sheet-group-cancel) .action-sheet-button.activated,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group:not(.action-sheet-group-cancel) .action-sheet-button:active,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group:not(.action-sheet-group-cancel) .action-sheet-button:focus {
+  --button-background: rgba(26, 58, 92, 0.14) !important;
+  background: rgba(26, 58, 92, 0.14) !important;
+  color: #1a3a5c !important;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel {
+  background: #f6c343 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel button,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel .action-sheet-button,
+ion-action-sheet.commercial-material-action-sheet button.action-sheet-cancel,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel {
+  --background: #f6c343 !important;
+  --button-background: #f6c343 !important;
+  background: #f6c343 !important;
+  color: #1c1c1e !important;
+  font-weight: 700 !important;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel button .action-sheet-button-inner,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel .action-sheet-button .action-sheet-button-inner,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel .action-sheet-button-inner {
+  color: #1c1c1e !important;
+}
+
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel button.activated,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-group-cancel .action-sheet-button.activated,
+ion-action-sheet.commercial-material-action-sheet button.action-sheet-cancel.activated,
+ion-action-sheet.commercial-material-action-sheet .action-sheet-cancel.activated {
+  --background: #eab42f !important;
+  --button-background: #eab42f !important;
+  background: #eab42f !important;
+  color: #1c1c1e !important;
+}
