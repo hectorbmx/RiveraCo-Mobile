@@ -196,6 +196,18 @@
         --color: #0c1e35;
       }
 
+      .biometric-button {
+        --border-color: rgba(255, 165, 0, 0.75);
+        --border-radius: 14px;
+        --color: #ffa500;
+        height: 56px;
+        margin-top: 0;
+        font-weight: 800;
+        font-size: 13px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
       .register-section {
         text-align: center;
         margin-top: 16px;

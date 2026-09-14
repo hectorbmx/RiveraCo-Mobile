@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   IonButton,
   IonCheckbox,
@@ -14,7 +14,9 @@ import {
   ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
+import { fingerPrintOutline, eyeOffOutline, eyeOutline } from 'ionicons/icons';
+import { firstValueFrom } from 'rxjs';
+import { BiometricLoginService } from '../../services/biometric-login.service';
 import { AuthService, LoginCredentials } from '../../services/auth';
 
 @Component({
@@ -25,6 +27,7 @@ import { AuthService, LoginCredentials } from '../../services/auth';
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
    
     IonContent,
     IonItem,
@@ -34,23 +37,30 @@ import { AuthService, LoginCredentials } from '../../services/auth';
     IonIcon
   ]
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   credentials: LoginCredentials = {
     email: '',
     password: ''
   };
-rememberMe = true; // o false por default, como prefieras
-showPassword = false;
-
-
+  rememberMe = true; // o false por default, como prefieras
+  enableBiometricLogin = false;
+  biometricAvailable = false;
+  biometricConfigured = false;
+  biometricLabel = 'Face ID';
+  showPassword = false;
 
   constructor(
     private authService: AuthService,
+    private biometricLogin: BiometricLoginService,
     private router: Router,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
   ) {
-    addIcons ({ eyeOutline,eyeOffOutline})
+    addIcons({ eyeOutline, eyeOffOutline, fingerPrintOutline });
+  }
+
+  async ngOnInit() {
+    await this.loadBiometricState();
   }
 
   async onLogin() {
@@ -68,6 +78,11 @@ showPassword = false;
     this.authService.login(this.credentials, this.rememberMe).subscribe({
       next: async (response) => {
         await loading.dismiss();
+        if (this.enableBiometricLogin && response.token) {
+          await this.biometricLogin.saveToken(response.token);
+          await this.loadBiometricState();
+        }
+
        // localStorage.setItem('user', JSON.stringify(response.user));
         await this.showToast('Bienvenido ' + response.user.name, 'success');
 
@@ -89,6 +104,32 @@ showPassword = false;
     });
   }
 
+  async onBiometricLogin() {
+    const loading = await this.loadingCtrl.create({
+      message: `Validando ${this.biometricLabel}...`,
+    });
+    await loading.present();
+
+    try {
+      const token = await this.biometricLogin.authenticateAndGetToken();
+
+      if (!token) {
+        await loading.dismiss();
+        return;
+      }
+
+      await firstValueFrom(this.authService.restoreSessionWithToken(token));
+      await loading.dismiss();
+      await this.showToast('Bienvenido de nuevo', 'success');
+      await this.router.navigate(['/home']);
+    } catch (error: any) {
+      await loading.dismiss();
+      await this.biometricLogin.clearSavedLogin();
+      await this.loadBiometricState();
+      await this.showToast(error?.message || 'No se pudo iniciar con biometria', 'danger');
+    }
+  }
+
   private async showToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
       message,
@@ -99,6 +140,13 @@ showPassword = false;
     await toast.present();
   }
   togglePassword() {
-  this.showPassword = !this.showPassword;
-}
+    this.showPassword = !this.showPassword;
+  }
+
+  private async loadBiometricState() {
+    const state = await this.biometricLogin.getState();
+    this.biometricAvailable = state.available;
+    this.biometricConfigured = state.configured;
+    this.biometricLabel = state.label;
+  }
 }

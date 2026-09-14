@@ -79,11 +79,34 @@
 
             <ion-label class="remember-label">Recuérdame</ion-label>
           </ion-item>
+
+          <ion-item *ngIf="biometricAvailable" lines="none" class="remember-item">
+            <ion-checkbox
+              slot="start"
+              class="remember-checkbox"
+              [(ngModel)]="enableBiometricLogin"
+              name="enableBiometricLogin"
+            ></ion-checkbox>
+
+            <ion-label class="remember-label">Usar {{ biometricLabel }} en este iPhone</ion-label>
+          </ion-item>
         </div>
 
         <!-- Login Button -->
         <ion-button expand="block" type="submit" class="login-button">
           INICIAR SESIÓN
+        </ion-button>
+
+        <ion-button
+          *ngIf="biometricConfigured"
+          expand="block"
+          type="button"
+          fill="outline"
+          class="biometric-button"
+          (click)="onBiometricLogin()"
+        >
+          <ion-icon name="finger-print-outline" slot="start"></ion-icon>
+          ENTRAR CON {{ biometricLabel }}
         </ion-button>
 
         <!-- Register Link -->

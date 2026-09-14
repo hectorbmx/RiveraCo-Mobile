@@ -261,10 +261,6 @@ export class AuthService {
       storedUser ? JSON.parse(storedUser) : null
     );
     this.currentUser = this.currentUserSubject.asObservable();
-    this.currentUserSubject = new BehaviorSubject<User | null>(
-      storedUser ? JSON.parse(storedUser) : null
-    );
-    this.currentUser = this.currentUserSubject.asObservable();
 
     // const token = localStorage.getItem('auth_token');
     const token = localStorage.getItem(this.storageKeyToken) ?? sessionStorage.getItem(this.storageKeyToken);
@@ -362,6 +358,15 @@ export class AuthService {
         this.isAuthenticatedSubject.next(true);
       })
     );
+  }
+
+  restoreSessionWithToken(token: string): Observable<MeResponse> {
+    this.setRemember(true);
+    localStorage.setItem(this.storageKeyToken, token);
+    sessionStorage.removeItem(this.storageKeyToken);
+    this.isAuthenticatedSubject.next(true);
+
+    return this.getMe();
   }
 
   getMe(): Observable<MeResponse> {
@@ -535,4 +540,3 @@ private getStorage(): Storage {
     localStorage.setItem(this.storageKeyRemember, remember ? '1' : '0');
   }
 }
-
