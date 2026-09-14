@@ -5,11 +5,6 @@
       <ion-label>Obra</ion-label>
     </ion-tab-button>
 
-    <!-- <ion-tab-button tab="tab2" href="/tabs/tab2">
-      <ion-icon name="construct"></ion-icon>
-      <ion-label>Máquinas</ion-label>
-    </ion-tab-button> -->
-
     <ion-tab-button *ngIf="!esObraCivil" tab="tab3" href="/tabs/tab3">
       <ion-icon name="cash"></ion-icon>
       <ion-label>Comisiones</ion-label>
@@ -28,6 +23,11 @@
     <ion-tab-button *ngIf="esObraCivil" tab="solicitud-material" href="/tabs/solicitud-material">
       <ion-icon name="document-text-outline"></ion-icon>
       <ion-label>Material</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button *ngIf="puedeCambiarContexto" (click)="irSelector()">
+      <ion-icon name="repeat-outline"></ion-icon>
+      <ion-label>Cambiar</ion-label>
     </ion-tab-button>
 
     <ion-tab-button (click)="presentLogoutConfirm()">

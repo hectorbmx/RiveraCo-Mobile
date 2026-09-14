@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Seleccionar acceso</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="selector-content">
+  <section class="selector-shell">
+    <div class="selector-heading">
+      <h1>Elige cómo quieres entrar</h1>
+      <ion-button fill="clear" size="small" (click)="refreshOptions()" [disabled]="loading">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="loading-row" *ngIf="loading">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div class="panel-grid">
+      <button
+        type="button"
+        class="panel-card"
+        *ngFor="let panel of paneles; trackBy: trackByPanel"
+        [class.active]="selectedPanel === panel.key"
+        (click)="choosePanel(panel.key)">
+        <span class="panel-icon">
+          <ion-icon [name]="panel.key === 'gerencial' ? 'business-outline' : 'construct-outline'"></ion-icon>
+        </span>
+        <span>{{ panel.label }}</span>
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+    <section class="obra-section" *ngIf="selectedPanel === 'residente' && obras.length > 1">
+      <h2>Selecciona obra</h2>
+
+      <button
+        type="button"
+        class="obra-row"
+        *ngFor="let obra of obras; trackBy: trackByObra"
+        [class.active]="auth.selectedObraIdValue === obra.id"
+        (click)="chooseObra(obra)">
+        <span>
+          <strong>{{ obra.clave_obra || 'Sin clave' }}</strong>
+          <small>{{ obra.nombre }}</small>
+        </span>
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </section>
+  </section>
+</ion-content>

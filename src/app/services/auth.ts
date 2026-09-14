@@ -111,6 +111,27 @@ export interface Authz {
   permissions: string[];
 }
 
+export interface PanelDisponible {
+  key: string;
+  label: string;
+}
+
+export interface ObraResidenteOption {
+  id: number;
+  cliente_id: number | null;
+  cliente_nombre: string | null;
+  nombre: string;
+  clave_obra: string | null;
+  tipo_obra?: string | null;
+  ubicacion?: string | null;
+  estatus_nuevo?: number | null;
+}
+
+export interface AppDefaults {
+  panel: string | null;
+  obra_id: number | null;
+}
+
 // export interface LoginResponse {
 //   ok: boolean;
 //   token: string;
@@ -126,6 +147,9 @@ export interface LoginResponse {
   app: AppInfo;
   contexto: Contexto | null;
   authz: Authz;              // ✅
+  paneles_disponibles?: PanelDisponible[];
+  obras_residente?: ObraResidenteOption[];
+  defaults?: AppDefaults;
   gerencial?: any | null;    // opcional si quieres guardarlo luego
   message?: string;
 }
@@ -136,6 +160,9 @@ export interface MeResponse {
   app: AppInfo;
   contexto: Contexto | null;
   authz: Authz;              // ✅
+  paneles_disponibles?: PanelDisponible[];
+  obras_residente?: ObraResidenteOption[];
+  defaults?: AppDefaults;
   gerencial?: any | null;
   message?: string;
 }
@@ -184,6 +211,11 @@ export class AuthService {
   private storageKeyApp = 'app_info';
   private storageKeyContexto = 'app_contexto';
   private storageKeyAuthz = 'authz';
+  private storageKeyPaneles = 'paneles_disponibles';
+  private storageKeyObrasResidente = 'obras_residente';
+  private storageKeyDefaults = 'app_defaults';
+  private storageKeySelectedPanel = 'selected_panel';
+  private storageKeySelectedObraId = 'selected_obra_id';
   private storageKeyRemember = 'remember_me';
 
   private currentUserSubject: BehaviorSubject<User | null>;
@@ -201,6 +233,21 @@ export class AuthService {
 
   private authzSubject = new BehaviorSubject<Authz | null>(null);
   public authz$ = this.authzSubject.asObservable();
+
+  private panelesSubject = new BehaviorSubject<PanelDisponible[]>([]);
+  public paneles$ = this.panelesSubject.asObservable();
+
+  private obrasResidenteSubject = new BehaviorSubject<ObraResidenteOption[]>([]);
+  public obrasResidente$ = this.obrasResidenteSubject.asObservable();
+
+  private defaultsSubject = new BehaviorSubject<AppDefaults | null>(null);
+  public defaults$ = this.defaultsSubject.asObservable();
+
+  private selectedPanelSubject = new BehaviorSubject<string | null>(null);
+  public selectedPanel$ = this.selectedPanelSubject.asObservable();
+
+  private selectedObraIdSubject = new BehaviorSubject<number | null>(null);
+  public selectedObraId$ = this.selectedObraIdSubject.asObservable();
 
 
   constructor(
@@ -240,6 +287,21 @@ export class AuthService {
       localStorage.getItem(this.storageKeyAuthz) ?? sessionStorage.getItem(this.storageKeyAuthz);
     if (storedAuthz) this.authzSubject.next(JSON.parse(storedAuthz));
 
+    const storedPaneles = localStorage.getItem(this.storageKeyPaneles) ?? sessionStorage.getItem(this.storageKeyPaneles);
+    if (storedPaneles) this.panelesSubject.next(JSON.parse(storedPaneles));
+
+    const storedObras = localStorage.getItem(this.storageKeyObrasResidente) ?? sessionStorage.getItem(this.storageKeyObrasResidente);
+    if (storedObras) this.obrasResidenteSubject.next(JSON.parse(storedObras));
+
+    const storedDefaults = localStorage.getItem(this.storageKeyDefaults) ?? sessionStorage.getItem(this.storageKeyDefaults);
+    if (storedDefaults) this.defaultsSubject.next(JSON.parse(storedDefaults));
+
+    const storedPanel = localStorage.getItem(this.storageKeySelectedPanel) ?? sessionStorage.getItem(this.storageKeySelectedPanel);
+    if (storedPanel) this.selectedPanelSubject.next(storedPanel);
+
+    const storedObraId = localStorage.getItem(this.storageKeySelectedObraId) ?? sessionStorage.getItem(this.storageKeySelectedObraId);
+    if (storedObraId) this.selectedObraIdSubject.next(Number(storedObraId));
+
   }
 
   public get currentUserValue(): User | null {
@@ -256,6 +318,22 @@ export class AuthService {
 
   public get appInfoValue(): AppInfo | null {
     return this.appInfoSubject.value;
+  }
+
+  public get panelesDisponiblesValue(): PanelDisponible[] {
+    return this.panelesSubject.value;
+  }
+
+  public get obrasResidenteValue(): ObraResidenteOption[] {
+    return this.obrasResidenteSubject.value;
+  }
+
+  public get selectedPanelValue(): string | null {
+    return this.selectedPanelSubject.value;
+  }
+
+  public get selectedObraIdValue(): number | null {
+    return this.selectedObraIdSubject.value;
   }
 
   login(credentials: LoginCredentials, rememberMe: boolean): Observable<LoginResponse> {
@@ -278,13 +356,19 @@ export class AuthService {
         storage.setItem(this.storageKeyAuthz, JSON.stringify(response.authz));
         this.authzSubject.next(response.authz);
 
+        this.hydrateMobileOptions(response, storage);
+        this.ensureDefaultSelection(response, storage);
+
         this.isAuthenticatedSubject.next(true);
       })
     );
   }
 
   getMe(): Observable<MeResponse> {
-    return this.apiService.get<MeResponse>('me').pipe(
+    const obraId = this.selectedObraIdValue;
+    const params = obraId ? { obra_id: obraId } : undefined;
+
+    return this.apiService.get<MeResponse>('me', params).pipe(
       tap(res => {
 
         const storage = this.getStorage();
@@ -300,6 +384,9 @@ export class AuthService {
 
         storage.setItem(this.storageKeyAuthz, JSON.stringify(res.authz));
         this.authzSubject.next(res.authz);
+
+        this.hydrateMobileOptions(res, storage);
+        this.ensureDefaultSelection(res, storage);
 
         // localStorage.setItem('current_user', JSON.stringify(res.user));
         // this.currentUserSubject.next(res.user);
@@ -323,6 +410,11 @@ export class AuthService {
       s.removeItem(this.storageKeyApp);
       s.removeItem(this.storageKeyContexto);
       s.removeItem(this.storageKeyAuthz);
+      s.removeItem(this.storageKeyPaneles);
+      s.removeItem(this.storageKeyObrasResidente);
+      s.removeItem(this.storageKeyDefaults);
+      s.removeItem(this.storageKeySelectedPanel);
+      s.removeItem(this.storageKeySelectedObraId);
     });
 
     // opcional: si quieres que al logout también se olvide el remember
@@ -332,12 +424,88 @@ export class AuthService {
     this.appInfoSubject.next(null);
     this.contextoSubject.next(null);
     this.authzSubject.next(null);
+    this.panelesSubject.next([]);
+    this.obrasResidenteSubject.next([]);
+    this.defaultsSubject.next(null);
+    this.selectedPanelSubject.next(null);
+    this.selectedObraIdSubject.next(null);
     this.isAuthenticatedSubject.next(false);
 
     this.router.navigate(['/login']);
   }
 
 
+
+  setSelectedPanel(panel: string | null): void {
+    const storage = this.getStorage();
+
+    if (panel) {
+      storage.setItem(this.storageKeySelectedPanel, panel);
+    } else {
+      [localStorage, sessionStorage].forEach(s => s.removeItem(this.storageKeySelectedPanel));
+    }
+
+    this.selectedPanelSubject.next(panel);
+  }
+
+  setSelectedObraId(obraId: number | null): void {
+    const storage = this.getStorage();
+
+    if (obraId) {
+      storage.setItem(this.storageKeySelectedObraId, String(obraId));
+    } else {
+      [localStorage, sessionStorage].forEach(s => s.removeItem(this.storageKeySelectedObraId));
+    }
+
+    this.selectedObraIdSubject.next(obraId);
+  }
+
+  private hydrateMobileOptions(response: LoginResponse | MeResponse, storage: Storage): void {
+    const paneles = response.paneles_disponibles ?? [];
+    const obras = response.obras_residente ?? [];
+    const defaults = response.defaults ?? null;
+
+    storage.setItem(this.storageKeyPaneles, JSON.stringify(paneles));
+    storage.setItem(this.storageKeyObrasResidente, JSON.stringify(obras));
+    storage.setItem(this.storageKeyDefaults, JSON.stringify(defaults));
+
+    this.panelesSubject.next(paneles);
+    this.obrasResidenteSubject.next(obras);
+    this.defaultsSubject.next(defaults);
+  }
+
+  private ensureDefaultSelection(response: LoginResponse | MeResponse, storage: Storage): void {
+    const paneles = response.paneles_disponibles ?? [];
+    const obras = response.obras_residente ?? [];
+    const defaults = response.defaults ?? null;
+    const currentPanel = this.selectedPanelSubject.value;
+    const currentObraId = this.selectedObraIdSubject.value;
+    const panelKeys = paneles.map(panel => panel.key);
+
+    if (currentPanel && !panelKeys.includes(currentPanel)) {
+      this.setSelectedPanel(null);
+    }
+
+    if (!this.selectedPanelSubject.value && defaults?.panel) {
+      this.setSelectedPanel(defaults.panel);
+    }
+
+    const currentObraStillValid = currentObraId
+      ? obras.some(obra => Number(obra.id) === Number(currentObraId))
+      : false;
+
+    if (currentObraId && !currentObraStillValid) {
+      this.setSelectedObraId(null);
+    }
+
+    if (!this.selectedObraIdSubject.value && defaults?.obra_id) {
+      this.setSelectedObraId(defaults.obra_id);
+    }
+
+    if (!this.selectedObraIdSubject.value && obras.length === 1) {
+      this.setSelectedObraId(obras[0].id);
+    }
+  }
   hasToken(): boolean {
     return !!(localStorage.getItem(this.storageKeyToken) ?? sessionStorage.getItem(this.storageKeyToken));
   }
@@ -367,3 +535,4 @@ private getStorage(): Storage {
     localStorage.setItem(this.storageKeyRemember, remember ? '1' : '0');
   }
 }
+

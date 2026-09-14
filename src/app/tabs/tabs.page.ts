@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EnvironmentInjector, OnDestroy, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -13,6 +14,7 @@ import {
   logOutOutline,
   people,
   receiptOutline,
+  repeatOutline,
   square,
   triangle,
 } from 'ionicons/icons';
@@ -32,7 +34,8 @@ export class TabsPage implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private router: Router
   ) {
     addIcons({
       triangle,
@@ -44,6 +47,7 @@ export class TabsPage implements OnInit, OnDestroy {
       exitOutline,
       logOutOutline,
       receiptOutline,
+      repeatOutline,
       barChartOutline,
       documentTextOutline,
     });
@@ -62,6 +66,14 @@ export class TabsPage implements OnInit, OnDestroy {
 
   get esObraCivil(): boolean {
     return (this.contexto?.obra?.tipo_obra ?? '').toUpperCase() === 'OBRA_CIVIL';
+  }
+
+  get puedeCambiarContexto(): boolean {
+    return this.authService.panelesDisponiblesValue.length > 1 || this.authService.obrasResidenteValue.length > 1;
+  }
+
+  irSelector() {
+    this.router.navigate(['/selector-panel']);
   }
 
   async presentLogoutConfirm() {

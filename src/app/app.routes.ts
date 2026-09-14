@@ -4,6 +4,11 @@ import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   {
+    path: 'selector-panel',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/selector-panel/selector-panel.page').then(m => m.SelectorPanelPage),
+  },
+  {
   path: 'home',
   canActivate: [authGuard, appShellGuard],
     loadComponent: () => import('./pages/landing/landing.page').then(m => m.LandingPage),
@@ -95,3 +100,4 @@ export const routes: Routes = [
 
  
 ];
+

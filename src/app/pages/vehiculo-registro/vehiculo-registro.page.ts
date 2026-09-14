@@ -119,16 +119,16 @@ export class VehiculoRegistroPage implements OnInit, OnDestroy {
     // Si no existe aún, coméntalo y por ahora solo funcionará el POST.
     this.sub = this.api.get<any>('vehiculos/km-log').subscribe({
       next: (res) => {
-        // Formato esperado recomendado:
-        // { ok: true, vehiculo_empleado_id: X, data: [...] }
+        this.asignacion = res?.asignacion ?? null;
+
         const arr = res?.data ?? res?.registros ?? [];
         this.registros = Array.isArray(arr) ? arr : [];
 
-        // km sugerido: el más reciente (asumiendo que viene desc). Si no, toma max.
         if (this.registros.length > 0) {
           this.kmSugerido = Number(this.registros[0]?.km ?? 0);
         } else {
-          this.kmSugerido = 0;
+          const kmBase = this.asignacion?.km_final ?? this.asignacion?.km_inicial ?? 0;
+          this.kmSugerido = Number(kmBase || 0);
         }
 
         this.loading = false;

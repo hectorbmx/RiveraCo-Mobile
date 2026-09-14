@@ -12,11 +12,49 @@ export const appShellGuard: CanActivateFn = (route, state) => {
     });
   }
 
-  // ✅ Gerencial
+  const paneles = auth.panelesDisponiblesValue;
+  const obras = auth.obrasResidenteValue;
+  const selectedPanel = auth.selectedPanelValue;
+  const selectedObraId = auth.selectedObraIdValue;
+
+  if (selectedPanel === 'gerencial' && auth.hasPermission('app.gerencial.access')) {
+    return router.createUrlTree(['/tabs-gerencial']);
+  }
+
+  if (selectedPanel === 'residente') {
+    if (obras.length === 1 && !selectedObraId) {
+      auth.setSelectedObraId(obras[0].id);
+      return router.createUrlTree(['/tabs', 'tab1']);
+    }
+
+    if (selectedObraId || obras.length <= 1) {
+      return router.createUrlTree(['/tabs', 'tab1']);
+    }
+
+    return router.createUrlTree(['/selector-panel']);
+  }
+
+  if (paneles.length === 1) {
+    const panel = paneles[0].key;
+    auth.setSelectedPanel(panel);
+
+    if (panel === 'gerencial') {
+      return router.createUrlTree(['/tabs-gerencial']);
+    }
+
+    if (obras.length === 1) {
+      auth.setSelectedObraId(obras[0].id);
+      return router.createUrlTree(['/tabs', 'tab1']);
+    }
+  }
+
+  if (paneles.length > 1 || obras.length > 1) {
+    return router.createUrlTree(['/selector-panel']);
+  }
+
   if (auth.hasPermission('app.gerencial.access')) {
     return router.createUrlTree(['/tabs-gerencial']);
   }
 
-  // ✅ Operativo
   return router.createUrlTree(['/tabs', 'tab1']);
 };
