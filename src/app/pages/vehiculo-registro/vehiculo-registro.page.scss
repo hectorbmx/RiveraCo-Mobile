@@ -1,109 +1,335 @@
-// Fondo limpio
-ion-content {
-  --background: #f8f9fa;
+:host {
+  --app-header-bg: #1a3a5c;
+  --app-header-text: #ffffff;
+  --page-bg: #f4f6f8;
+  --card-bg: #ffffff;
+  --card-border: #e5eaf0;
+  --text-primary: #1f2937;
+  --text-secondary: #5b6472;
+  --text-muted: #8a93a2;
+  --badge-bg: #edf2f7;
 }
 
-// Loading
+ion-content {
+  --background: var(--page-bg);
+  background: var(--page-bg);
+}
+
+.custom-header ion-toolbar {
+  --background: var(--app-header-bg);
+  --color: var(--app-header-text);
+  --border-width: 0;
+  --min-height: 58px;
+}
+
+.custom-header ion-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.vehiculo-registro-page {
+  --padding-top: 12px;
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
-  
+  padding: 44px 20px;
+
   ion-spinner {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
-  
+
   p {
-    color: #5f6368;
     font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
   }
 }
 
-// Error
 .error-container {
   padding: 20px 0;
 }
 
 .error-card {
-  background: #fef7f7;
-  border: 1px solid #f5c2c7;
-  
+  border: 1px solid #f4c7cc;
+  background: #fff5f6;
+
+  ion-card-content p {
+    margin: 0;
+    color: #8a1e2d;
+    font-size: 0.9rem;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 4px 10px;
+
+  h2 {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+  }
+
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: var(--badge-bg);
+    color: var(--text-secondary);
+  }
+}
+
+ion-card {
+  margin: 8px 0;
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+
+  ion-card-header {
+    padding: 14px 16px 8px;
+  }
+
+  ion-card-subtitle {
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  ion-card-title {
+    color: var(--text-primary);
+    font-size: 1.08rem;
+    font-weight: 700;
+  }
+
   ion-card-content {
-    p {
-      color: #842029;
-      margin: 0;
-      font-size: 0.9rem;
+    padding: 8px 16px 14px;
+  }
+}
+
+.asignacion-card,
+.registros-card,
+.empty-card,
+.modal-card {
+  margin: 8px 0 16px;
+}
+
+.info-grid {
+  padding: 0;
+
+  ion-row {
+    margin: 0;
+  }
+
+  ion-col {
+    padding: 4px 8px;
+  }
+}
+
+.info-item {
+  .label {
+    margin: 0 0 4px;
+    font-size: 0.68rem;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .value {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  ion-badge {
+    margin-top: 4px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+}
+
+.registros-card {
+  overflow: hidden;
+
+  ion-list {
+    background: transparent;
+    padding: 0;
+  }
+
+  .registro-item {
+    --background: var(--card-bg);
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --inner-padding-end: 0;
+    --min-height: 82px;
+    border-bottom: 1px solid var(--card-border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    ion-label {
+      margin: 10px 0;
+    }
+
+    .horometro-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 1.02rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .horas-badge {
+        background: #eaf2ff;
+        color: #1a3a5c;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.7px;
+      }
+    }
+
+    .registro-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+
+      .fecha-text {
+        font-weight: 600;
+      }
+
+      .notas-text,
+      .gasolina-text {
+        color: var(--text-secondary);
+      }
+
+      .ticket-link {
+        color: var(--app-header-bg);
+        font-weight: 600;
+        text-decoration: none;
+        margin-top: 2px;
+      }
     }
   }
 }
+
+.empty-card {
+  ion-card-content {
+    padding: 28px 16px;
+    text-align: center;
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+  }
+}
+
+ion-badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+ion-badge[color='success'] {
+  --background: #1e8e3e;
+  --color: #ffffff;
+}
+
 ion-footer {
   box-shadow: none !important;
 }
 
 ion-footer ion-toolbar {
+  --background: #ffffff;
   --border-width: 0 !important;
-  border-top: none !important;
 }
 
-/* Modal tipo sheet */
 .nuevo-registro-modal {
-  
   --width: 100%;
   --max-width: 520px;
-  --border-radius: 16px 16px 0 0;
-    --height: 100vh;          /* o 80vh si lo quieres más alto */
+  --height: 100vh;
   --border-radius: 16px 16px 0 0;
 }
 
-/* Fondo y look general del modal */
 .nuevo-registro-modal ion-content {
-  --background: #f7f8fb;
+  --background: var(--page-bg);
+  background: var(--page-bg);
 }
 
-/* Card principal del modal */
 .modal-card {
   border-radius: 16px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+  margin: 0;
 }
 
-/* Texto auxiliar */
 .muted {
-  opacity: 0.75;
   margin: 0 0 12px;
+  opacity: 0.72;
 }
 
-/* Items de campos: sin fondo negro, sin líneas */
 .field-item {
   --background: transparent;
   --padding-start: 0;
   --inner-padding-end: 0;
   --min-height: 0;
-  color:#80868b
-    
+  color: var(--text-muted);
 }
-.ultimo-badge {
-  margin-left: 8px;
-  font-size: 0.9rem;
-  padding: 6px 10px;
-  border-radius: 999px;
-}
+
 .field-label {
-  margin-bottom: 10px; /* separa label del input */
+  margin-bottom: 10px;
   font-weight: 600;
   letter-spacing: 0.2px;
 }
 
-/* Inputs/textarea outline: que se vean blancos consistentes */
-ion-input[fill="outline"],
-ion-textarea[fill="outline"] {
+ion-input[fill='outline'],
+ion-textarea[fill='outline'] {
   --background: #ffffff;
   --border-radius: 12px;
-  
 }
 
-/* Acciones en fila */
+.ultimo-badge {
+  margin-left: 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  padding: 6px 10px;
+}
+
 .modal-actions {
   display: flex;
   gap: 12px;
@@ -113,217 +339,22 @@ ion-textarea[fill="outline"] {
   flex: 1;
 }
 
-/* Spinner en botón */
 .btn-spinner {
   margin-right: 8px;
 }
 
-/* Error compacto */
 .error-mini {
   border-left: 4px solid var(--ion-color-danger);
 }
 
-
-// Encabezado de sección
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 4px 8px 4px;
-  
-  h2 {
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin: 0;
-    color: #1a1a1a;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-  
-  .count-badge {
-    background: #e8eaed;
-    color: #5f6368;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
+ion-toolbar ion-back-button {
+  --color: var(--app-header-text);
 }
 
-// Cards generales
-ion-card {
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  margin: 8px 0;
-  border: 1px solid #e8eaed;
-  background: #ffffff;
-
-  ion-card-header {
-    padding: 12px 16px 8px 16px;
-    
-    ion-card-subtitle {
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 700;
-      font-size: 0.7rem;
-      color: #5f6368;
-      margin-bottom: 4px;
-    }
-    
-    ion-card-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #1a1a1a;
-      line-height: 1.3;
-    }
-  }
-
-  ion-card-content {
-    padding: 8px 16px 12px 16px;
-  }
+ion-button {
+  --border-radius: 12px;
 }
 
-// Card de asignación
-.asignacion-card {
-  margin-bottom: 16px;
-}
-
-// Grid de información
-.info-grid {
-  padding: 0;
-  
-  ion-row {
-    margin-bottom: 0;
-  }
-  
-  ion-col {
-    padding: 4px 8px;
-  }
-}
-
-.info-item {
-  .label {
-    font-size: 0.7rem;
-    color: #80868b;
-    margin: 0 0 4px 0;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-  
-  .value {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin: 0;
-    color: #1a1a1a;
-    line-height: 1.2;
-  }
-  
-  ion-badge {
-    margin-top: 4px;
-    font-size: 0.7rem;
-    padding: 4px 8px;
-  }
-}
-
-// Lista de registros
-.registros-card {
-  overflow: hidden;
-  background: #ffffff;
-  
-  ion-list {
-    padding: 0;
-    background: #ffffff;
-  }
-
-  .registro-item {
-    --background: #ffffff;
-    --color: #1a1a1a;
-    --padding-start: 16px;
-    --padding-end: 16px;
-    --inner-padding-end: 0;
-    --min-height: 70px;
-    border-bottom: 1px solid #e8eaed;
-    
-    &:last-child {
-      border-bottom: none;
-    }
-    
-    &:hover {
-      --background: #f8f9fa;
-    }
-
-    ion-label {
-      margin: 10px 0;
-      
-      .horometro-info {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 6px;
-        
-        h3 {
-          font-weight: 700;
-          font-size: 1rem;
-          color: #1a1a1a;
-          margin: 0;
-        }
-        
-        .horas-badge {
-          background: #e8f0fe;
-          color: #1a73e8;
-          padding: 4px 10px;
-          border-radius: 8px;
-          font-size: 0.7rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.3px;
-        }
-      }
-
-      .registro-details {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        
-        .fecha-text {
-          font-size: 0.75rem;
-          color: #5f6368;
-          font-weight: 500;
-        }
-        
-        .notas-text {
-          font-size: 0.75rem;
-          color: #80868b;
-          font-style: italic;
-          line-height: 1.3;
-        }
-      }
-    }
-  }
-}
-
-// Badges
-ion-badge {
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  
-  &[color="success"] {
-    --background: #1e8e3e;
-    --color: #ffffff;
-  }
-  
-  &[color="medium"] {
-    --background: #80868b;
-    --color: #ffffff;
-  }
-}
-
-// Card vacío
 .empty-card {
   background: #ffffff;
   

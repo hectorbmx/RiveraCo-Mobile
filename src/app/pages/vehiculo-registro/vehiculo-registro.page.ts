@@ -32,6 +32,7 @@ import {
 } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api';
+import { VehiculoDocumentosConsultaComponent } from 'src/app/components/vehiculo-documentos-consulta/vehiculo-documentos-consulta.component';
 
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
@@ -55,7 +56,7 @@ type VehiculoKmLog = {
     IonBackButton, IonContent, IonHeader, IonTextarea, IonInput, IonTitle, IonToolbar,
     IonCol, IonBadge, IonList, IonItem, IonLabel, IonButton, IonFooter, IonText, IonModal,
     IonCardTitle, IonRow, IonGrid, IonCardHeader, IonCardSubtitle, CommonModule, FormsModule,
-    IonSpinner, IonCard, IonCardContent, IonButtons
+    IonSpinner, IonCard, IonCardContent, IonButtons, VehiculoDocumentosConsultaComponent
   ],
 })
 export class VehiculoRegistroPage implements OnInit, OnDestroy {

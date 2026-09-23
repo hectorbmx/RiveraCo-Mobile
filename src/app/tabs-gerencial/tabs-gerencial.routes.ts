@@ -45,6 +45,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../pages/gerencial-maquinas/gerencial-maquinas.page').then(m => m.GerencialMaquinasPage),
       },
+      {
+        path: 'vehiculos',
+        loadComponent: () =>
+          import('../pages/gerencial-vehiculos/gerencial-vehiculos.page').then(m => m.GerencialVehiculosPage),
+      },
        {
           path: 'maquina-detalles/:id',
           loadComponent: () => import('../pages/gerencial-maquinas/maquina-detalles/maquina-detalles.page').then( m => m.MaquinaDetallesPage)
@@ -96,3 +101,5 @@ export const routes: Routes = [
     ],
   },
 ];
+
+

@@ -13,6 +13,9 @@
         <div class="obra-name" *ngIf="obra">
           {{ obra.nombre }}
         </div>
+        <div class="selected-pila" *ngIf="selectedPilaId">
+          {{ selectedPilaLabel || ('Pila #' + selectedPilaId) }}
+        </div>
       </div>
 
       <div class="profile-icon">
@@ -111,7 +114,7 @@
     <ng-template #emptyState>
       <div class="empty-state">
         <ion-icon name="cube-outline"></ion-icon>
-        <div>Sin pilas realizadas</div>
+        <div>{{ selectedPilaId ? 'Sin pilas realizadas para esta pila' : 'Sin pilas realizadas' }}</div>
       </div>
     </ng-template>
 
@@ -119,3 +122,4 @@
   </section>
 
 </ion-content>
+

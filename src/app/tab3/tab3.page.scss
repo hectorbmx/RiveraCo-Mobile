@@ -17,31 +17,23 @@
 .machine-date {
   width: 100%;
   height: 44px;
-
-  // look & feel tipo tus inputs/cards
-  background: #f8fafc;              // slate-50
-  border: 1px solid #e2e8f0;         // slate-200
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 0 12px;
-
   font-size: 14px;
   font-weight: 600;
-  color: #0f172a;                    // slate-900
-
+  color: #0f172a;
   outline: none;
   box-shadow: none;
-
-  // quita estilos nativos feos
   -webkit-appearance: none;
   appearance: none;
-
-  // alinear texto centrado vertical
   display: flex;
   align-items: center;
 
   &:focus {
-    border-color: #ffc107;
-    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
     background: #ffffff;
   }
 
@@ -51,19 +43,17 @@
   }
 }
 
-/* El icono del calendario (Chrome/WebView) */
 .machine-date::-webkit-calendar-picker-indicator {
   opacity: 0.85;
   cursor: pointer;
   padding: 6px;
 }
 
-/* Si en iOS se ve raro, esto ayuda a mantener el padding */
 .machine-date::-webkit-date-and-time-value {
   text-align: left;
 }
 
-// Pila Toolbar (despuÃ©s de los estilos de .perf-card)
+// Pila Toolbar
 .pila-toolbar {
   display: flex;
   flex-direction: column;
@@ -145,7 +135,6 @@
   }
 }
 
-// Responsive para toolbar
 @media (min-width: 640px) {
   .pila-toolbar {
     flex-direction: row;
@@ -162,17 +151,21 @@
     }
   }
 }
+
+// Estilos Generales de la vista de Comisiones
 .comision-content {
-  --background: #f5f7fa;
+  // Fondo ligeramente más oscuro para dar resalte a los contenedores blancos
+  --background: #eef2f6;
   --padding-bottom: 80px;
 
-  // Info Card (Datos Generales)
+  // Info Card (Tarjeta superior de Obra Activa)
   .info-card {
     background: #ffffff;
     border-radius: 16px;
     margin: 20px 16px 16px;
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-top: 5px solid #1a3a5c;
 
     .info-card-header {
       margin-bottom: 20px;
@@ -276,32 +269,9 @@
         color: #637487;
       }
     }
-
-    .info-location {
-      padding-top: 16px;
-      border-top: 1px solid #e8eaed;
-
-      .info-label {
-        display: block;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.8px;
-        color: #8a9099;
-        margin-bottom: 6px;
-        text-transform: uppercase;
-      }
-
-      .info-value {
-        margin: 0;
-        font-size: 14px;
-        font-weight: 600;
-        color: #1a3a5c;
-        line-height: 1.4;
-      }
-    }
   }
 
-  // MÃ¡quina en Obra Card
+  // Máquina Grid en Nueva Comisión
   .machine-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -342,15 +312,17 @@
     }
   }
 
-  // Section Cards
+  // Section Cards (Contenedores principales)
   .section-card {
     background: #ffffff;
     border-radius: 16px;
-    margin: 16px;
+    margin: 20px 16px;
     padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e1e4e8;
   }
 
+  // Títulos con acento de línea vertical
   .section-header {
     margin-bottom: 20px;
     display: flex;
@@ -359,20 +331,33 @@
 
     .section-title {
       margin: 0;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
       color: #1a3a5c;
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+
+      // Línea de acento visual a la izquierda del texto
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 16px;
+        background-color: #2563eb;
+        border-radius: 4px;
+        margin-right: 8px;
+      }
     }
 
     .section-count {
-      background: #e8eaed;
-      color: #5a6c7d;
-      font-size: 13px;
+      background: #1a3a5c;
+      color: #ffffff;
+      font-size: 12px;
       font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 3px 10px;
+      border-radius: 12px;
       min-width: 28px;
       text-align: center;
     }
@@ -401,9 +386,9 @@
     width: 100%;
     border: 1px solid #e1e4e8;
     background: #ffffff;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -433,7 +418,7 @@
     &.visual-ambar {
       border-color: #fed7aa;
       background: #fffaf3;
-      box-shadow: 0 4px 14px rgba(194, 65, 12, 0.08);
+      box-shadow: 0 4px 12px rgba(194, 65, 12, 0.05);
     }
 
     &.visual-verde {
@@ -460,7 +445,7 @@
     align-items: center;
     justify-content: center;
     min-height: 24px;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 999px;
     background: #e8eaed;
     color: #5a6c7d;
@@ -607,6 +592,63 @@
     }
   }
 
+  // Grids de perforación e insumos de etapa
+  .perf-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 12px;
+    background: #f8fafc;
+
+    .perf-header {
+      margin-bottom: 12px;
+      .perf-title {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a3a5c;
+      }
+    }
+  }
+
+  .perf-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+
+    .perf-item {
+      .perf-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: #5a6c7d;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+      }
+
+      .perf-input {
+        --background: #ffffff;
+        --border-color: #e1e4e8;
+        --border-radius: 8px;
+        --border-width: 1px;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        --color: #0f172a;
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 800;
+        min-height: 44px;
+
+        &::part(native) {
+          color: #0f172a;
+          font-weight: 800;
+          opacity: 1;
+        }
+      }
+    }
+  }
+
   .etapa-time-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -626,26 +668,6 @@
       text-transform: uppercase;
     }
 
-    .perf-input {
-      --background: #ffffff;
-      --border-color: #e1e4e8;
-      --border-radius: 8px;
-      --border-width: 1px;
-      --padding-start: 8px;
-      --padding-end: 8px;
-      --color: #0f172a;
-      color: #0f172a;
-      font-size: 14px;
-      font-weight: 800;
-      min-height: 44px;
-
-      &::part(native) {
-        color: #0f172a;
-        font-weight: 800;
-        opacity: 1;
-      }
-    }
-
     .production-field .perf-label {
       color: #1a3a5c;
     }
@@ -658,6 +680,7 @@
     }
   }
 
+  // Galería e insumos de Fotos
   .photo-button {
     width: 100%;
     min-height: 46px;
@@ -728,20 +751,63 @@
     }
   }
 
-  .empty-state {
-    padding: 36px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    color: #5a6c7d;
+  // Personal
+  .personal-card {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
 
-    ion-icon {
-      font-size: 42px;
-      margin-bottom: 10px;
+    .personal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .personal-name {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a3a5c;
+      }
+
+      .personal-role {
+        font-size: 11px;
+        color: #64748b;
+      }
+    }
+
+    .activities-grid {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .activity-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .activity-label {
+        font-size: 13px;
+        color: #334155;
+        font-weight: 600;
+      }
+
+      .activity-personal-info {
+        display: flex;
+        flex-direction: column;
+
+        .activity-role {
+          font-size: 11px;
+          color: #64748b;
+        }
+      }
     }
   }
 
+  // Inputs y Textareas de Ionic
   .custom-textarea {
     --background: #f8f9fb;
     --border-color: #e1e4e8;
@@ -756,381 +822,58 @@
     font-size: 15px;
   }
 
-  // Form Groups
-  .form-group {
-    margin-bottom: 20px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      color: #5a6c7d;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
-
-    .custom-input,
-    .custom-textarea {
-      --background: #f8f9fb;
-      --border-color: #e1e4e8;
-      --border-radius: 8px;
-      --border-width: 1px;
-      --padding-start: 16px;
-      --padding-end: 16px;
-      --placeholder-color: #a0aab5;
-      --color: #1a3a5c;
-      font-size: 15px;
-
-      &::part(native) {
-        border-radius: 8px;
-      }
-    }
-
-    .custom-input {
-      min-height: 48px;
-    }
-
-    .custom-textarea {
-      --padding-top: 12px;
-      --padding-bottom: 12px;
-    }
-  }
-
-  // Personal Cards
-  .personal-card {
-    background: #f8f9fb;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .personal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-
-      .personal-info {
-        flex: 1;
-
-        .personal-name {
-          margin: 0;
-          font-size: 16px;
-          font-weight: 700;
-          color: #1a3a5c;
-        }
-
-        .personal-role {
-          display: block;
-          margin-top: 2px;
-          font-size: 12px;
-          font-weight: 600;
-          color: #8a9099;
-        }
-      }
-
-      .chevron-icon {
-        font-size: 20px;
-        color: #c4c9cf;
-      }
-    }
-
-    .time-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
-
-      .time-item {
-        .time-label {
-          display: block;
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-          color: #5a6c7d;
-          margin-bottom: 6px;
-          text-transform: uppercase;
-        }
-
-        .time-input {
-          --background: #ffffff;
-          --border-color: #e1e4e8;
-          --border-radius: 8px;
-          --padding-start: 12px;
-          --padding-end: 12px;
-          --color: #1a3a5c;
-          font-size: 14px;
-          font-weight: 600;
-          min-height: 40px;
-          text-align: center;
-        }
-      }
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
-
-      .stat-item {
-        background: #ffffff;
-        border-radius: 8px;
-        padding: 12px;
-        text-align: center;
-
-        .stat-label {
-          display: block;
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-          color: #5a6c7d;
-          margin-bottom: 6px;
-          text-transform: uppercase;
-        }
-
-        .stat-value {
-          font-size: 20px;
-          font-weight: 700;
-          color: #1a3a5c;
-        }
-      }
-    }
-
-    .activities-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-
-      .activity-item {
-        background: #ffffff;
-        border-radius: 8px;
-        padding: 12px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .activity-label {
-          font-size: 14px;
-          font-weight: 500;
-          color: #1a3a5c;
-        }
-
-        .custom-toggle {
-          --handle-width: 24px;
-          --handle-height: 24px;
-          --handle-spacing: 2px;
-          --background: #e1e4e8;
-          --background-checked: #2563eb;
-          --handle-background: #ffffff;
-          --handle-background-checked: #ffffff;
-          margin: 0;
-          padding: 0;
-          width: 48px;
-          height: 28px;
-        }
-      }
-    }
-  }
-
-  .compact-personal {
-    padding: 0;
-
-    .single-activity {
-      background: #f8f9fb;
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      .activity-label {
-        color: #1a3a5c;
-        font-size: 14px;
-        font-weight: 700;
-        line-height: 1.25;
-        padding-right: 12px;
-      }
-    }
-  }
-
-  // PerforaciÃ³n Cards
-  .perf-card {
-    background: #f8f9fb;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .perf-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-
-      .perf-title {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 700;
-        color: #1a3a5c;
-      }
-
-      .perf-remove-btn {
-        background: transparent;
-        border: none;
-        color: #dc2626;
-        font-size: 14px;
-        font-weight: 600;
-        padding: 4px 8px;
-        cursor: pointer;
-
-        &:disabled {
-          opacity: 0.4;
-          cursor: not-allowed;
-        }
-      }
-    }
-
-    .perf-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-
-      .perf-item {
-        .perf-label {
-          display: block;
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.5px;
-          color: #5a6c7d;
-          margin-bottom: 8px;
-          text-transform: uppercase;
-        }
-
-        .perf-input {
-          --background: #ffffff;
-          --border-color: #e1e4e8;
-          --border-radius: 8px;
-          --border-width: 1px;
-          --padding-start: 12px;
-          --padding-end: 12px;
-          --color: #1a3a5c;
-          font-size: 15px;
-          min-height: 44px;
-
-          &::part(native) {
-            border-radius: 8px;
-          }
-        }
-      }
-    }
-  }
-
-  .add-row-btn {
-    width: 100%;
-    background: transparent;
-    border: 2px dashed #2563eb;
-    border-radius: 12px;
-    padding: 14px;
-    margin-top: 16px;
-    color: #2563eb;
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    ion-icon {
-      font-size: 20px;
-    }
-
-    &:active {
-      transform: scale(0.98);
-    }
-  }
-
-  // Action Section
+  // Acciones y Botones
   .action-section {
-    padding: 16px;
+    margin: 24px 16px;
 
     .save-button {
-      --background: #1a3a5c;
-      --background-hover: #152e47;
-      --background-activated: #152e47;
-      --border-radius: 12px;
-      --box-shadow: 0 4px 12px rgba(26, 58, 92, 0.2);
-      height: 52px;
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .native-save-button {
       width: 100%;
-      border: 0;
+      min-height: 50px;
       background: #1a3a5c;
       color: #ffffff;
+      border: 0;
       border-radius: 12px;
-      height: 52px;
-      font-weight: 800;
       font-size: 14px;
-      letter-spacing: 1px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
+      cursor: pointer;
       box-shadow: 0 4px 12px rgba(26, 58, 92, 0.2);
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &:active {
+        transform: scale(0.99);
+      }
     }
   }
 
-  // No Context
-  .no-context {
+  .empty-state {
+    padding: 36px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
     text-align: center;
+    color: #5a6c7d;
 
     ion-icon {
-      font-size: 64px;
-      color: #8a9099;
-      margin-bottom: 16px;
-    }
-
-    p {
-      color: #5a6c7d;
-      font-size: 15px;
-      line-height: 1.5;
+      font-size: 42px;
+      margin-bottom: 10px;
     }
   }
-}
 
-// Responsive
-@media (min-width: 768px) {
-  .comision-content {
-    .info-card,
-    .section-card {
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+  .no-context {
+    padding: 60px 20px;
+    text-align: center;
+    color: #64748b;
 
-    .action-section {
-      max-width: 800px;
-      margin: 0 auto;
+    ion-icon {
+      font-size: 48px;
+      color: #ef4444;
+      margin-bottom: 12px;
     }
   }
 }

@@ -165,7 +165,7 @@
             <ion-input type="time" [(ngModel)]="etapaForm.hora_fin" class="perf-input" fill="outline"></ion-input>
           </div>
           <div class="perf-item production-field" *ngIf="etapaSeleccionada.produccion as produccion">
-            <label class="perf-label">{{ produccion.unidad }}</label>
+            <label class="perf-label">{{ etiquetaProduccion(produccion) }}</label>
             <ion-input
               type="number"
               [step]="produccion.input?.step || '0.01'"
@@ -173,6 +173,7 @@
               [(ngModel)]="etapaForm.produccion_valor"
               class="perf-input production-input"
               fill="outline"
+              placeholder="0.00"
             ></ion-input>
           </div>
         </div>
@@ -220,7 +221,10 @@
 
         <div *ngFor="let p of personalSinResidente" class="personal-card compact-personal">
           <div class="activity-item single-activity">
-            <span class="activity-label">{{ p.nombre }}</span>
+            <div class="activity-personal-info">
+              <span class="activity-label">{{ p.nombre }}</span>
+              <span class="activity-role">{{ p.rol_nombre || 'Sin rol' }}</span>
+            </div>
             <ion-toggle [(ngModel)]="etapaForm.personal[p.obra_empleado_id]" class="custom-toggle"></ion-toggle>
           </div>
         </div>
@@ -308,6 +312,10 @@
             <div class="perf-item">
               <label class="perf-label">Vol. bentonita</label>
               <ion-input type="number" [(ngModel)]="d.vol_bentonita" class="perf-input" fill="outline"></ion-input>
+            </div>
+            <div class="perf-item">
+              <label class="perf-label">M3 concreto</label>
+              <ion-input type="number" [(ngModel)]="d.vol_concreto" class="perf-input" fill="outline"></ion-input>
             </div>
             <div class="perf-item">
               <label class="perf-label">ML ademe</label>

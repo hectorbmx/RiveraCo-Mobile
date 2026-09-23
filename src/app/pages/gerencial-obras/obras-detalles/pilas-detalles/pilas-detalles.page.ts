@@ -29,8 +29,11 @@ export class PilasDetallesPage implements OnInit {
 
   loading = true;
   obraId!: number;
+  selectedPilaId: number | null = null;
+  selectedPilaLabel = '';
 
   obra: any = null;
+  allRows: any[] = [];
   rows: any[] = [];
   totalRealizadas = 0;
 
@@ -50,6 +53,16 @@ export class PilasDetallesPage implements OnInit {
 
   ngOnInit() {
     this.obraId = Number(this.route.snapshot.paramMap.get('id'));
+    const query = this.route.snapshot.queryParamMap;
+    const pilaId = Number(query.get('pila_id'));
+
+    this.selectedPilaId = Number.isFinite(pilaId) && pilaId > 0 ? pilaId : null;
+    this.selectedPilaLabel = this.buildSelectedPilaLabel(
+      query.get('tipo'),
+      query.get('diametro'),
+      query.get('profundidad')
+    );
+
     this.load();
   }
 
@@ -61,8 +74,11 @@ export class PilasDetallesPage implements OnInit {
         const d = resp?.data;
 
         this.obra = d?.obra ?? null;
-        this.rows = d?.rows ?? [];
-        this.totalRealizadas = d?.total_realizadas ?? 0;
+        this.allRows = d?.rows ?? [];
+        this.rows = this.filtrarRowsPorPila(this.allRows);
+        this.totalRealizadas = this.selectedPilaId
+          ? this.sumarPilas(this.rows)
+          : (d?.total_realizadas ?? 0);
 
         this.loading = false;
       },
@@ -71,6 +87,41 @@ export class PilasDetallesPage implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  filtrarRowsPorPila(rows: any[]): any[] {
+    if (!this.selectedPilaId) {
+      return rows;
+    }
+
+    return rows
+      .map((row) => {
+        const comisiones = (row.comisiones ?? [])
+          .filter((comision: any) => Number(comision?.pila?.id) === this.selectedPilaId);
+
+        return {
+          ...row,
+          comisiones,
+          comisiones_registradas: comisiones.length,
+          total_pilas: this.sumarComisiones(comisiones),
+        };
+      })
+      .filter((row) => row.comisiones.length > 0);
+  }
+
+  sumarPilas(rows: any[]): number {
+    return rows.reduce((total, row) => total + Number(row?.total_pilas ?? 0), 0);
+  }
+
+  sumarComisiones(comisiones: any[]): number {
+    return comisiones.reduce((total, comision) => total + Number(comision?.total_pilas ?? 0), 0);
+  }
+
+  buildSelectedPilaLabel(tipo: string | null, diametro: string | null, profundidad: string | null): string {
+    const partes = [tipo, diametro ? `${diametro}m diam.` : null, profundidad ? `${profundidad}m prof.` : null]
+      .filter(Boolean);
+
+    return partes.join(' - ');
   }
 
   goBack() {

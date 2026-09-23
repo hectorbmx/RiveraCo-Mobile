@@ -1,14 +1,14 @@
-<ion-header>
-  <ion-toolbar color="primary">
+<ion-header class="custom-header">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
     </ion-buttons>
 
-    <ion-title>Registro de Vehículo</ion-title>
+    <ion-title>REGISTRO</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding vehiculo-registro-page">
   <!-- Loading -->
   <div *ngIf="loading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
@@ -58,6 +58,10 @@
             </ion-col>
           </ion-row>
         </ion-grid>
+
+        <app-vehiculo-documentos-consulta
+          [documentosConsulta]="asignacion?.vehiculo?.documentos_consulta"
+        ></app-vehiculo-documentos-consulta>
       </ion-card-content>
     </ion-card>
 

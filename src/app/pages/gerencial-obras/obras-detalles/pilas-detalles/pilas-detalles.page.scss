@@ -270,3 +270,14 @@ ion-content.pilas-content {
     grid-template-columns: 1fr;
   }
 }
+.selected-pila {
+  display: inline-flex;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: rgba(246, 195, 0, 0.16);
+  color: var(--accent-yellow);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+

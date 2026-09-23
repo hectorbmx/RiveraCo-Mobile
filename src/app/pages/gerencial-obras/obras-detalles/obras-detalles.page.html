@@ -42,6 +42,50 @@
       <div class="loading-text">Cargando obra...</div>
     </div>
 
+    <section class="card attendance-card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Asistencia de hoy</div>
+          <div class="attendance-date">{{ asistenciaHoy?.date || 'Sin datos del API' }}</div>
+        </div>
+        <ion-icon class="card-icon" name="people-outline"></ion-icon>
+      </div>
+
+      <div class="attendance-status" [ngClass]="estadoAsistenciaClase()">
+        <ion-icon [name]="iconoAsistencia()"></ion-icon>
+        <div>
+          <div class="attendance-title">{{ estadoAsistenciaTitulo() }}</div>
+          <div class="attendance-detail">{{ estadoAsistenciaDetalle() }}</div>
+        </div>
+      </div>
+
+      <div class="attendance-kpis">
+        <div class="attendance-mini">
+          <span>Esperados</span>
+          <strong>{{ asistenciaHoy?.resumen?.esperados ?? 0 }}</strong>
+        </div>
+        <div class="attendance-mini">
+          <span>Con entrada</span>
+          <strong>{{ asistenciaHoy?.resumen?.con_entrada ?? 0 }}</strong>
+        </div>
+        <div class="attendance-mini">
+          <span>Con foto</span>
+          <strong>{{ asistenciaHoy?.resumen?.con_entrada_y_foto ?? 0 }}</strong>
+        </div>
+        <div class="attendance-mini">
+          <span>Pendientes</span>
+          <strong>{{ (asistenciaHoy?.resumen?.sin_entrada ?? 0) + (asistenciaHoy?.resumen?.entrada_sin_foto ?? 0) }}</strong>
+        </div>
+      </div>
+
+      <div class="attendance-pending" *ngIf="faltantesAsistencia().length">
+        <div class="missing-title">Por revisar</div>
+        <div class="missing-row" *ngFor="let e of faltantesAsistencia()">
+          <span>{{ e.empleado_nombre || ('Empleado #' + e.empleado_id) }}</span>
+          <strong>{{ e.status === 'entrada_sin_foto' ? 'Sin foto' : 'Sin entrada' }}</strong>
+        </div>
+      </div>
+    </section>
     <div class="kpi-grid">
   <!-- Card 1: Cobranza -->
   <div class="kpi">
@@ -167,26 +211,49 @@
       </ng-template>
     </section>
 
-    <!-- Pilas preview -->
+    <!-- Pilas asignadas -->
     <section class="card">
       <div class="card-header">
-        <div class="card-title">Pilas</div>
+        <div class="card-title">Pilas asignadas</div>
         <ion-icon class="card-icon" name="cube-outline"></ion-icon>
       </div>
 
       <ng-container *ngIf="pilasPreview?.length; else noPilas">
-        <div class="list">
-          <div class="list-item" *ngFor="let p of pilasPreview" (click)="goToPilasDetalles()">
-            <div class="li-left">
-              <div class="li-title">
-                {{ p.tipo }} — {{ p.cantidad_programada }}
+        <div class="pile-type-list">
+          <div class="pile-type-card" *ngFor="let p of pilasPreview" (click)="goToPilasDetalles(p)">
+            <div class="pile-type-head">
+              <div>
+                <div class="pile-type-title">{{ p.tipo || 'Sin tipo' }}</div>
+                <div class="pile-type-sub">
+                  {{ p.diametro }}m diam. • {{ p.profundidad }}m prof.
+                  <span *ngIf="p.ubicacion"> • {{ p.ubicacion }}</span>
+                </div>
               </div>
-              <div class="li-sub">
-                {{ p.diametro }}cm • {{ p.profundidad }}m
-                <span *ngIf="p.ubicacion"> • {{ p.ubicacion }}</span>
+              <strong>{{ pilaPorcentaje(p) | number:'1.0-0' }}%</strong>
+            </div>
+
+            <div class="pile-type-progress">
+              <div class="pile-type-fill" [style.width.%]="pilaPorcentaje(p)"></div>
+            </div>
+
+            <div class="pile-type-metrics">
+              <div>
+                <span>Programadas</span>
+                <b>{{ p.cantidad_programada ?? 0 }}</b>
+              </div>
+              <div>
+                <span>Cerradas</span>
+                <b>{{ p.cantidad_ejecutada ?? 0 }}</b>
+              </div>
+              <div>
+                <span>Faltan</span>
+                <b>{{ faltantesPila(p) }}</b>
+              </div>
+              <div>
+                <span>Estado</span>
+                <b>{{ p.activo ? 'Activa' : 'Inactiva' }}</b>
               </div>
             </div>
-            <ion-icon class="li-arrow" name="chevron-forward-outline"></ion-icon>
           </div>
         </div>
       </ng-container>
@@ -198,7 +265,14 @@
         </div>
       </ng-template>
     </section>
-
     <div class="bottom-spacer"></div>
   </div>
 </ion-content>
+
+
+
+
+
+
+
+

@@ -72,7 +72,14 @@ cargarMaquinas(event?: any) {
   this.maquinasSvc.getMaquinas(page, q, this.enUso).subscribe({
    next: (res) => {
   const response = res as MaquinasResponse;
-  this.maquinas = response.data.data;
+  this.maquinas = [...response.data.data].sort((a, b) => {
+    const codigoA = (a.codigo ?? '').trim().toLowerCase();
+    const codigoB = (b.codigo ?? '').trim().toLowerCase();
+    const nombreA = (a.nombre ?? '').trim().toLowerCase();
+    const nombreB = (b.nombre ?? '').trim().toLowerCase();
+
+    return codigoA.localeCompare(codigoB) || nombreA.localeCompare(nombreB);
+  });
   this.loading = false;
   if (event) event.target.complete();
 },

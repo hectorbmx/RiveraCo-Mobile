@@ -35,10 +35,18 @@
     <section class="obra-section" *ngIf="selectedPanel === 'residente' && obras.length > 1">
       <h2>Selecciona obra</h2>
 
+      <ion-searchbar
+        class="obra-search"
+        placeholder="Buscar obra"
+        debounce="150"
+        [value]="obraSearch"
+        (ionInput)="onObraSearch($event)">
+      </ion-searchbar>
+
       <button
         type="button"
         class="obra-row"
-        *ngFor="let obra of obras; trackBy: trackByObra"
+        *ngFor="let obra of obrasFiltradas; trackBy: trackByObra"
         [class.active]="auth.selectedObraIdValue === obra.id"
         (click)="chooseObra(obra)">
         <span>
@@ -47,6 +55,11 @@
         </span>
         <ion-icon name="chevron-forward-outline"></ion-icon>
       </button>
+
+      <p class="empty-obras" *ngIf="obrasFiltradas.length === 0">
+        No se encontraron obras.
+      </p>
     </section>
   </section>
 </ion-content>
+

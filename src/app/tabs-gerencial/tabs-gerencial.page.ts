@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { briefcaseOutline, calculatorOutline, cogOutline, gridOutline, homeOutline, logOutOutline, peopleOutline, repeatOutline, speedometerOutline } from 'ionicons/icons';
+import { briefcaseOutline, calculatorOutline, carSportOutline, cogOutline, gridOutline, homeOutline, logOutOutline, peopleOutline, repeatOutline, speedometerOutline } from 'ionicons/icons';
 import { AuthService } from '../services/auth';
 
 @Component({
@@ -22,7 +22,7 @@ export class TabsGerencialPage {
     private alertController: AlertController,
     private router: Router
   ) {
-    addIcons({ homeOutline, gridOutline, cogOutline, peopleOutline, calculatorOutline, logOutOutline, briefcaseOutline, speedometerOutline, repeatOutline });
+    addIcons({ homeOutline, gridOutline, cogOutline, peopleOutline, calculatorOutline, logOutOutline, briefcaseOutline, carSportOutline, speedometerOutline, repeatOutline });
   }
 
   get puedeCambiarContexto(): boolean {
@@ -46,4 +46,5 @@ export class TabsGerencialPage {
     await alert.present();
   }
 }
+
 

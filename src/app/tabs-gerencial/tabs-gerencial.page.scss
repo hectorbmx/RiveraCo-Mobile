@@ -1,0 +1,16 @@
+ion-tab-bar {
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-inline: 4px;
+  scrollbar-width: none;
+}
+
+ion-tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+ion-tab-button {
+  flex: 0 0 auto;
+  min-width: 84px;
+}

@@ -44,13 +44,15 @@ export class GerencialPersonalService {
     return this.api.get(this.base, httpParams);
   }
 
-  show(id: number): Observable<ApiOk<any>> {
-    return this.api.get(`${this.base}/${id}`);
+    show(id: number, weekStart?: string | null): Observable<ApiOk<any>> {
+    return this.api.get(`${this.base}/${id}`, weekStart ? { week_start: weekStart } : undefined);
   }
-  getEmpleado(id: string | number) {
-  return this.api.get<any>(`${this.base}/${id}`);
-}
+
+  getEmpleado(id: string | number, weekStart?: string | null) {
+    return this.api.get<any>(`${this.base}/${id}`, weekStart ? { week_start: weekStart } : undefined);
+  }
   areas(): Observable<{ ok: boolean; data: AreaDto[] }> {
     return this.http.get<{ ok: boolean; data: AreaDto[] }>(`/api/v1/areas`);
   }
 }
+

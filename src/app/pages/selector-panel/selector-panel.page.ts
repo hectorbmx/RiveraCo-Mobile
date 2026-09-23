@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonTitle, IonToolbar, ToastController } from '@ionic/angular/standalone';
+import { IonButton, IonContent, IonHeader, IonIcon, IonSearchbar, IonSpinner, IonTitle, IonToolbar, ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { businessOutline, chevronForwardOutline, constructOutline, refreshOutline } from 'ionicons/icons';
 import { firstValueFrom } from 'rxjs';
@@ -12,12 +12,13 @@ import { AuthService, ObraResidenteOption, PanelDisponible } from '../../service
   templateUrl: './selector-panel.page.html',
   styleUrls: ['./selector-panel.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonButton, IonContent, IonHeader, IonIcon, IonSpinner, IonTitle, IonToolbar],
+  imports: [CommonModule, IonButton, IonContent, IonHeader, IonIcon, IonSearchbar, IonSpinner, IonTitle, IonToolbar],
 })
 export class SelectorPanelPage implements OnInit {
   paneles: PanelDisponible[] = [];
   obras: ObraResidenteOption[] = [];
   selectedPanel: string | null = null;
+  obraSearch = '';
   loading = false;
 
   constructor(
@@ -91,10 +92,37 @@ export class SelectorPanelPage implements OnInit {
     return obra.id;
   }
 
+  get obrasFiltradas(): ObraResidenteOption[] {
+    const term = this.normalizeSearch(this.obraSearch);
+
+    if (!term) {
+      return this.obras;
+    }
+
+    return this.obras.filter((obra) => {
+      const clave = this.normalizeSearch(obra.clave_obra || '');
+      const nombre = this.normalizeSearch(obra.nombre || '');
+
+      return clave.includes(term) || nombre.includes(term);
+    });
+  }
+
+  onObraSearch(event: CustomEvent) {
+    this.obraSearch = String(event.detail?.value || '');
+  }
+
   private syncFromAuth() {
     this.paneles = this.auth.panelesDisponiblesValue;
     this.obras = this.auth.obrasResidenteValue;
     this.selectedPanel = this.auth.selectedPanelValue;
+  }
+
+  private normalizeSearch(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
   }
 
   private async showToast(message: string, color: 'success' | 'danger' | 'warning') {
@@ -108,4 +136,7 @@ export class SelectorPanelPage implements OnInit {
     await toast.present();
   }
 }
+
+
+
 

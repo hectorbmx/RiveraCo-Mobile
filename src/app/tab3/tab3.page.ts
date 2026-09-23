@@ -677,6 +677,12 @@ export class Tab3Page implements OnInit {
       return;
     }
 
+    const produccionRequerida = this.produccionSeleccionada();
+    if (produccionRequerida?.campo === 'vol_concreto' && Number(this.etapaForm.produccion_valor ?? 0) <= 0) {
+      await this.showToast(`Captura ${this.etiquetaProduccion(produccionRequerida).toLowerCase()}`, 'danger');
+      return;
+    }
+
     this.guardandoEtapa = true;
     const comisionId = this.comisionSeleccionada.id;
     const etapaKey = this.etapaSeleccionada.etapa;
@@ -764,6 +770,16 @@ export class Tab3Page implements OnInit {
 
   produccionSeleccionada(): ProduccionEtapa | null {
     return (this.etapaSeleccionada?.produccion ?? null) as ProduccionEtapa | null;
+  }
+
+  etiquetaProduccion(produccion: ProduccionEtapa | null | undefined): string {
+    if (!produccion) return 'Produccion';
+
+    if (produccion.campo === 'vol_concreto') {
+      return 'M3 de concreto';
+    }
+
+    return `${produccion.label} (${produccion.unidad})`;
   }
 
   etiquetaAccionEtapa(etapa: any): string {

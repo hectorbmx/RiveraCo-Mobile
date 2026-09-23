@@ -220,3 +220,158 @@ ion-list {
   border-radius: 12px;
   margin: 20px 0 10px;
 }
+.attendance-week {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  padding: 14px;
+}
+
+.week-nav {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+
+  ion-button {
+    --color: var(--navy);
+    font-size: 12px;
+    font-weight: 800;
+    min-width: 92px;
+  }
+}
+
+.week-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--navy);
+  font-size: 12px;
+  text-align: center;
+
+  strong {
+    font-size: 13px;
+  }
+
+  span {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+}
+
+.week-current-btn {
+  width: 100%;
+  min-height: 34px;
+  margin: 10px 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #eef3fb;
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(74px, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.week-day {
+  min-height: 118px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--navy);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  padding: 10px 8px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 22px;
+  }
+
+  .day-label {
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  strong {
+    font-size: 12px;
+  }
+
+  small {
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .day-time {
+    color: #475569;
+    font-size: 10px;
+    font-weight: 800;
+  }
+}
+
+.week-day.attendance-completa {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+
+  ion-icon,
+  small {
+    color: #15803d;
+  }
+}
+
+.week-day.attendance-entrada_sin_foto {
+  border-color: #fed7aa;
+  background: #fff7ed;
+
+  ion-icon,
+  small {
+    color: #c2410c;
+  }
+}
+
+.week-day.attendance-sin_entrada {
+  border-color: #fecaca;
+  background: #fef2f2;
+
+  ion-icon,
+  small {
+    color: #b91c1c;
+  }
+}
+
+@media (max-width: 768px) {
+  .week-nav {
+    grid-template-columns: 1fr 1fr;
+
+    .week-title {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+  }
+
+  .week-grid {
+    grid-template-columns: repeat(7, 88px);
+  }
+}
+
+
+.attendance-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+

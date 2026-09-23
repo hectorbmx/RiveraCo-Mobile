@@ -1,0 +1,83 @@
+<ion-content class="vehiculos-content">
+  <div class="header-section">
+    <div class="header-top">
+      <div class="header-info">
+        <p class="welcome-text">GESTIÓN</p>
+        <h1 class="dashboard-title">Vehículos</h1>
+
+        <div class="header-search">
+          <ion-searchbar
+            placeholder="Buscar por placas, modelo, serie o empleado..."
+            mode="ios"
+            [debounce]="300"
+            [(ngModel)]="searchTerm"
+            (ionInput)="onSearchChange($event.detail.value)">
+          </ion-searchbar>
+        </div>
+      </div>
+
+      <div class="profile-icon">
+        <app-profile-menu></app-profile-menu>
+      </div>
+    </div>
+  </div>
+
+  <div class="vehiculos-list-wrap">
+    <div class="vehiculos-list-container">
+      <div *ngIf="loading" class="ion-text-center ion-padding">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+      </div>
+
+      <ion-list lines="none" *ngIf="!loading && vehiculos.length > 0" class="info-list-white">
+        <ion-item
+          *ngFor="let v of vehiculos"
+          class="vehiculo-item"
+          [detail]="false">
+          <div slot="start" class="vehiculo-icon-box">
+            <ion-icon name="car-sport-outline"></ion-icon>
+          </div>
+
+          <ion-label>
+            <div class="item-main-row">
+              <h2 class="vehiculo-nombre">{{ nombreVehiculo(v) }}</h2>
+              <ion-badge [ngClass]="v.asignado ? 'badge-ok' : 'badge-patio'">
+                {{ v.asignado ? 'Asignado' : 'Disponible' }}
+              </ion-badge>
+            </div>
+
+            <p class="vehiculo-placas">
+              {{ v.placas || 'Sin placas' }}
+              <span *ngIf="v.serie"> · Serie {{ v.serie }}</span>
+            </p>
+
+            <p class="vehiculo-empleado">
+              <ion-icon name="person-circle"></ion-icon>
+              {{ empleadoAsignado(v) }}
+            </p>
+
+            <div class="vehiculo-badges">
+              <span class="mini-badge" [ngClass]="seguroBadgeClass(v)">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+                {{ seguroLabel(v) }}
+              </span>
+              <span class="mini-badge" [ngClass]="documentoBadgeClass(v)">
+                <ion-icon name="document-text-outline"></ion-icon>
+                {{ documentoLabel(v) }}
+              </span>
+            </div>
+          </ion-label>
+
+          <ion-icon name="chevron-forward" slot="end" class="arrow-next"></ion-icon>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="!loading && vehiculos.length === 0" class="empty-state">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>No se encontraron vehículos</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-spacer"></div>
+</ion-content>
+

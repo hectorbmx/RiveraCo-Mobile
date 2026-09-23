@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.rivera.obras',
+  appId: 'com.RiveraCo.app',
   appName: 'RiveraCo',
   webDir: 'www',
   server:{

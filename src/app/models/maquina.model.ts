@@ -2,6 +2,7 @@
 
 export interface MaquinaListItemDto {
   id: number;
+  codigo?: string | null;
   nombre: string;
   tipo: string | null;
   marca: string | null;

@@ -222,6 +222,54 @@
           </ion-item>
         </ng-template>
 
+        <div class="section-divider">ASISTENCIA SEMANAL</div>
+
+        <div class="attendance-week" *ngIf="asistenciaSemana">
+          <div class="week-nav">
+            <ion-button size="small" fill="clear" (click)="semanaAnterior()">
+              <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+              Anterior
+            </ion-button>
+
+            <div class="week-title">
+              <strong>
+                {{ formatDateText(asistenciaSemana.week_start) }} - {{ formatDateText(asistenciaSemana.week_end) }}
+              </strong>
+              <span *ngIf="asistenciaSemana.promedio_entrada">
+                Prom. entrada {{ asistenciaSemana.promedio_entrada.hora }}
+              </span>
+              <span *ngIf="!asistenciaSemana.promedio_entrada">Sin promedio de entrada</span>
+            </div>
+
+            <ion-button size="small" fill="clear" (click)="semanaSiguiente()" [disabled]="!puedeAvanzarSemana()">
+              Siguiente
+              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+            </ion-button>
+          </div>
+
+          <button type="button" class="week-current-btn" (click)="semanaActual()">
+            Semana actual
+          </button>
+
+          <div class="week-grid">
+            <div
+              class="week-day"
+              *ngFor="let dia of asistenciaSemana.days"
+              [ngClass]="estadoDiaClase(dia.status)"
+            >
+              <span class="day-label">{{ dia.label }}</span>
+              <strong>{{ formatDateText(dia.date).slice(0, 5) }}</strong>
+              <ion-icon [name]="iconoDia(dia.status)"></ion-icon>
+              <small>{{ textoDia(dia.status) }}</small>
+              <span class="day-time" *ngIf="dia.entrada">E {{ dia.entrada.hora || '--:--' }}</span>
+              <span class="day-time" *ngIf="dia.salida">S {{ dia.salida.hora || '--:--' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="attendance-week attendance-empty" *ngIf="!asistenciaSemana">
+          El API todavía no está regresando el resumen semanal de asistencia.
+        </div>
         <div class="section-divider">ASISTENCIAS RECIENTES</div>
 
         <ng-container *ngIf="empleado.asistencias?.length; else sinAsistencias">
@@ -260,3 +308,6 @@
     </div>
   </div>
 </ion-content>
+
+
+

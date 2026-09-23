@@ -100,3 +100,22 @@
   color: #64748b;
   font-size: 13px;
 }
+.obra-search {
+  --background: #ffffff;
+  --border-radius: 8px;
+  --box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  --color: #1e293b;
+  --placeholder-color: #64748b;
+  padding: 0;
+}
+
+.empty-obras {
+  margin: 0;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: #64748b;
+  background: #ffffff;
+  text-align: center;
+}
+
