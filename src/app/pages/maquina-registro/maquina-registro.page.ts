@@ -68,6 +68,7 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
   formError: string | null = null;
 
     form = {
+    fecha: '' as string,
     horometro_fin: null as number | null,
     notas: '' as string
   };
@@ -125,10 +126,20 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
 
   abrirModalNuevo() {
     this.formError = null;
+    this.form.fecha = this.fechaHoy();
     // Precargar con el sugerido
     this.form.horometro_fin = this.horometroSugerido ?? 0;
     this.form.notas = '';
     this.modalOpen = true;
+  }
+
+  private fechaHoy(): string {
+    const hoy = new Date();
+    const year = hoy.getFullYear();
+    const month = String(hoy.getMonth() + 1).padStart(2, '0');
+    const day = String(hoy.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 
   abrirModalCambioEstado(nuevoEstado: string) {
@@ -275,6 +286,11 @@ reportarFalla() {
   guardarRegistro() {
        this.formError = null;
 
+    if (!this.form.fecha) {
+      this.formError = 'Selecciona la fecha del registro.';
+      return;
+    }
+
     const fin = Number(this.form.horometro_fin);
     const inicio = Number(this.horometroSugerido ?? 0);
 
@@ -291,6 +307,7 @@ reportarFalla() {
   this.saving = true;
 
   const payload = {
+    fecha: this.form.fecha,
     horometro_fin: Number(this.form.horometro_fin),
     notas: (this.form.notas || '').trim() || null,
   };

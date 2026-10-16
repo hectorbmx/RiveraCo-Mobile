@@ -20,7 +20,11 @@ export class MaquinaService {
   /**
    * Registra un nuevo horómetro (Guardar Registro)
    */
-  postRegistro(obraMaquinaId: number, payload: { horometro_fin: number, notas?: string | null }): Observable<any> {
+  postRegistro(obraMaquinaId: number, payload: {
+    fecha: string;
+    horometro_fin: number;
+    notas?: string | null;
+  }): Observable<any> {
     return this.api.post(`maquinas/${obraMaquinaId}/registros`, payload);
   }
 

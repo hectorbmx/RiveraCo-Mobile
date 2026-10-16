@@ -160,6 +160,16 @@
             </ion-badge>
           </p>
 
+          <ion-item class="field-item" lines="none">
+            <ion-label class="field-label" position="stacked">Fecha del registro</ion-label>
+            <ion-input
+              name="fecha"
+              fill="outline"
+              type="date"
+              [(ngModel)]="form.fecha"
+              required
+            ></ion-input>
+          </ion-item>
 
           <ion-item class="field-item" lines="none">
             <ion-label class="field-label" position="stacked">Horómetro final</ion-label>
