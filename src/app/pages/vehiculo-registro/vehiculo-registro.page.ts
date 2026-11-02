@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -52,7 +57,7 @@ type VehiculoKmLog = {
   templateUrl: './vehiculo-registro.page.html',
   styleUrls: ['./vehiculo-registro.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonRefresher, IonRefresherContent,
     IonBackButton, IonContent, IonHeader, IonTextarea, IonInput, IonTitle, IonToolbar,
     IonCol, IonBadge, IonList, IonItem, IonLabel, IonButton, IonFooter, IonText, IonModal,
     IonCardTitle, IonRow, IonGrid, IonCardHeader, IonCardSubtitle, CommonModule, FormsModule,
@@ -60,6 +65,14 @@ type VehiculoKmLog = {
   ],
 })
 export class VehiculoRegistroPage implements OnInit, OnDestroy {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  get bloquearRefrescoApp() { return this.loading || this.modalOpen || this.saving; }
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.bloquearRefrescoApp) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.cargar(completar); }, this.destroyRefrescoApp);
+  }
+
 
   vehiculoId!: number;
 
@@ -112,13 +125,13 @@ export class VehiculoRegistroPage implements OnInit, OnDestroy {
     this.sub?.unsubscribe();
   }
 
-  cargar() {
+  cargar(_completado: () => void = () => {}) {
     this.loading = true;
     this.errorMsg = null;
 
     // Si ya implementaste GET /api/v1/vehiculos/km-log, aquí lo consumimos.
     // Si no existe aún, coméntalo y por ahora solo funcionará el POST.
-    this.sub = this.api.get<any>('vehiculos/km-log').subscribe({
+    this.sub = this.api.get<any>('vehiculos/km-log').pipe(finalize(_completado)).subscribe({
       next: (res) => {
         this.asignacion = res?.asignacion ?? null;
 

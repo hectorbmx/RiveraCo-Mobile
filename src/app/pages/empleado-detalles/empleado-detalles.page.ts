@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -37,13 +42,20 @@ import {
   templateUrl: './empleado-detalles.page.html',
   styleUrls: ['./empleado-detalles.page.scss'],
   standalone: true,
-  imports: [IonItemOption, IonItemSliding, IonFooter,IonItemOptions,
+  imports: [IonRefresher, IonRefresherContent, IonItemOption, IonItemSliding, IonFooter,IonItemOptions,
     CommonModule,
     IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton,
     IonList, IonItem, IonLabel, IonSpinner, IonModal, IonButton, IonIcon
   ]
 })
 export class EmpleadoDetallesPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.load(completar); }, this.destroyRefrescoApp);
+  }
+
 
   empleadoId!: number;
   obraId = 0;
@@ -90,11 +102,11 @@ export class EmpleadoDetallesPage implements OnInit {
     this.load();
   }
 
-  load() {
+  load(_completado: () => void = () => {}) {
     this.loading = true;
 
     // Usa el endpoint filtrado por obra + empleado (ya lo tienes)
-    this.api.getAsistenciasEmpleadoObra(this.obraId, this.empleadoId).subscribe({
+    this.api.getAsistenciasEmpleadoObra(this.obraId, this.empleadoId).pipe(finalize(_completado)).subscribe({
       next: (res: AsistenciasResponse & { empleado_id?: number }) => {
         this.items = res.data || [];
 

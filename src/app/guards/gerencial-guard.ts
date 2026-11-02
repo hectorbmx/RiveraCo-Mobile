@@ -15,5 +15,5 @@ export const gerencialGuard: CanActivateFn = () => {
   }
 
   // si no es gerencial, lo mandamos al operativo
-  return router.createUrlTree(['/tabs', 'tab1']);
+  return router.createUrlTree(['/home']);
 };

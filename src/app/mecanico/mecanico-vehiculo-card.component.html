@@ -1,0 +1,18 @@
+<article class="maquina-card resumen-lista">
+  <button type="button" class="maquina-banda fila-equipo" (click)="expandida = !expandida" [attr.aria-expanded]="expandida" [attr.aria-controls]="'vehiculo-contenido-' + vehiculo.id" [attr.aria-label]="(expandida ? 'Ocultar datos de ' : 'Mostrar datos de ') + nombre">
+    <span class="indicador" [attr.data-estado]="vehiculo.estatus || vehiculo.estado" aria-hidden="true"></span>
+    <span class="resumen-texto"><strong class="resumen-nombre">{{ vehiculo.placas || 'Sin placas' }}</strong><span class="resumen-subtitulo">{{ nombre }}</span></span>
+    <span class="maquina-banda-lateral"><span class="badge estado" [attr.data-estado]="vehiculo.estatus || vehiculo.estado">{{ etiqueta(vehiculo.estatus || vehiculo.estado) }}</span><span class="flecha-cabecera" aria-hidden="true"></span></span>
+  </button>
+  <div class="maquina-contenido" [hidden]="!expandida" [id]="'vehiculo-contenido-' + vehiculo.id">
+    <h2>{{ nombre }}</h2>
+    <p class="maquina-modelo" *ngIf="vehiculo.tipo || vehiculo.color">{{ vehiculo.tipo }}{{ vehiculo.tipo && vehiculo.color ? ' · ' : '' }}{{ vehiculo.color }}</p>
+    <div class="ubicacion"><span class="badge asignacion" [class.asignado]="vehiculo.asignado">{{ vehiculo.asignado ? 'Asignado' : 'Disponible' }}</span><span class="obra">{{ vehiculo.asignacion_actual?.empleado?.nombre || 'Sin empleado asignado' }}</span></div>
+    <dl class="datos-vehiculo">
+      <div><dt>Serie</dt><dd>{{ vehiculo.serie || 'Sin registro' }}</dd></div>
+      <div *ngIf="vehiculo.asignacion_actual"><dt>Asignado desde</dt><dd>{{ fecha(vehiculo.asignacion_actual.fecha_asignacion) }}</dd></div>
+      <div *ngIf="vehiculo.asignacion_actual?.km_inicial != null"><dt>Km al asignar</dt><dd>{{ vehiculo.asignacion_actual?.km_inicial | number:'1.0-2' }} km</dd></div>
+    </dl>
+    <footer class="maquina-acciones"><ion-button size="small" fill="outline" [routerLink]="['/tabs-mecanico/vehiculos', vehiculo.id]">Ver detalle</ion-button></footer>
+  </div>
+</article>

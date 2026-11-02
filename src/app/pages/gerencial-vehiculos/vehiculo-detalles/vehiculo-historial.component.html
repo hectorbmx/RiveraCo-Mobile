@@ -1,0 +1,23 @@
+<details [class.mecanico]="mecanico" [open]="estado.abierto" (toggle)="toggle($event)">
+  <summary><span>{{ titulo }}</span><span class="total" *ngIf="estado.meta">{{ estado.meta.total }}</span></summary>
+  <div class="contenido">
+    <form (ngSubmit)="pagina.emit(1)">
+      <label>{{ fechaLabel }} desde<input type="date" name="desde" [(ngModel)]="estado.desde"></label>
+      <label>{{ fechaLabel }} hasta<input type="date" name="hasta" [(ngModel)]="estado.hasta"></label>
+      <label *ngIf="estados.length" class="estado-filtro">Estado<select name="estatus" [(ngModel)]="estado.estatus"><option value="">Todos</option><option *ngFor="let opcion of estados" [value]="opcion.valor">{{ opcion.nombre }}</option></select></label>
+      <button type="submit" [disabled]="estado.loading">Aplicar filtros</button>
+    </form>
+    <p *ngIf="estado.loading" class="mensaje" role="status"><ion-spinner name="crescent"></ion-spinner> Cargando historial…</p>
+    <div *ngIf="estado.error" class="error" role="alert"><p>{{ estado.error }}</p><button type="button" (click)="pagina.emit(estado.paginaSolicitada)">Reintentar</button></div>
+    <ng-container *ngIf="!estado.loading && !estado.error && estado.consultado">
+      <p *ngIf="estado.meta?.total === 0" class="mensaje">No hay registros para estos filtros.</p>
+      <p *ngIf="estado.meta && estado.meta.total > 0" class="conteo">{{ estado.meta.total }} registros · Página {{ estado.meta.current_page }} de {{ estado.meta.last_page }}</p>
+      <ng-content></ng-content>
+      <nav *ngIf="estado.meta && estado.meta.last_page > 1" aria-label="Páginas del historial">
+        <button type="button" [disabled]="estado.meta.current_page <= 1" (click)="pagina.emit(estado.meta.current_page - 1)">Anterior</button>
+        <span>{{ estado.meta.current_page }} / {{ estado.meta.last_page }}</span>
+        <button type="button" [disabled]="estado.meta.current_page >= estado.meta.last_page" (click)="pagina.emit(estado.meta.current_page + 1)">Siguiente</button>
+      </nav>
+    </ng-container>
+  </div>
+</details>

@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -29,13 +34,20 @@ import { GerencialPersonalService } from 'src/app/services/gerencial-personal.se
   templateUrl: './empleado-detalles.page.html',
   styleUrls: ['./empleado-detalles.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonRefresher, IonRefresherContent,
     IonContent, IonHeader, IonTitle, IonItem, CommonModule, FormsModule,
     IonButton, IonBackButton, IonButtons, IonLabel, IonList, IonIcon,
     IonBadge, IonCard, ProfileMenuComponent
   ]
 })
 export class EmpleadoDetallesPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.obtenerDetalle(completar); }, this.destroyRefrescoApp);
+  }
+
   id: string | null = null;
   empleado: any = null;
   asistenciaSemana: any = null;
@@ -74,9 +86,9 @@ export class EmpleadoDetallesPage implements OnInit {
     }
   }
 
-  obtenerDetalle() {
+  obtenerDetalle(_completado: () => void = () => {}) {
     this.loading = true;
-    this.personalSvc.getEmpleado(this.id!, this.weekStart).subscribe({
+    this.personalSvc.getEmpleado(this.id!, this.weekStart).pipe(finalize(_completado)).subscribe({
       next: (res) => {
         this.empleado = res.data;
         this.asistenciaSemana = this.empleado?.asistencia_semana ?? null;

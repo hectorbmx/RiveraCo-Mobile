@@ -1,76 +1,87 @@
 <ion-content class="maquinas-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescarApp($event)"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…" refreshingSpinner="crescent"></ion-refresher-content></ion-refresher>
   <div class="header-section">
     <div class="header-top">
       <div class="header-info">
         <p class="welcome-text">GESTIÓN</p>
         <h1 class="dashboard-title">Maquinaria</h1>
         <p class="filter-note" *ngIf="enUso">Filtrado: máquinas en uso</p>
-        
         <div class="header-search">
-          <ion-searchbar
-            placeholder="Buscar por nombre o placa..."
-            mode="ios"
-            [debounce]="300"
-            [(ngModel)]="searchTerm"
-            (ionInput)="onSearchChange($event.detail.value)">
-          </ion-searchbar>
+          <ion-searchbar placeholder="Buscar por nombre, código o placa..." mode="ios" [debounce]="300"
+            [(ngModel)]="searchTerm" (ionInput)="onSearchChange($event.detail.value)"></ion-searchbar>
         </div>
       </div>
-      <div class="profile-icon">
-        <!-- <ion-icon name="person-circle"></ion-icon> -->
-           <app-profile-menu></app-profile-menu>
-
-      </div>
+      <div class="profile-icon"><app-profile-menu></app-profile-menu></div>
     </div>
   </div>
 
   <div class="maquinas-list-wrap">
-    <div class="maquinas-list-container">
-      
-      <div *ngIf="loading" class="ion-text-center ion-padding">
-        <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <div *ngIf="loading" class="loading-state" role="status">
+      <ion-spinner name="crescent" color="primary"></ion-spinner><span>Cargando maquinaria…</span>
+    </div>
+    <div *ngIf="!loading" class="maquinas-resultados">
+      <p *ngIf="maquinas.length">{{ maquinas.length }} de {{ total }} máquinas</p>
+      <article *ngFor="let m of maquinas; trackBy: trackMaquina" class="maquina-resumen">
+        <a class="maquina-enlace" [routerLink]="['/tabs-gerencial/maquina-detalles', m.id]">
+          <span class="maquina-icon-box"><ion-icon [name]="getIconForTipo(m.tipo)"></ion-icon></span>
+          <span class="maquina-identidad">
+            <span class="maquina-codigo">{{ m.codigo || 'Sin código' }}</span>
+            <h2>{{ m.nombre || 'Máquina sin nombre' }}</h2>
+            <span class="maquina-modelo">{{ identidad(m) }}</span>
+          </span>
+          <ion-icon name="chevron-forward" class="arrow-next" aria-hidden="true"></ion-icon>
+        </a>
+        <div class="maquina-datos">
+          <div class="maquina-badges">
+            <span class="dato-badge estado" [attr.data-estado]="m.estado">{{ etiqueta(m.estado) }}</span>
+            <span class="dato-badge ubicacion">{{ m.ubicacion ? etiqueta(m.ubicacion) : 'Sin ubicación' }}</span>
+          </div>
+          <p class="obra-actual">{{ m.obra_activa?.nombre || 'Sin obra asignada' }}</p>
+          <div class="lecturas">
+            <div><span class="dato-label">Horómetro actual</span>
+              <strong *ngIf="m.horometro_actual != null; else sinLectura">{{ m.horometro_actual | number:'1.0-2' }} <small>h</small></strong>
+              <ng-template #sinLectura><span>Sin lectura disponible</span></ng-template>
+            </div>
+            <div class="ultima-lectura"><span class="dato-label">Última lectura</span>
+              <time *ngIf="m.fecha_ultima_lectura; else sinFecha" [attr.datetime]="m.fecha_ultima_lectura">{{ m.fecha_ultima_lectura | date:'dd/MM/yyyy':'-0600' }}</time>
+              <ng-template #sinFecha><span>Sin fecha registrada</span></ng-template>
+            </div>
+          </div>
+          <section *ngIf="m.preventivo as p; else sinPreventivo" class="preventivo" [attr.data-estado]="p.estado" aria-label="Servicio preventivo prioritario">
+            <div class="preventivo-fila"><span class="dato-label">Servicio preventivo</span><span class="dato-badge preventivo-estado">{{ estadoPreventivo(p) }}</span></div>
+            <h3>{{ p.servicio_tipo_nombre || p.servicio_nombre }}</h3>
+            <p>{{ p.label }}</p>
+            <div *ngIf="p.estado !== 'sin_datos'" class="progreso" role="progressbar" aria-label="Avance del servicio preventivo" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="progreso(p)"><span [style.width.%]="progreso(p)"></span></div>
+            <div class="preventivo-metas">
+              <span *ngIf="p.horas_usadas != null">{{ p.horas_usadas | number:'1.0-2' }} / {{ p.intervalo_horas | number:'1.0-2' }} h</span>
+              <span *ngIf="p.proximo_horometro != null">Meta <b>{{ p.proximo_horometro | number:'1.0-2' }} h</b></span>
+              <span *ngIf="p.proximo_fecha">Fecha <b>{{ fechaCivil(p.proximo_fecha) }}</b></span>
+            </div>
+            <details *ngIf="p.servicios.length > 1" class="otros-preventivos">
+              <summary>Todos los preventivos ({{ p.servicios.length }})</summary>
+              <div *ngFor="let tipo of p.servicios" class="preventivo-tipo" [attr.data-estado]="tipo.estado">
+                <div class="preventivo-fila"><h4>{{ tipo.servicio_tipo_nombre || tipo.servicio_nombre }}</h4><span class="dato-badge preventivo-estado">{{ estadoPreventivo(tipo) }}</span></div>
+                <p>Cada {{ tipo.intervalo_horas | number:'1.0-2' }} h · {{ tipo.label }}</p>
+                <div class="preventivo-metas">
+                  <span *ngIf="tipo.proximo_horometro != null">Meta <b>{{ tipo.proximo_horometro | number:'1.0-2' }} h</b></span>
+                  <span *ngIf="tipo.proximo_fecha">Fecha <b>{{ fechaCivil(tipo.proximo_fecha) }}</b></span>
+                </div>
+              </div>
+            </details>
+          </section>
+          <ng-template #sinPreventivo><p class="sin-preventivo">Información preventiva no disponible.</p></ng-template>
+        </div>
+      </article>
+      <div *ngIf="error" class="error-state" role="alert">
+        <p>{{ error }}</p><button type="button" (click)="cargarMaquinas(maquinas.length > 0)">Reintentar</button>
       </div>
-
-      <ion-list lines="none" *ngIf="!loading && maquinas.length > 0" class="info-list-white">
-       <ion-item 
-  *ngFor="let m of maquinas" 
-  class="maquina-item" 
-  [detail]="false" 
-  [routerLink]="['/tabs-gerencial/maquina-detalles', m.id]"> 
-  
-  <div slot="start" class="maquina-icon-box">
-    <ion-icon [name]="getIconForTipo(m.tipo)"></ion-icon>
-  </div>
-
-  <ion-label>
-    <div class="item-main-row">
-      <h2 class="maquina-nombre">{{ m.nombre }}</h2>
-      <ion-badge [class]="m.asignada ? 'badge-ok' : 'badge-patio'">
-        {{ m.asignada ? 'En Obra' : 'En Patio' }}
-      </ion-badge>
-    </div>
-    
-    <p class="maquina-obra">
-      {{ m.obra_activa?.nombre || 'Sin obra asignada' }}
-    </p>
-    
-    <div class="maquina-footer">
-      <!-- <span class="maquina-meta">Modelo: {{ m.modelo }}</span>
-      <span class="dot">•</span>
-      <span class="maquina-meta">Placas: {{ m.placas }}</span> -->
-    </div>
-  </ion-label>
-
-  <ion-icon name="chevron-forward" slot="end" class="arrow-next"></ion-icon>
-</ion-item>
-      </ion-list>
-
-      <div *ngIf="!loading && maquinas.length === 0" class="empty-state">
-        <ion-icon name="alert-circle-outline"></ion-icon>
-        <p>No se encontraron máquinas</p>
+      <div *ngIf="!error && maquinas.length === 0" class="empty-state">
+        <ion-icon name="alert-circle-outline"></ion-icon><p>No se encontraron máquinas</p>
       </div>
+      <button *ngIf="currentPage < lastPage && !error" class="cargar-mas" type="button" [disabled]="loadingMore" (click)="cargarMaquinas(true)">
+        <ion-spinner *ngIf="loadingMore" name="crescent"></ion-spinner>{{ loadingMore ? 'Cargando…' : 'Cargar más máquinas' }}
+      </button>
     </div>
   </div>
-  
   <div class="bottom-spacer"></div>
 </ion-content>

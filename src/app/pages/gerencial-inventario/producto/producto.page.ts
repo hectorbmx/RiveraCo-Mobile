@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -20,11 +25,18 @@ import { GerencialInventarioService } from 'src/app/services/gerencial-inventari
   templateUrl: './producto.page.html',
   styleUrls: ['./producto.page.scss'],
   standalone:true,
-  imports:[
+  imports: [IonRefresher, IonRefresherContent,
     IonIcon,IonContent,IonSpinner,CommonModule,FormsModule,IonBadge,ProfileMenuComponent
   ]
 })
 export class ProductoPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.cargarResumen(completar); }, this.destroyRefrescoApp);
+  }
+
   loading = true;
   productoId!: number;
   almacenId: number | null = null;
@@ -49,13 +61,13 @@ export class ProductoPage implements OnInit {
 goBack() {
   this.nav.back();
 }
-  cargarResumen() {
+  cargarResumen(_completado: () => void = () => {}) {
     this.loading = true;
 
     this.inv.resumenProducto(this.productoId, {
       almacen_id: this.almacenId ?? undefined,
       days: 30, // default 30 días si no hay fechas
-    }).subscribe({
+    }).pipe(finalize(_completado)).subscribe({
       next: (res) => {
         this.resumen = res;
         this.loading = false;

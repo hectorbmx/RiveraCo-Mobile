@@ -1,3 +1,7 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -11,10 +15,17 @@ import { GerencialObrasService } from 'src/app/services/gerencial-obras.service'
   templateUrl: './maquinas-detalles.page.html',
   styleUrls: ['./maquinas-detalles.page.scss'],
   standalone: true,
-  imports: [IonInfiniteScroll, IonContent, IonIcon, IonSpinner,  CommonModule, FormsModule, IonInfiniteScrollContent, IonBackButton]
+  imports: [IonRefresher, IonRefresherContent, IonInfiniteScroll, IonContent, IonIcon, IonSpinner,  CommonModule, FormsModule, IonInfiniteScrollContent, IonBackButton]
 })
 
 export class MaquinasDetallesPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.load(1, true, completar); }, this.destroyRefrescoApp);
+  }
+
   loading = true;
 
   obraId!: number;

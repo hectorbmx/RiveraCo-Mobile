@@ -1,0 +1,15 @@
+.maquina-card.resumen-lista { border: 0; border-radius: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.02); }
+.resumen-lista .maquina-banda.fila-equipo { display: flex; flex-wrap: nowrap; min-height: 82px; padding: 16px; gap: 11px; background: #fff; color: #152033; }
+.resumen-lista .fila-equipo > .indicador { flex: 0 0 9px; width: 9px; height: 9px; border-radius: 50%; background: #94a3b8; }
+.fila-equipo .resumen-texto { flex: 1 1 0; min-width: 0; }
+.fila-equipo .resumen-nombre { display: block; margin: 0; color: #171b23; font-size: 16px; line-height: 1.25; font-weight: 750; overflow-wrap: anywhere; }
+.fila-equipo .resumen-subtitulo { display: block; margin-top: 3px; color: #747780; font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
+.fila-equipo .maquina-banda-lateral { flex: 0 1 auto; gap: 7px; max-width: 52%; }
+.fila-equipo .badge { font-size: 11px; padding: 4px 9px; font-weight: 700; }
+.fila-equipo .flecha-cabecera { flex-basis: 6px; width: 6px; height: 6px; color: #94a3b8; }
+.resumen-lista .maquina-contenido { border-top: 1px solid #eef0f5; }
+.resumen-lista .fila-equipo > .indicador[data-estado="operativa"], .resumen-lista .fila-equipo > .indicador[data-estado="activo"], .resumen-lista .fila-equipo > .indicador[data-estado="activa"], .resumen-lista .fila-equipo > .indicador[data-estado="disponible"] { background: #166534; }
+.resumen-lista .fila-equipo > .indicador[data-estado="en_reparacion"], .resumen-lista .fila-equipo > .indicador[data-estado="mantenimiento"] { background: #92400e; }
+.resumen-lista .fila-equipo > .indicador[data-estado="fuera_servicio"], .resumen-lista .fila-equipo > .indicador[data-estado="fuera_de_servicio"], .resumen-lista .fila-equipo > .indicador[data-estado="baja_definitiva"], .resumen-lista .fila-equipo > .indicador[data-estado="baja"], .resumen-lista .fila-equipo > .indicador[data-estado="inactivo"] { background: #991b1b; }
+
+.resumen-lista .fila-equipo > .indicador[data-estado="en_taller"] { background: #92400e; }

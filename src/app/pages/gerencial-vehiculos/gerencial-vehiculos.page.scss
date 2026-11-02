@@ -127,7 +127,13 @@ ion-content.vehiculos-content {
   --background: #ffffff !important;
   --padding-start: 10px;
   --inner-padding-end: 10px;
-  margin-bottom: 5px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  margin-bottom: 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #e2e8f0;
+  }
 
   .vehiculo-icon-box {
     width: 48px;

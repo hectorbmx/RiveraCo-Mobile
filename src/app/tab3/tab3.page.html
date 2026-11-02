@@ -8,6 +8,7 @@
 </ion-header>
 
 <ion-content class="comision-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescarApp($event)" [disabled]="bloquearRefrescoApp"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…" refreshingSpinner="crescent"></ion-refresher-content></ion-refresher>
   <ng-container *ngIf="ctx && form; else noctx">
     <div class="info-card">
       <div class="info-card-header">

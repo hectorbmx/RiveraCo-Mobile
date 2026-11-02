@@ -1,0 +1,22 @@
+<ion-modal [isOpen]="maquinaId !== null && !cerrando" (didDismiss)="alCerrar()">
+  <ng-template>
+    <ion-header><ion-toolbar><ion-title>Ubicación de la máquina</ion-title><ion-buttons slot="end"><ion-button (click)="cerrar()">Cerrar</ion-button></ion-buttons></ion-toolbar></ion-header>
+    <ion-content><main class="captura-horas">
+      <div class="estado-carga" *ngIf="cargando" role="status"><ion-spinner/><p>Consultando movimientos disponibles…</p></div>
+      <p *ngIf="error" class="error-general" role="alert">{{ error }}</p>
+      <ng-container *ngIf="opciones as o">
+        <section class="maquina-resumen"><span class="codigo">{{ o.maquina.codigo }}</span><h2>{{ o.maquina.nombre }}</h2><p>{{ etiqueta(o.maquina.ubicacion) }} · {{ asignacion?.obra?.nombre || 'Sin obra asignada' }}</p></section>
+        <p *ngIf="obraCerrada" class="aviso">La obra está terminada o cancelada. Puedes cerrar la asignación pendiente pasando la máquina al patio.</p>
+        <p *ngIf="o.maquina.estado !== 'operativa'" class="ayuda">La máquina no está operativa. No se puede asignar a una nueva obra. Pasarla al patio conservará su estado actual.</p>
+        <ion-button *ngIf="asignacion" expand="block" [disabled]="!o.acciones_permitidas.retirar_obra || cerrando" (click)="elegir('retirar')">Pasar al patio</ion-button>
+        <p *ngIf="asignacion && !o.acciones_permitidas.retirar_obra" class="ayuda">Tu sesión no tiene permiso para retirar esta asignación. Solicita el permiso y vuelve a ingresar.</p>
+        <ion-button *ngIf="puedeOfrecerObra" expand="block" [disabled]="!o.acciones_permitidas.asignar_obra || cerrando" (click)="elegir('asignar')">Asignar a nueva obra</ion-button>
+        <p *ngIf="puedeOfrecerObra && !o.acciones_permitidas.asignar_obra" class="ayuda">La asignación no está disponible. Revisa los permisos y si hay asignaciones pendientes de cierre.</p>
+        <ion-button *ngIf="o.acciones_permitidas.cambiar_ubicacion" expand="block" fill="outline" [disabled]="cerrando" (click)="elegir('ubicacion')">{{ asignacion ? 'Camino, reparación o regreso a obra' : 'Cambiar ubicación: camino, reparación o patio' }}</ion-button>
+        <p *ngIf="asignacion && !obraCerrada && o.maquina.estado === 'operativa'" class="ayuda">Para asignarla a otra obra, primero registra su retiro al patio.</p>
+        <p *ngIf="!asignacion && !puedeOfrecerObra && !o.acciones_permitidas.cambiar_ubicacion" class="ayuda">No hay movimientos disponibles. Revisa los permisos y las asignaciones pendientes.</p>
+      </ng-container>
+      <ion-button *ngIf="error && !cargando" expand="block" fill="outline" (click)="cargar()">Reintentar consulta</ion-button>
+    </main></ion-content>
+  </ng-template>
+</ion-modal>

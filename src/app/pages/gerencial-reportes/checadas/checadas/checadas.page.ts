@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -45,7 +50,7 @@ export interface Worker {
   templateUrl: './checadas.page.html',
   styleUrls: ['./checadas.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonRefresher, IonRefresherContent,
     IonTitle,IonButtons,
     IonToolbar,
     IonContent,
@@ -59,6 +64,13 @@ export interface Worker {
   ],
 })
 export class ChecadasPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.loadAttendance(this.currentDate, completar); }, this.destroyRefrescoApp);
+  }
+
 
   searchQuery = '';
   currentDate = new Date();
@@ -140,7 +152,7 @@ export class ChecadasPage implements OnInit {
      console.log('🚀 ChecadasPage INIT');
   console.log('📅 Fecha actual:', this.currentDate);
     this.loadAttendance(this.currentDate);
- 
+
   }
 
   prevDay() {
@@ -169,7 +181,7 @@ export class ChecadasPage implements OnInit {
     );
   }
 
-  private loadAttendance(date: Date) {
+  private loadAttendance(date: Date, _completado: () => void = () => {}) {
   const iso = this.formatDateOnly(date);
 
   console.log('📡 Llamando endpoint con fecha:', iso);
@@ -180,7 +192,7 @@ export class ChecadasPage implements OnInit {
     from: iso,
     to: iso,
     per_page: 300
-  }).subscribe({
+  }).pipe(finalize(_completado)).subscribe({
     next: (response: any) => {
       console.log('✅ RESPONSE:', response);
 
@@ -229,7 +241,7 @@ export class ChecadasPage implements OnInit {
     if (!employeeLogs.length) {
       return null;
     }
-    
+
 
     const sorted = [...employeeLogs].sort((a, b) => {
       const aTime = new Date(a.checked_at).getTime();

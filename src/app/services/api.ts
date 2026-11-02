@@ -98,7 +98,7 @@ export class ApiService {
     }
 
     console.error('Error en API:', errorMessage);
-    return throwError(() => new Error(errorMessage));
+    return throwError(() => Object.assign(new Error(errorMessage), { status: error.status, error: error.error }));
   }
 
   get<T>(endpoint: string, params?: Record<string, any>): Observable<T> {

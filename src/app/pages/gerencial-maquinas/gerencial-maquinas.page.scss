@@ -98,115 +98,53 @@ ion-content.maquinas-content {
   }
 }
 
-/* Lista y Overlap */
-.maquinas-list-wrap {
-    margin-top: -20px;
-  padding: 0 18px;
-  position: relative;
-  z-index: 5;
-}
-
-.maquinas-list-container {
-   background: var(--card-bg);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 10px 20px rgba(16, 24, 40, 0.06);
-}
-.maquinas-list {
-  background: transparent;
-}
-
-
-/* Forzar Fondo Blanco para evitar tabla negra */
-.info-list-white {
-  background: #ffffff !important;
-  --ion-background-color: #ffffff !important;
-}
-
-.maquina-item {
-  --background: #ffffff !important;
-  --padding-start: 10px;
-  --inner-padding-end: 10px;
-  margin-bottom: 5px;
-
-  .maquina-icon-box {
-    width: 48px;
-    height: 48px;
-    background: #f0f4f9;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    margin-right: 15px;
-    ion-icon { color: var(--navy); font-size: 24px; }
-  }
-
-  .maquina-nombre { font-weight: 800; color: var(--navy); font-size: 16px; }
-  .maquina-obra { color: var(--text-muted); font-size: 13px; margin: 4px 0; }
-  
-  .maquina-footer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--text-muted);
-    .dot { font-size: 18px; line-height: 0; }
-  }
-}
-
-/* Badges */
-.badge-ok { --background: rgba(34, 197, 94, 0.1); color: #166534; font-weight: 700; }
-.badge-patio { --background: #f1f5f9; color: #475569; font-weight: 700; }
-
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-muted);
-  ion-icon { font-size: 48px; margin-bottom: 10px; }
-}
-.item-main-row {
-  display: flex;
-  justify-content: space-between; /* Esto empuja el badge a la derecha */
-  align-items: center;
-  width: 100%;
-  margin-bottom: 4px;
-}
-
-.maquina-nombre {
-  font-weight: 800;
-  color: var(--navy);
-  font-size: 16px;
-  margin: 0;
-  flex: 1; /* Permite que el nombre tome el espacio necesario antes del badge */
-}
-
-/* Estilo mejorado para el Badge */
-ion-badge {
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-left: 10px;
-}
-
-.badge-ok {
-  --background: rgba(34, 197, 94, 0.12);
-  color: #15803d;
-}
-
-.badge-patio {
-  --background: #f1f5f9;
-  color: #475569;
-}
-
-/* Ajuste fino para la flecha de navegación */
-.arrow-next {
-  font-size: 16px;
-  color: #cbd5e1;
-  margin-left: 8px;
-}
-
-/* Evitar que el label recorte el contenido */
-ion-label {
-  overflow: visible !important;
-}
+.maquinas-list-wrap { margin-top: -20px; padding: 0 18px; position: relative; z-index: 5; }
+.maquinas-resultados > p { padding: 22px 4px 0; color: #53657c; font-size: 12px; }
+.maquina-resumen { background: var(--card-bg); border-radius: 18px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 10px 20px rgba(16,24,40,.06); }
+.maquina-enlace { display: flex; align-items: center; gap: 12px; padding: 18px; text-decoration: none; color: var(--navy); }
+.maquina-enlace:focus-visible, summary:focus-visible, button:focus-visible { outline: 3px solid var(--accent-yellow); outline-offset: -3px; }
+.maquina-icon-box { flex: 0 0 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: #f0f4f9; }
+.maquina-icon-box ion-icon { font-size: 24px; }
+.maquina-identidad { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.maquina-codigo { font-size: 11px; font-weight: 800; letter-spacing: .5px; color: #64748b; }
+.maquina-identidad h2 { font-size: 18px; font-weight: 800; margin: 3px 0; color: var(--navy); }
+.maquina-modelo { font-size: 12px; color: #64748b; }
+.arrow-next { flex: 0 0 16px; color: #94a3b8; }
+.maquina-datos { padding: 0 18px 18px; }
+.maquina-badges, .preventivo-fila { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.maquina-badges { justify-content: flex-start; }
+.dato-badge { display: inline-block; border-radius: 8px; padding: 5px 9px; font-size: 11px; font-weight: 800; background: #f1f5f9; color: #475569; }
+.ubicacion { background: #edf3fb; color: var(--navy); }
+.estado[data-estado="operativa"] { background: #dcfce7; color: #166534; }
+.estado[data-estado="fuera_servicio"], .estado[data-estado="fuera_de_servicio"], .estado[data-estado="baja_definitiva"], .estado[data-estado="baja"] { background: #fee2e2; color: #991b1b; }
+.estado[data-estado="mantenimiento"] { background: #fef3c7; color: #92400e; }
+.obra-actual { font-size: 13px; color: #64748b; margin: 10px 0 16px; overflow-wrap: anywhere; }
+.lecturas { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: center; gap: 12px; padding: 16px 0; border-block: 1px solid #e8edf5; font-size: 12px; color: #53657c; }
+.dato-label { display: block; font-size: 12px; color: #64748b; margin-bottom: 4px; }
+.lecturas strong { display: block; font-size: 25px; color: var(--navy); }
+.lecturas small { font-size: 13px; }
+.ultima-lectura { text-align: right; }
+.preventivo { padding-top: 16px; }
+.preventivo h3, .preventivo h4 { font-size: 14px; font-weight: 800; color: var(--navy); margin: 10px 0 5px; overflow-wrap: anywhere; }
+.preventivo p, .sin-preventivo { font-size: 12px; color: #53657c; margin: 5px 0 10px; }
+.preventivo-estado { background: #f1f5f9; color: #475569; }
+[data-estado="ok"] > .preventivo-fila .preventivo-estado { background: #dcfce7; color: #166534; }
+[data-estado="proximo"] > .preventivo-fila .preventivo-estado { background: #fef3c7; color: #92400e; }
+[data-estado="vencido"] > .preventivo-fila .preventivo-estado { background: #fee2e2; color: #991b1b; }
+.progreso { height: 7px; border-radius: 10px; background: #edf2f8; overflow: hidden; }
+.progreso span { display: block; height: 100%; background: var(--navy); }
+[data-estado="proximo"] > .progreso span { background: var(--accent-yellow); }
+[data-estado="vencido"] > .progreso span { background: #dc2626; }
+.preventivo-metas { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 9px; font-size: 11px; color: #64748b; }
+.otros-preventivos { margin-top: 15px; background: #f5f7fb; border-radius: 12px; padding: 12px; }
+.otros-preventivos summary { cursor: pointer; font-size: 12px; color: var(--navy); font-weight: 800; }
+.preventivo-tipo { padding: 10px 0; border-top: 1px solid #e2e8f0; margin-top: 10px; }
+.preventivo-fila h4 { flex: 1; min-width: 120px; margin: 0; }
+.loading-state, .empty-state, .error-state { padding: 35px 20px; background: #fff; border-radius: 18px; text-align: center; color: #64748b; }
+.loading-state span { display: block; margin-top: 12px; }
+.empty-state ion-icon { font-size: 40px; }
+.error-state { color: #991b1b; }
+.cargar-mas, .error-state button { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; border: 1px solid var(--navy); border-radius: 12px; padding: 12px; background: #fff; color: var(--navy); font: inherit; font-size: 13px; font-weight: 700; }
+.cargar-mas:disabled { opacity: .65; }
+.cargar-mas ion-spinner { width: 18px; height: 18px; }
+.bottom-spacer { height: 24px; }

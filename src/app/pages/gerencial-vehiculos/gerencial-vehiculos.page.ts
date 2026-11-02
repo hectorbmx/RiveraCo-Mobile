@@ -1,3 +1,7 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +36,7 @@ import { VehiculosGerencialService } from 'src/app/services/gerencial-vehiculo.s
   templateUrl: './gerencial-vehiculos.page.html',
   styleUrls: ['./gerencial-vehiculos.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonRefresher, IonRefresherContent,
     CommonModule,
     FormsModule,
     RouterModule,
@@ -48,6 +52,13 @@ import { VehiculosGerencialService } from 'src/app/services/gerencial-vehiculo.s
   ],
 })
 export class GerencialVehiculosPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.cargarVehiculos({ target: { complete: completar } }); }, this.destroyRefrescoApp);
+  }
+
   vehiculos: VehiculoListItemDto[] = [];
   loading = false;
   searchTerm = '';

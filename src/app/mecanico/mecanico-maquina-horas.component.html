@@ -1,0 +1,60 @@
+<ion-modal [isOpen]="maquinaId !== null" [canDismiss]="puedeCerrar" (didDismiss)="alCerrar()" class="modal-horas-maquina">
+  <ng-template>
+    <ion-header><ion-toolbar><ion-title>{{ titulo }}</ion-title><ion-buttons slot="end"><ion-button (click)="cerrar()" [disabled]="guardando">Cerrar</ion-button></ion-buttons></ion-toolbar></ion-header>
+    <ion-content>
+      <main class="captura-horas">
+        <div class="estado-carga" *ngIf="cargando" role="status"><ion-spinner/><p>Consultando datos actuales…</p></div>
+        <p class="error-general" *ngIf="error" role="alert">{{ error }}</p>
+        <p class="aviso" *ngIf="aviso" role="status">{{ aviso }}</p>
+        <section class="maquina-resumen" *ngIf="opciones as o">
+          <span class="codigo">{{ o.maquina.codigo || 'Máquina' }}</span><h2>{{ o.maquina.nombre || 'Máquina sin nombre' }}</h2>
+          <p>{{ obraActual }}</p>
+          <p *ngIf="o.maquina.fecha_ultima_lectura">Última lectura: {{ o.maquina.fecha_ultima_lectura | date:'dd/MM/yyyy HH:mm':'-0600' }}</p>
+          <div class="referencia"><span>Referencia de la captura</span><strong>{{ referencia == null ? 'Sin lectura previa' : (referencia | number:'1.0-2') + ' h' }}</strong></div>
+        </section>
+        <p class="aviso" *ngIf="incierto" role="status">Hay una captura pendiente de confirmar. Sus datos se conservan sin cambios, incluso si cierras esta ventana y vuelves a abrirla en esta sesión.</p>
+        <form *ngIf="opciones && (permite || incierto)" (ngSubmit)="guardar()">
+          <fieldset [disabled]="bloqueado">
+            <ion-input label="Nuevo horómetro (h)" labelPlacement="stacked" name="horometro_fin" type="number" min="0" max="99999999.99" step="0.01" [(ngModel)]="lecturaNueva" [disabled]="bloqueado" required aria-describedby="error-horometro" [attr.aria-invalid]="!!errores['horometro_fin']"/>
+            <p id="error-horometro" class="error-campo" role="alert">{{ errores['horometro_fin'] }}</p>
+            <p class="ayuda">Captura la lectura del contador. Las horas agregadas se calculan al guardar.</p>
+            <ng-container *ngIf="esRegistro; else ajuste">
+              <div class="fechas">
+                <label>Inicio<input name="inicio" type="datetime-local" [(ngModel)]="inicio" [disabled]="bloqueado" required aria-describedby="error-inicio"/></label>
+                <label>Fin<input name="fin" type="datetime-local" [(ngModel)]="fin" [disabled]="bloqueado" required aria-describedby="error-fin"/></label>
+              </div>
+              <p id="error-inicio" class="error-campo" role="alert">{{ errores['inicio'] }}</p><p id="error-fin" class="error-campo" role="alert">{{ errores['fin'] }}</p>
+              <p class="ayuda">Fechas y horas de Ciudad de México. La obra se toma de la asignación actual.</p>
+            </ng-container>
+            <ng-template #ajuste>
+              <label>Fecha del registro<input name="fecha_registro" type="date" min="1000-01-01" [(ngModel)]="fechaRegistro" [disabled]="bloqueado" required aria-describedby="error-fecha"/></label>
+              <p id="error-fecha" class="error-campo" role="alert">{{ errores['fecha_registro'] }}</p>
+              <details class="obra-relacionada" *ngIf="!incierto">
+                <summary>Obra relacionada <small>Opcional</small></summary>
+                <ion-searchbar aria-label="Buscar obra relacionada" placeholder="Buscar por nombre o clave" [debounce]="350" [(ngModel)]="busquedaObra" [ngModelOptions]="{standalone: true}" (ionInput)="buscarObras()" [disabled]="bloqueado"/>
+                <ion-button size="small" type="button" fill="clear" (click)="buscarObras()" [disabled]="bloqueado || cargandoObras">{{ cargandoObras ? 'Buscando…' : 'Consultar obras' }}</ion-button>
+                <p *ngIf="errorObras" class="error-campo" role="alert">{{ errorObras }}</p>
+                <ion-select label="Obra relacionada" labelPlacement="stacked" name="obra_id" interface="popover" [(ngModel)]="obraId" (ionChange)="seleccionarObra()" [disabled]="bloqueado || cargandoObras">
+                  <ion-select-option [value]="null">Sin obra relacionada</ion-select-option>
+                  <ion-select-option *ngIf="obraFueraPagina && obraSeleccionada as seleccionada" [value]="seleccionada.id">{{ seleccionada.nombre }}</ion-select-option>
+                  <ion-select-option *ngFor="let obra of obras" [value]="obra.id">{{ obra.clave_obra }} · {{ obra.nombre }}</ion-select-option>
+                </ion-select>
+                <div class="paginacion-obras" *ngIf="metaObras && metaObras.last_page > 1"><ion-button size="small" type="button" fill="clear" [disabled]="bloqueado || cargandoObras || metaObras.current_page <= 1" (click)="buscarObras(metaObras.current_page - 1)">Anterior</ion-button><span>{{ metaObras.current_page }} / {{ metaObras.last_page }}</span><ion-button size="small" type="button" fill="clear" [disabled]="bloqueado || cargandoObras || metaObras.current_page >= metaObras.last_page" (click)="buscarObras(metaObras.current_page + 1)">Siguiente</ion-button></div>
+                <p class="ayuda" *ngIf="metaObras && !obras.length">No se encontraron obras.</p>
+                <p class="ayuda">Esta referencia no asigna la máquina a una obra ni cambia su ubicación.</p>
+              </details>
+              <p class="ayuda" *ngIf="incierto && obraId">Se conserva la obra relacionada enviada en la captura pendiente.</p>
+              <p class="error-campo" role="alert">{{ errores['obra_id'] }}</p>
+            </ng-template>
+            <ion-textarea label="Notas" labelPlacement="stacked" name="notas" [(ngModel)]="notas" [maxlength]="500" [rows]="3" [autoGrow]="true" [disabled]="bloqueado" aria-describedby="error-notas"/>
+            <p id="error-notas" class="error-campo" role="alert">{{ errores['notas'] }}</p>
+          </fieldset>
+          <div class="acciones"><ion-button type="submit" [disabled]="bloqueado">{{ guardando ? 'Guardando…' : (esRegistro ? 'Guardar horas' : 'Guardar ajuste') }}</ion-button></div>
+        </form>
+        <ion-button *ngIf="incierto" expand="block" type="button" (click)="guardar(true)" [disabled]="guardando || cargando || accesoDenegado || !puedeReintentar">{{ guardando ? 'Confirmando…' : 'Reintentar misma captura' }}</ion-button>
+        <ion-button *ngIf="contextoCambiado" expand="block" fill="outline" type="button" (click)="cargarOpciones(true)" [disabled]="cargando || guardando">Revisar datos actuales</ion-button>
+        <ion-button *ngIf="!opciones && !cargando && !accesoDenegado" expand="block" fill="outline" type="button" (click)="cargarOpciones()">Reintentar consulta</ion-button>
+      </main>
+    </ion-content>
+  </ng-template>
+</ion-modal>

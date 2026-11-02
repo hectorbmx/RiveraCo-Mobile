@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -24,9 +29,16 @@ import { GerencialObrasService } from 'src/app/services/gerencial-obras.service'
   templateUrl: './obras-detalles.page.html',
   styleUrls: ['./obras-detalles.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, ProfileMenuComponent, CommonModule,IonProgressBar, FormsModule,IonSpinner,IonIcon,RouterModule]
+  imports: [IonRefresher, IonRefresherContent, IonContent, IonHeader, IonTitle, ProfileMenuComponent, CommonModule,IonProgressBar, FormsModule,IonSpinner,IonIcon,RouterModule]
 })
 export class ObrasDetallesPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.load(Number(this.route.snapshot.paramMap.get('id')), completar); }, this.destroyRefrescoApp);
+  }
+
   
   loading = true;
 
@@ -56,10 +68,10 @@ kpis = {
         const id = Number(this.route.snapshot.paramMap.get('id'));
     this.load(id);
   }
-   load(id: number) {
+   load(id: number, _completado: () => void = () => {}) {
     this.loading = true;
 
-    this.obrasSrv.show(id).subscribe({
+    this.obrasSrv.show(id).pipe(finalize(_completado)).subscribe({
       next: (resp) => {
         const d = resp?.data;
 

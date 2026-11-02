@@ -5,12 +5,10 @@
 </ion-header>
 
 <ion-content class="selector-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescarApp($event)" [disabled]="bloquearRefrescoApp"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…" refreshingSpinner="crescent"></ion-refresher-content></ion-refresher>
   <section class="selector-shell">
     <div class="selector-heading">
       <h1>Elige cómo quieres entrar</h1>
-      <ion-button fill="clear" size="small" (click)="refreshOptions()" [disabled]="loading">
-        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
-      </ion-button>
     </div>
 
     <div class="loading-row" *ngIf="loading">

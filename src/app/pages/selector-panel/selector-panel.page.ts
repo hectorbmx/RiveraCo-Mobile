@@ -1,3 +1,7 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -12,9 +16,17 @@ import { AuthService, ObraResidenteOption, PanelDisponible } from '../../service
   templateUrl: './selector-panel.page.html',
   styleUrls: ['./selector-panel.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonButton, IonContent, IonHeader, IonIcon, IonSearchbar, IonSpinner, IonTitle, IonToolbar],
+  imports: [IonRefresher, IonRefresherContent, CommonModule, IonButton, IonContent, IonHeader, IonIcon, IonSearchbar, IonSpinner, IonTitle, IonToolbar],
 })
 export class SelectorPanelPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  get bloquearRefrescoApp() { return this.loading; }
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.bloquearRefrescoApp) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.refreshOptions().finally(completar); }, this.destroyRefrescoApp);
+  }
+
   paneles: PanelDisponible[] = [];
   obras: ObraResidenteOption[] = [];
   selectedPanel: string | null = null;
@@ -51,8 +63,14 @@ export class SelectorPanelPage implements OnInit {
   }
 
   async choosePanel(panel: string) {
+    if (!this.paneles.some(option => option.key === panel)) return;
     this.auth.setSelectedPanel(panel);
     this.selectedPanel = panel;
+    if (panel === 'mecanico') {
+      this.auth.setSelectedObraId(null);
+      await this.router.navigate(['/tabs-mecanico', 'servicios']);
+      return;
+    }
 
     if (panel === 'gerencial') {
       await this.router.navigate(['/tabs-gerencial']);

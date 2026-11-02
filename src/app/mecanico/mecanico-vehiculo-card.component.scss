@@ -1,0 +1,11 @@
+.asignacion { background: #edf2f8; color: #475569; }
+.asignacion.asignado { background: #dcfce7; color: #166534; }
+.datos-vehiculo { margin: 14px 0 0; font-size: 12px; }
+.datos-vehiculo > div { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.5fr); gap: 10px; padding: 10px 0; border-top: 1px solid #e8edf5; }
+dt { color: #64748b; }
+dd { margin: 0; text-align: right; font-weight: 600; color: #152033; overflow-wrap: anywhere; }
+.estado[data-estado="activo"], .estado[data-estado="activa"], .estado[data-estado="disponible"] { background: #dcfce7; color: #166534; }
+.estado[data-estado="mantenimiento"] { background: #fef3c7; color: #92400e; }
+.estado[data-estado="inactivo"], .estado[data-estado="baja"] { background: #fee2e2; color: #991b1b; }
+
+.estado[data-estado="en_taller"] { background: #fef3c7; color: #92400e; }

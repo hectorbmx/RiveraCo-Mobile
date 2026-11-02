@@ -1,0 +1,49 @@
+<article class="maquina-card" [class.resumen-lista]="!detalle">
+  <button type="button" class="maquina-banda" [class.fila-equipo]="!detalle" (click)="expandida = !expandida" [attr.aria-expanded]="expandida" [attr.aria-controls]="'maquina-contenido-' + maquina.id + (detalle ? '-detalle' : '-lista')" [attr.aria-label]="(expandida ? 'Ocultar datos de ' : 'Mostrar datos de ') + (maquina.nombre || maquina.codigo || 'máquina')">
+    <span *ngIf="!detalle" class="indicador" [attr.data-estado]="maquina.estado" aria-hidden="true"></span>
+    <span *ngIf="!detalle; else tituloDetalle" class="resumen-texto"><strong class="resumen-nombre">{{ maquina.codigo || maquina.nombre || 'Sin código' }}</strong><span class="resumen-subtitulo">{{ subtitulo }}</span></span>
+    <ng-template #tituloDetalle><span>Máquina <strong>{{ maquina.codigo || 'Sin código' }}</strong></span></ng-template>
+    <span class="maquina-banda-lateral"><span class="badge estado" [attr.data-estado]="maquina.estado">{{ etiqueta(maquina.estado) }}</span><span class="flecha-cabecera" aria-hidden="true"></span></span>
+  </button>
+  <div class="maquina-contenido" [hidden]="!expandida" [id]="'maquina-contenido-' + maquina.id + (detalle ? '-detalle' : '-lista')">
+    <h2>{{ maquina.nombre || 'Máquina sin nombre' }}</h2>
+    <p class="maquina-modelo" *ngIf="maquina.marca || maquina.modelo || maquina.tipo">{{ identidad }}</p>
+    <div class="ubicacion">
+      <button type="button" class="badge ubicacion-badge ubicacion-accion" (click)="gestionarUbicacion.emit(maquina.id)" [attr.aria-label]="'Administrar ubicación de ' + (maquina.codigo || maquina.nombre)">{{ maquina.ubicacion ? etiqueta(maquina.ubicacion) : 'Sin ubicación' }} <span aria-hidden="true">⌄</span></button>
+      <span class="obra">{{ maquina.obra_activa?.nombre || 'Sin obra asignada' }}</span>
+    </div>
+    <div class="lectura">
+      <div><span class="dato-label">Horómetro actual</span><strong class="horometro" *ngIf="maquina.horometro_actual != null; else sinLectura">{{ maquina.horometro_actual | number:'1.0-2' }} <small>h</small></strong><ng-template #sinLectura><strong class="sin-dato">Sin lectura disponible</strong></ng-template></div>
+      <div class="ultima-lectura"><span class="dato-label">Última lectura</span><time *ngIf="maquina.fecha_ultima_lectura; else sinFecha" [attr.datetime]="maquina.fecha_ultima_lectura">{{ maquina.fecha_ultima_lectura | date:'dd/MM/yyyy':'-0600' }}</time><ng-template #sinFecha><span>Sin fecha registrada</span></ng-template></div>
+    </div>
+    <section class="preventivo" *ngIf="maquina.preventivo as p; else sinPreventivo" [attr.data-estado]="p.estado" aria-label="Servicio preventivo prioritario">
+      <div class="preventivo-titulo"><span class="dato-label">Servicio preventivo</span><span class="badge preventivo-estado">{{ estadoPreventivo(p) }}</span></div>
+      <h3>{{ p.servicio_tipo_nombre || p.servicio_nombre }}</h3>
+      <p class="preventivo-label">{{ p.label }}</p>
+      <div *ngIf="p.estado !== 'sin_datos'" class="progreso" role="progressbar" [attr.aria-label]="'Avance de ' + p.servicio_nombre" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="progreso(p)"><span [style.width.%]="progreso(p)"></span></div>
+      <div class="preventivo-metas">
+        <span *ngIf="p.horas_usadas != null">{{ p.horas_usadas | number:'1.0-2' }} / {{ p.intervalo_horas | number:'1.0-2' }} h</span>
+        <span *ngIf="p.proximo_horometro != null">Meta <strong>{{ p.proximo_horometro | number:'1.0-2' }} h</strong></span>
+        <span *ngIf="p.proximo_fecha">Fecha <strong>{{ fechaCivil(p.proximo_fecha) }}</strong></span>
+      </div>
+      <details class="otros-preventivos" *ngIf="p.servicios.length > 1">
+        <summary><span>Todos los preventivos <small>({{ p.servicios.length }})</small></span><span class="flecha" aria-hidden="true"></span></summary>
+        <div class="preventivo-tipo" *ngFor="let tipo of p.servicios" [attr.data-estado]="tipo.estado">
+          <div class="preventivo-titulo"><h4>{{ tipo.servicio_tipo_nombre || tipo.servicio_nombre }}</h4><span class="badge preventivo-estado">{{ estadoPreventivo(tipo) }}</span></div>
+          <p>Cada {{ tipo.intervalo_horas | number:'1.0-2' }} h · {{ tipo.label }}</p>
+          <div class="preventivo-metas"><span *ngIf="tipo.proximo_horometro != null">Meta <strong>{{ tipo.proximo_horometro | number:'1.0-2' }} h</strong></span><span *ngIf="tipo.proximo_fecha">Fecha <strong>{{ fechaCivil(tipo.proximo_fecha) }}</strong></span></div>
+        </div>
+      </details>
+    </section>
+    <ng-template #sinPreventivo><p class="preventivo-no-disponible">Información preventiva no disponible.</p></ng-template>
+    <footer class="maquina-acciones" *ngIf="!detalle || puedeProgramar || puedeCapturarHoras || puedeAsignarObra || puedeRetirarObra || puedeCambiarUbicacion">
+      <ion-button *ngIf="!detalle" size="small" fill="outline" [routerLink]="['/tabs-mecanico/maquinas', maquina.id]">Ver detalle</ion-button>
+      <ion-button *ngIf="puedeProgramar" size="small" routerLink="/tabs-mecanico/servicios/nuevo" [queryParams]="{maquina_id: maquina.id}">Programar servicio</ion-button>
+      <ion-button *ngIf="puedeCapturarHoras" size="small" fill="outline" (click)="capturarHoras.emit(maquina.id)">{{ maquina.asignada || maquina.obra_activa ? 'Registrar horas' : 'Ajustar horómetro' }}</ion-button>
+      <ion-button *ngIf="!asignacionPendiente && puedeAsignarObra && !maquina.asignada && !maquina.obra_activa && maquina.estado === 'operativa'" size="small" fill="outline" (click)="gestionarAsignacion.emit({maquinaId: maquina.id, accion: 'asignar'})">Asignar a obra</ion-button>
+      <ion-button *ngIf="!asignacionPendiente && puedeRetirarObra && (maquina.asignada || maquina.obra_activa)" size="small" fill="outline" (click)="gestionarAsignacion.emit({maquinaId: maquina.id, accion: 'retirar'})">Retirar al patio</ion-button>
+      <ion-button *ngIf="asignacionPendiente as accion" size="small" fill="outline" (click)="gestionarAsignacion.emit({maquinaId: maquina.id, accion: accion})">Confirmar operación pendiente</ion-button>
+      <ion-button *ngIf="puedeCambiarUbicacion" size="small" fill="outline" (click)="cambiarUbicacion.emit(maquina.id)">{{ ubicacionPendiente ? 'Confirmar ubicación pendiente' : 'Cambiar ubicación' }}</ion-button>
+    </footer>
+  </div>
+</article>

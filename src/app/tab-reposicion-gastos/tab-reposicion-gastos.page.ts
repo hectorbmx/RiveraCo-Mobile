@@ -1,3 +1,7 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -54,7 +58,7 @@ interface ManualConcepto {
   templateUrl: './tab-reposicion-gastos.page.html',
   styleUrls: ['./tab-reposicion-gastos.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonRefresher, IonRefresherContent,
     CommonModule,
     FormsModule,
     IonBadge,
@@ -71,6 +75,14 @@ interface ManualConcepto {
   ],
 })
 export class TabReposicionGastosPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  get bloquearRefrescoApp() { return this.loading || this.searching || this.showForm || this.conceptos.length > 0; }
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.bloquearRefrescoApp) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.loadData().finally(completar); }, this.destroyRefrescoApp);
+  }
+
   loading = false;
   searching = false;
   showForm = false;

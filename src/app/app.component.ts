@@ -1,3 +1,4 @@
+import { NavegacionLoadingService } from './services/navegacion-loading.service';
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 
@@ -7,5 +8,5 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  constructor(_navegacion: NavegacionLoadingService) {}
 }

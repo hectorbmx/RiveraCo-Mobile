@@ -1,3 +1,6 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -39,18 +42,25 @@ import { GerencialPersonalService } from 'src/app/services/gerencial-personal.se
   templateUrl: './gerencial-empleados.page.html',
   styleUrls: ['./gerencial-empleados.page.scss'],
   standalone: true,
-  imports: [IonSegmentButton, IonBackButton, IonAvatar, 
+  imports: [IonRefresher, IonRefresherContent, IonSegmentButton, IonBackButton, IonAvatar,
     IonFabButton, IonFab,IonSegment,IonSelect,IonSelectOption,
     IonInfiniteScrollContent, IonInfiniteScroll,
     IonItem, IonLabel, IonList,
     IonIcon, IonContent,
     IonHeader, IonTitle, IonToolbar, IonFooter,
-    IonRefresher, IonRefresherContent,
+
     IonSearchbar,ProfileMenuComponent,
     CommonModule, FormsModule
   ]
 })
 export class GerencialEmpleadosPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.page = 1; this.items = []; this.meta = null; if (this.infiniteScroll) this.infiniteScroll.disabled = false; this.fetchPage({ target: { complete: completar } }); }, this.destroyRefrescoApp);
+  }
+
 @ViewChild(IonInfiniteScroll) infiniteScroll!: IonInfiniteScroll;
   showTabs = true;
   lastScrollTop = 0;
@@ -113,7 +123,7 @@ fetchPage(event?: any) {
   this.personalSvc.index(params).subscribe({
     next: (res: any) => {
       const list = Array.isArray(res.data) ? res.data : [];
-      
+
       if (this.page === 1) this.items = list;
       else this.items = [...this.items, ...list];
 
@@ -125,7 +135,7 @@ fetchPage(event?: any) {
       }
     },
     error: (err) => {
-      console.error('Error:', err);
+      this.loading = false; console.error('Error:', err);
       if (event) event.target.complete();
     },
     complete: () => {
@@ -206,21 +216,21 @@ getAreaName(e: EmpleadoListItemDto): string {
 
 getObraName(e: any): string {
   const obra = e.obra_actual;
-  
+
   if (obra) {
     // Si tiene clave, la mostramos así: "ABC-123 - Nombre de la Obra"
     // Si no tiene clave, solo el nombre.
     const clave = obra.clave_obra ? `${obra.clave_obra} - ` : '';
     return `${clave}${obra.nombre}`;
   }
-  
+
   return 'Sin obra asignada';
 }
   goToDetalle(e: EmpleadoListItemDto) {
     // aquí navegas si ya tienes ruta de detalle
     // this.router.navigate(['gerencial', 'empleados', e.id]);
     console.log('Empleado:', (e as any)?.id);
-    
+
     this.router.navigate(['tabs-gerencial', 'empleado-detalles', e.id]);
   }
 

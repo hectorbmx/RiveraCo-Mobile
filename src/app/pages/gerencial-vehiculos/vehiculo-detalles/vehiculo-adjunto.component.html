@@ -1,0 +1,28 @@
+<ng-container *ngIf="url; else ausente">
+  <button *ngIf="tipo === 'imagen'" type="button" class="miniatura" (click)="abrir()" [attr.aria-label]="'Ampliar ' + titulo">
+    <img *ngIf="!miniaturaError" [src]="url" [alt]="titulo" loading="lazy" (error)="miniaturaError = true">
+    <span *ngIf="miniaturaError" class="imagen-fallida">Imagen no disponible</span>
+    <span class="nombre">{{ titulo }}</span><span class="ampliar">Ampliar</span>
+  </button>
+  <a *ngIf="tipo === 'documento'" class="archivo" [href]="url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'Abrir ' + titulo + ' en otra ventana'">Ver {{ titulo }} <span aria-hidden="true">↗</span></a>
+</ng-container>
+<ng-template #ausente><span class="sin-archivo">{{ sinArchivo }}</span></ng-template>
+
+<ion-modal #visor *ngIf="abierto" [isOpen]="abierto" (didDismiss)="abierto = false">
+  <ng-template>
+    <ion-header><ion-toolbar><ion-title>{{ titulo }}</ion-title><ion-buttons slot="end"><ion-button (click)="visor.dismiss()">Cerrar</ion-button></ion-buttons></ion-toolbar></ion-header>
+    <ion-content>
+      <div class="visor">
+        <div class="herramientas">
+          <button type="button" *ngIf="!imagenError" (click)="original = !original" [attr.aria-pressed]="original">{{ original ? 'Ajustar a pantalla' : 'Tamaño original' }}</button>
+          <a [href]="url" target="_blank" rel="noopener noreferrer">Abrir archivo ↗</a>
+        </div>
+        <p *ngIf="cargando && !imagenError" class="mensaje" role="status">Cargando imagen…</p>
+        <div *ngIf="imagenError" class="mensaje" role="alert"><p>No se pudo cargar la imagen.</p><p>Puedes intentar abrir el archivo con el enlace de arriba.</p></div>
+        <div class="imagen-scroll" [class.original]="original">
+          <img *ngIf="!imagenError" [src]="url" [alt]="titulo" (load)="cargando = false" (error)="imagenError = true; cargando = false">
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

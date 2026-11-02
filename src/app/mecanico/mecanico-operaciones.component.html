@@ -1,0 +1,72 @@
+<details [open]="!!error || !!aviso || permite('editar_borrador') || permite('generar_orden')" class="tarjeta tarjeta-desplegable">
+  <summary><span>Acciones</span><span class="desplegable-flecha" aria-hidden="true"></span></summary><div class="tarjeta-contenido"><p *ngIf="permite('generar_orden')" class="materiales-ayuda">Genera la orden para revisar qué materiales se aplicarán antes de solicitarlos.</p><p *ngIf="cambiosMateriales" class="materiales-pendientes">Guarda los ajustes de materiales antes de solicitar almacén o compra.</p><p *ngIf="error" role="alert">{{ error }}</p><p *ngIf="aviso" role="status">{{ aviso }}</p>
+  <ion-button *ngIf="permite('editar_borrador')" [routerLink]="['/tabs-mecanico/servicios', servicio.id, 'editar']" [disabled]="ocupado">Editar borrador</ion-button>
+  <ion-button *ngIf="permite('generar_orden')" (click)="confirmar('generar_orden')" [disabled]="ocupado">Generar orden</ion-button>
+  <ion-button *ngIf="permite('solicitar_almacen')" (click)="confirmar('solicitar_almacen')" [disabled]="ocupado || cambiosMateriales">Solicitar almacén</ion-button>
+  <ion-button *ngIf="permite('solicitar_compra')" (click)="confirmar('solicitar_compra')" [disabled]="ocupado || cambiosMateriales">Solicitar compra</ion-button>
+  <ion-button fill="clear" routerLink="/tabs-mecanico/productos" [queryParams]="{servicio: servicio.id}" [disabled]="ocupado">Consultar productos de Giralda</ion-button>
+</div></details>
+<details open class="tarjeta tarjeta-desplegable ajuste-materiales" *ngIf="permite('ajustar_materiales')">
+  <summary><span>Materiales para este servicio</span><span class="desplegable-flecha" aria-hidden="true"></span></summary><div class="tarjeta-contenido">
+  <p class="materiales-ayuda">Consulta lo requerido y el disponible de Giralda. Si una pieza o el aceite se cambiaron recientemente, desmarca la partida y explica el motivo.</p>
+  <article class="material-seleccion" *ngFor="let item of materialesInventario; trackBy: idMaterialInventario" [class.material-excluido]="!item.material.incluido"><ng-container *ngIf="item.material as m">
+    <div class="material-cabecera"><h3>{{ m.producto }}</h3><span class="material-estado">{{ m.incluido ? 'Aplicar' : 'No se solicitará' }}</span></div>
+    <dl class="material-cantidades">
+      <div class="cantidad-efectiva"><dt>Requerido</dt><dd>{{ item.requerido | number:'1.0-2' }} <small>{{ m.unidad }}</small></dd></div>
+      <div class="cantidad-disponible"><dt>Disponible en Giralda</dt><dd>{{ item.disponible === null ? 'Sin dato' : (item.disponible | number:'1.0-2') }} <small *ngIf="item.disponible !== null">{{ m.unidad }}</small></dd></div>
+    </dl>
+    <p class="material-compra" *ngIf="m.incluido && item.porComprar !== null" [class.requiere-compra]="item.porComprar > 0">
+      <strong>Por comprar: {{ item.porComprar | number:'1.0-2' }} {{ m.unidad }}</strong><br>
+      <span *ngIf="item.porComprar === 0">El inventario disponible cubre este material. Solicita surtido de almacén.</span>
+      <span *ngIf="item.porComprar > 0 && item.surtir === 0">Sin inventario disponible para esta partida. Se requiere compra.</span>
+      <span *ngIf="item.porComprar > 0 && item.surtir !== null && item.surtir > 0">Puedes surtir {{ item.surtir | number:'1.0-2' }} {{ m.unidad }} desde almacén y comprar el resto.</span>
+    </p>
+    <p class="materiales-ayuda" *ngIf="m.incluido && item.disponible === null">Actualiza el servicio para consultar el inventario antes de decidir el abastecimiento.</p>
+    <ion-checkbox [(ngModel)]="m.incluido" (ionChange)="erroresMateriales[m.id] = ''" [disabled]="ocupado">Aplicar en este servicio</ion-checkbox>
+    <ng-container *ngIf="!m.incluido">
+      <p class="materiales-ayuda">No se incluirá en las solicitudes de almacén ni compra al guardar.</p>
+      <ion-textarea label="Motivo obligatorio" labelPlacement="stacked" placeholder="Ej. Aceite cambiado en la reparación de la semana anterior" [(ngModel)]="m.motivo_exclusion" (ionInput)="erroresMateriales[m.id] = ''" [maxlength]="255" [autoGrow]="true" [rows]="2" [required]="true" [disabled]="ocupado" [attr.aria-invalid]="!!erroresMateriales[m.id]" [attr.aria-describedby]="'motivo-error-' + m.id"/>
+      <p class="material-error" *ngIf="erroresMateriales[m.id]" [id]="'motivo-error-' + m.id" role="alert">{{ erroresMateriales[m.id] }}</p>
+    </ng-container>
+  </ng-container></article>
+  <p class="materiales-ayuda">El disponible descuenta cantidades reservadas y se confirma al surtir.</p>
+  <p class="materiales-pendientes" *ngIf="cambiosMateriales">Hay ajustes sin guardar. Guárdalos antes de solicitar materiales.</p>
+  <ion-button type="button" expand="block" (click)="guardarMateriales()" [disabled]="ocupado">{{ ocupado ? 'Guardando…' : 'Guardar ajustes de materiales' }}</ion-button>
+</div></details>
+<ng-content/>
+<details [open]="fotos.length > 0 || envioIncierto" class="tarjeta tarjeta-desplegable" [class.evidencias-bloqueadas]="!permite('agregar_evidencias')">
+  <summary><span>Agregar evidencias</span><span class="desplegable-flecha" aria-hidden="true"></span></summary><div class="tarjeta-contenido"><p *ngIf="!permite('agregar_evidencias')" class="aviso-evidencias" role="status">{{ servicio.evidencias.length >= 8 ? 'Se alcanzó el límite de ocho fotografías.' : (servicio.estatus === 'cancelado' ? 'No se pueden agregar evidencias a un servicio cancelado.' : (!servicio.es_propio ? 'Solo el mecánico asignado puede agregar evidencias.' : 'Disponible al iniciar el servicio y recibir los materiales requeridos.')) }}</p><p>{{ servicio.evidencias.length }} de 8 fotografías guardadas. Máximo 10 MB por imagen.</p>
+  <label>Elegir fotos<input type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="elegirArchivos($event)" [disabled]="ocupado || camara || !permite('agregar_evidencias')"/></label>
+  <ion-button fill="outline" (click)="tomarFoto()" [disabled]="ocupado || camara || fotos.length >= capacidad || !permite('agregar_evidencias')">{{ camara ? 'Abriendo cámara…' : 'Tomar foto' }}</ion-button>
+  <figure *ngFor="let foto of fotos; let index = index"><img [src]="foto.preview" alt="Foto seleccionada para evidencia"/><ion-textarea label="Descripción" labelPlacement="stacked" [(ngModel)]="foto.descripcion" [maxlength]="200" [disabled]="ocupado"/><ion-button fill="clear" (click)="quitarFoto(index)" [disabled]="ocupado">Retirar foto</ion-button></figure>
+  <ion-button (click)="subirFotos()" [disabled]="ocupado || camara || envioIncierto || !fotos.length || fotos.length > capacidad || !permite('agregar_evidencias')">{{ ocupado ? 'Guardando…' : 'Guardar evidencias' }}</ion-button>
+  <ion-button *ngIf="envioIncierto" fill="clear" (click)="envioIncierto = false">Revisé las evidencias guardadas</ion-button>
+</div></details>
+<ng-content select="[galeria-evidencias]"/>
+<ng-content select="[ejecucion-registrada]"/>
+<details class="tarjeta tarjeta-desplegable card-ejecucion" [open]="!!ejecucion || ejecucionIncierta">
+  <summary><span>Ejecución</span><span class="desplegable-flecha" aria-hidden="true"></span></summary><div class="tarjeta-contenido"><p class="materiales-ayuda" *ngIf="!permite('iniciar') && !permite('completar') && servicio.estatus !== 'en_proceso'">{{ servicio.estatus === 'completado' ? 'Servicio completado.' : (servicio.estatus === 'cancelado' ? 'Servicio cancelado.' : 'Disponible al generar la orden de servicio.') }}</p>
+  <p *ngIf="permite('iniciar')">{{ materialesPendientes ? 'Puedes iniciar con materiales pendientes. Para completar deberán estar surtidos todos los materiales incluidos.' : 'Materiales listos. Ya puedes iniciar el servicio.' }}</p>
+  <p *ngIf="servicio.es_propio && servicio.estatus === 'en_proceso' && !permite('completar')" role="status">{{ materialesPendientes ? 'Hay materiales incluidos pendientes de surtir. Podrás completar cuando estén surtidos.' : 'Completar todavía no está disponible. Revisa el servicio y actualiza su estado.' }}</p>
+<div class="ejecucion-botones">  <ion-button size="small" *ngIf="permite('iniciar') && !ejecucion" (click)="abrirEjecucion('iniciar')" [disabled]="ocupado || camara || ejecucionIncierta">Iniciar servicio</ion-button>
+  <ion-button size="small" *ngIf="permite('completar') && !ejecucion" (click)="abrirEjecucion('completar')" [disabled]="ocupado || camara || ejecucionIncierta">Completar servicio</ion-button>  <ion-button *ngIf="ejecucionIncierta || envioIncierto" size="small" type="button" fill="outline" (click)="actualizarEjecucion()" [disabled]="ocupado || camara">Verificar operación</ion-button></div>
+  <form *ngIf="ejecucion" (ngSubmit)="guardarEjecucion()">
+    <h3>{{ ejecucion === 'iniciar' ? 'Registrar inicio' : 'Registrar cierre' }}</h3>
+    <label>{{ ejecucion === 'iniciar' ? 'Fecha y hora de inicio' : 'Fecha y hora de fin' }}
+      <input name="fecha_ejecucion" type="datetime-local" [(ngModel)]="fechaEjecucion" required [disabled]="ocupado || ejecucionIncierta" [attr.aria-invalid]="!!erroresEjecucion[ejecucion === 'iniciar' ? 'fecha_inicio' : 'fecha_fin']" aria-describedby="zona-ejecucion error-fecha-ejecucion"/>
+    </label>
+    <p id="zona-ejecucion" class="muted">Hora de Ciudad de México.</p>
+    <p id="error-fecha-ejecucion" role="alert">{{ erroresEjecucion[ejecucion === 'iniciar' ? 'fecha_inicio' : 'fecha_fin'] }}</p>
+    <ng-container *ngIf="ejecucion === 'completar'">
+      <p>Inicio registrado: {{ horaMexico(servicio.fecha_inicio) }} (Ciudad de México).</p>
+      <ion-input [label]="esMaquina ? 'Horómetro final (h)' : 'Kilometraje final (km)'" labelPlacement="stacked" name="lectura_final" type="number" [min]="lecturaMinima" [step]="esMaquina ? 'any' : '1'" [(ngModel)]="lecturaFinal" [disabled]="ocupado || ejecucionIncierta" required aria-describedby="error-lectura-ejecucion"/>
+      <p id="error-lectura-ejecucion" role="alert">{{ erroresEjecucion[campoLectura] }}</p>
+      <ion-textarea label="Notas de ejecución" labelPlacement="stacked" name="notas_ejecucion" [(ngModel)]="notasEjecucion" [maxlength]="5000" [disabled]="ocupado || ejecucionIncierta" aria-describedby="error-notas-ejecucion"/>
+      <p id="error-notas-ejecucion" role="alert">{{ erroresEjecucion['notas'] }}</p>
+      <p class="muted">La mano de obra se calcula en el servidor. Los costos son de consulta.</p>
+    </ng-container>
+    <ion-button size="small" type="submit" [disabled]="ocupado || camara || ejecucionIncierta">{{ ocupado ? 'Guardando…' : (ejecucion === 'iniciar' ? 'Confirmar inicio' : 'Confirmar cierre') }}</ion-button>
+    <ion-button size="small" type="button" fill="clear" (click)="cerrarEjecucion()" [disabled]="ocupado || ejecucionIncierta">Volver</ion-button>
+  </form>
+
+</div></details>

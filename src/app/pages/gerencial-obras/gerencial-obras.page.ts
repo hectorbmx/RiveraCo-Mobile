@@ -1,3 +1,7 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresherContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -25,10 +29,17 @@ import { GerencialObrasService } from 'src/app/services/gerencial-obras.service'
   templateUrl: './gerencial-obras.page.html',
   styleUrls: ['./gerencial-obras.page.scss'],
   standalone: true,
-  imports: [IonInfiniteScrollContent,IonItem,IonLabel, IonInfiniteScroll, IonIcon, IonContent, IonHeader, IonTitle, IonList,
-    IonToolbar,IonFooter, CommonModule,IonRefresher, FormsModule,ProfileMenuComponent,IonSearchbar]
+  imports: [IonRefresher, IonRefresherContent, IonInfiniteScrollContent,IonItem,IonLabel, IonInfiniteScroll, IonIcon, IonContent, IonHeader, IonTitle, IonList,
+    IonToolbar,IonFooter, CommonModule, FormsModule,ProfileMenuComponent,IonSearchbar]
 })
 export class GerencialObrasPage {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.refresh({ target: { complete: completar } }); }, this.destroyRefrescoApp);
+  }
+
   obras: ObraListItemDTO[] = [];
   loading = false;
 

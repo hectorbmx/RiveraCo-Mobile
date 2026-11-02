@@ -1,0 +1,22 @@
+:host { display: block; margin-bottom: 16px; }
+details { background: #fff; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 20px rgba(16,24,40,.06); }
+summary { cursor: pointer; padding: 18px; color: #0b2a63; font-size: 15px; font-weight: 800; border-bottom: 1px solid #e2e8f0; overflow-wrap: anywhere; }
+summary::marker { color: #0b2a63; }
+.total { display: inline-block; margin-left: 8px; padding: 3px 8px; border-radius: 12px; background: #f0f4f9; font-size: 12px; }
+.contenido { padding: 16px; }
+form { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0; }
+label { min-width: 0; display: block; font-size: 11px; font-weight: 600; color: #64748b; }
+input, select { display: block; width: 100%; min-width: 0; box-sizing: border-box; margin-top: 5px; padding: 9px 5px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #0b2a63; font: inherit; font-size: 12px; }
+.estado-filtro { grid-column: 1 / -1; }
+button { border: 1px solid #0b2a63; border-radius: 10px; padding: 10px; font: inherit; font-size: 12px; font-weight: 700; color: #0b2a63; background: #fff; cursor: pointer; }
+form > button { grid-column: 1 / -1; background: #0b2a63; color: #fff; }
+button:disabled { opacity: .45; cursor: default; }
+button:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #f6c300; outline-offset: -3px; }
+.mensaje, .conteo { font-size: 12px; color: #64748b; }
+.mensaje ion-spinner { width: 18px; height: 18px; vertical-align: middle; }
+.error { font-size: 13px; color: #991b1b; }
+nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 15px; font-size: 12px; color: #64748b; }
+
+details.mecanico > summary { background: #0e2858; color: #fff; border-color: #0e2858; }
+details.mecanico > summary::marker { color: #fff; }
+details.mecanico > summary .total { background: rgba(255,255,255,.18); color: #fff; }

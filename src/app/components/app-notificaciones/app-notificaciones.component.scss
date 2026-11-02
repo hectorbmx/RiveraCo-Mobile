@@ -1,0 +1,15 @@
+:host { display: inline-flex; vertical-align: middle; }
+.campana { --color: #0b265a; position: relative; margin: 0; }
+.campana.clara { --color: #fff; }
+.campana ion-icon { font-size: 24px; }
+.campana ion-badge { position: absolute; top: 0; right: 0; font-size: 9px; padding: 3px; }
+ion-toolbar { --background: #0b265a; --color: #fff; }
+ion-toolbar ion-button { --color: #fff; }
+ion-content { --background: #f2f2f7; }
+main { padding: 16px; color: #475569; }
+article { background: #fff; padding: 16px; border-radius: 14px; margin-bottom: 12px; border-left: 3px solid transparent; }
+article.sin-leer { border-left-color: #0b265a; }
+h2 { font-size: 15px; font-weight: 700; color: #0b265a; margin: 0 0 6px; }
+p { font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+time, small { display: block; font-size: 11px; color: #64748b; margin-top: 8px; }
+nav { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }

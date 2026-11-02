@@ -1,0 +1,59 @@
+:host { display: block; min-width: 0; color: #152033; }
+* { box-sizing: border-box; }
+.maquina-card { margin: 0; border: 1px solid #dfe7f2; border-radius: 16px; overflow: hidden; background: #fff; }
+.maquina-banda { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 12px 16px; background: #0b265a; color: #fff; font-size: 12px; }
+.maquina-banda > span:first-child { min-width: 0; flex: 1 1 110px; overflow-wrap: anywhere; }
+.maquina-banda strong { margin-left: 5px; font-size: 14px; }
+.badge { display: inline-block; padding: 4px 9px; border-radius: 20px; font-size: 11px; font-weight: 650; line-height: 1.3; overflow-wrap: anywhere; }
+.estado { background: #e8eef8; color: #25436d; }
+.estado[data-estado="operativa"] { background: #dcfce7; color: #166534; }
+.estado[data-estado="en_reparacion"] { background: #fef3c7; color: #92400e; }
+.estado[data-estado="fuera_servicio"], .estado[data-estado="fuera_de_servicio"], .estado[data-estado="baja_definitiva"] { background: #fee2e2; color: #991b1b; }
+.maquina-contenido { padding: 16px; }
+h2 { margin: 0; font-size: clamp(20px, 5vw, 25px); line-height: 1.2; font-weight: 750; overflow-wrap: anywhere; }
+.maquina-modelo { margin: 5px 0 0; font-size: 12px; color: #64748b; overflow-wrap: anywhere; }
+.ubicacion { display: flex; flex-wrap: wrap; align-items: baseline; gap: 7px 10px; margin-top: 12px; }
+.ubicacion-badge { background: #eef3fa; color: #385677; }
+.obra { min-width: 0; color: #475569; font-size: 12px; overflow-wrap: anywhere; }
+.lectura { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: center; margin: 15px 0; padding: 13px 0; border-top: 1px solid #e4eaf3; border-bottom: 1px solid #e4eaf3; }
+.dato-label { display: block; font-size: 11px; color: #64748b; font-weight: 500; }
+.horometro { display: block; margin-top: 3px; color: #0b265a; font-size: 25px; line-height: 1.2; overflow-wrap: anywhere; }
+.horometro small { font-size: 14px; font-weight: 500; }
+.sin-dato { display: block; margin-top: 5px; color: #64748b; font-size: 12px; font-weight: 500; }
+.ultima-lectura { text-align: right; font-size: 12px; color: #475569; }
+.ultima-lectura time, .ultima-lectura > span:last-child { display: block; margin-top: 5px; }
+.preventivo-titulo { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; }
+.preventivo h3 { margin: 7px 0 0; font-size: 15px; font-weight: 700; overflow-wrap: anywhere; }
+.preventivo-label { margin: 5px 0 8px; font-size: 12px; color: #475569; }
+.preventivo-estado { background: #eef2f7; color: #475569; }
+.preventivo[data-estado="ok"] > .preventivo-titulo .preventivo-estado, .preventivo-tipo[data-estado="ok"] .preventivo-estado { background: #dcfce7; color: #166534; }
+.preventivo[data-estado="proximo"] > .preventivo-titulo .preventivo-estado, .preventivo-tipo[data-estado="proximo"] .preventivo-estado { background: #fef3c7; color: #92400e; }
+.preventivo[data-estado="vencido"] > .preventivo-titulo .preventivo-estado, .preventivo-tipo[data-estado="vencido"] .preventivo-estado { background: #fee2e2; color: #991b1b; }
+.progreso { height: 7px; border-radius: 10px; background: #edf1f7; overflow: hidden; }
+.progreso span { display: block; height: 100%; border-radius: inherit; background: #16803d; }
+.preventivo[data-estado="proximo"] .progreso span { background: #e2a508; }
+.preventivo[data-estado="vencido"] .progreso span { background: #dc2626; }
+.preventivo-metas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 5px 10px; margin-top: 7px; color: #64748b; font-size: 11px; }
+.preventivo-metas strong { color: #334155; font-weight: 600; }
+.otros-preventivos { margin-top: 12px; border: 1px solid #e4eaf3; border-radius: 10px; overflow: hidden; }
+summary { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 40px; padding: 10px 12px; background: #eef3fa; color: #0b265a; cursor: pointer; list-style: none; font-size: 12px; font-weight: 650; }
+summary::-webkit-details-marker { display: none; }
+summary:focus-visible { outline: 3px solid #66a6ff; outline-offset: -3px; }
+.flecha { flex: 0 0 7px; height: 7px; width: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); margin: -3px 2px 0; }
+details[open] .flecha { transform: rotate(225deg); margin-top: 3px; }
+.preventivo-tipo { padding: 11px 12px; border-top: 1px solid #e4eaf3; }
+.preventivo-tipo h4 { flex: 1 1 120px; margin: 0; font-size: 12px; font-weight: 650; overflow-wrap: anywhere; }
+.preventivo-tipo p { margin: 6px 0 0; font-size: 11px; line-height: 1.5; color: #64748b; }
+.preventivo-no-disponible { margin: 0; color: #64748b; font-size: 12px; }
+.maquina-acciones { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.maquina-acciones ion-button { flex: 1 1 120px; min-width: 0; margin: 0; min-height: 36px; --border-radius: 9px; --box-shadow: none; font-size: 12px; white-space: normal; }
+
+.ubicacion-accion { border: 1px solid #b9ccec; cursor: pointer; font: inherit; font-size: 12px; gap: 7px; min-height: 32px; }
+.ubicacion-accion:focus-visible { outline: 3px solid #66a6ff; outline-offset: 2px; }
+.ubicacion-accion:hover { background: #dce8fa; }
+
+.maquina-banda { width: 100%; border: 0; text-align: left; font-family: inherit; cursor: pointer; min-height: 48px; }
+.maquina-banda:focus-visible { outline: 3px solid #66a6ff; outline-offset: -3px; }
+.maquina-banda-lateral { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; }
+.flecha-cabecera { flex: 0 0 8px; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); margin: -4px 2px 0; }
+.maquina-banda[aria-expanded="true"] .flecha-cabecera { transform: rotate(225deg); margin-top: 4px; }

@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -23,9 +28,16 @@ import { GerencialObrasService } from 'src/app/services/gerencial-obras.service'
   templateUrl: './pilas-detalles.page.html',
   styleUrls: ['./pilas-detalles.page.scss'],
   standalone: true,
-  imports: [IonTitle, IonHeader, CommonModule, IonContent, IonIcon, IonSpinner]
+  imports: [IonRefresher, IonRefresherContent, IonTitle, IonHeader, CommonModule, IonContent, IonIcon, IonSpinner]
 })
 export class PilasDetallesPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.load(completar); }, this.destroyRefrescoApp);
+  }
+
 
   loading = true;
   obraId!: number;
@@ -66,10 +78,10 @@ export class PilasDetallesPage implements OnInit {
     this.load();
   }
 
-  load() {
+  load(_completado: () => void = () => {}) {
     this.loading = true;
 
-    this.obrasSrv.getComisionesObra(this.obraId).subscribe({
+    this.obrasSrv.getComisionesObra(this.obraId).pipe(finalize(_completado)).subscribe({
       next: (resp) => {
         const d = resp?.data;
 

@@ -1,0 +1,153 @@
+<ion-header [class.cabecera-equipos]="esIndiceEquipos"><ion-toolbar>
+  <ion-buttons slot="start" *ngIf="id"><ion-button [routerLink]="['/tabs-mecanico', recurso]">Volver</ion-button></ion-buttons>
+  <ion-title>{{ titulo }}</ion-title>
+  <ion-buttons slot="end"><ion-button *ngIf="puedeCambiarPanel" routerLink="/selector-panel">Acceso</ion-button><app-notificaciones [clara]="esIndiceEquipos"></app-notificaciones></ion-buttons>
+</ion-toolbar>
+<div class="equipos-busqueda" *ngIf="esIndiceEquipos">
+  <ion-searchbar aria-label="Buscar equipo" placeholder="Buscar" [debounce]="350" [(ngModel)]="busqueda" (ionInput)="cargar()"></ion-searchbar>
+  <p class="equipos-resultados" role="status">{{ cargando ? 'Buscando…' : (meta ? meta.total + ' resultados' : (error ? 'Consulta no disponible' : '0 resultados')) }}</p>
+</div></ion-header>
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)" [disabled]="bloquearRefresco"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…" refreshingSpinner="crescent"></ion-refresher-content></ion-refresher>
+  <app-mecanico-maquina-horas *ngIf="recurso === 'maquinas' && maquinaHorasId !== null" [maquinaId]="maquinaHorasId" (cerrado)="maquinaHorasId = null" (guardado)="aplicarHoras($event)"/>
+  <app-mecanico-maquina-asignacion *ngIf="recurso === 'maquinas' && seleccionAsignacion !== null" [seleccion]="seleccionAsignacion" (cerrado)="seleccionAsignacion = null" (actualizado)="refrescarMaquina($event)" (guardado)="aplicarAsignacion($event)"/>
+  <app-mecanico-maquina-ubicacion *ngIf="recurso === 'maquinas' && maquinaUbicacionId !== null" [maquinaId]="maquinaUbicacionId" (cerrado)="maquinaUbicacionId = null" (actualizado)="refrescarMaquina($event)" (guardado)="aplicarUbicacion($event)"/>
+  <app-mecanico-maquina-ubicacion-menu *ngIf="recurso === 'maquinas' && menuUbicacionId !== null" [maquinaId]="menuUbicacionId" (cerrado)="menuUbicacionId = null" (actualizado)="refrescarMaquina($event)" (operacion)="elegirOperacionUbicacion($event)"/>
+  <main [class.indice-equipos]="esIndiceEquipos">
+    <p *ngIf="avisoHoras" class="aviso-horas" role="status">{{ avisoHoras }}</p>
+    <ion-button *ngIf="!id && recurso === 'servicios' && auth.appInfoValue?.empleado_id" routerLink="/tabs-mecanico/servicios/nuevo">Programar servicio</ion-button>
+    <ng-container *ngIf="!id">
+      <ion-searchbar *ngIf="!esIndiceEquipos" aria-label="Buscar" placeholder="Buscar" [debounce]="350" [(ngModel)]="busqueda" (ionInput)="cargar()"/>
+      <div class="filtros" *ngIf="recurso === 'servicios'">
+        <ion-toggle [(ngModel)]="soloMios" (ionChange)="cargar()">Solo míos</ion-toggle>
+        <ion-select label="Estado del servicio" labelPlacement="stacked" aria-label="Estado del servicio" interface="popover" [(ngModel)]="estatus" (ionChange)="cargar()">
+          <ion-select-option value="">Todos los estados</ion-select-option>
+          <ion-select-option value="completado">Completados</ion-select-option>
+          <ion-select-option value="pendiente">Pendientes</ion-select-option>
+          <ion-select-option value="borrador">Borrador</ion-select-option>
+          <ion-select-option value="en_proceso">En proceso</ion-select-option>
+          <ion-select-option value="orden_generada">Orden generada</ion-select-option>
+          <ion-select-option value="cancelado">Cancelados</ion-select-option>
+        </ion-select>
+      </div>
+      <details class="filtros-avanzados" *ngIf="recurso === 'servicios'">
+        <summary><span>Filtrar por fechas o equipo</span><span class="filtros-flecha" aria-hidden="true"></span></summary><div class="filtros-contenido">
+        <div class="filtros">
+          <ion-input type="date" label="Programado desde" labelPlacement="stacked" [(ngModel)]="fechaDesde" (ionChange)="cargar()"/>
+          <ion-input type="date" label="Programado hasta" labelPlacement="stacked" [(ngModel)]="fechaHasta" (ionChange)="cargar()"/>
+        </div>
+        <ion-select label="Tipo de equipo" interface="popover" [(ngModel)]="equipoTipo" (ionChange)="cambiarTipoEquipo()">
+          <ion-select-option value="">Todos los equipos</ion-select-option><ion-select-option value="maquinas">Máquinas</ion-select-option><ion-select-option value="vehiculos">Vehículos</ion-select-option>
+        </ion-select>
+        <ng-container *ngIf="equipoTipo">
+          <ion-searchbar aria-label="Buscar equipo" placeholder="Buscar equipo por nombre, código o placas" [debounce]="350" [(ngModel)]="equipoBusqueda" (ionInput)="cargarEquipos()"/>
+          <p *ngIf="cargandoEquipos" role="status">Buscando equipos…</p>
+          <p *ngIf="errorEquipos" role="alert">{{ errorEquipos }}</p>
+          <ion-select label="Equipo" interface="popover" [(ngModel)]="equipoId" (ionChange)="seleccionarEquipo()" [disabled]="cargandoEquipos">
+            <ion-select-option [value]="null">{{ equipoTipo === 'vehiculos' ? 'Todos los vehículos' : 'Todas las máquinas' }}</ion-select-option><ion-select-option *ngIf="equipoSeleccionadoFueraPagina && equipoSeleccionado as seleccionado" [value]="seleccionado.id">{{ nombre(seleccionado) }} · {{ seleccionado.codigo || seleccionado.placas }}</ion-select-option><ion-select-option *ngFor="let equipo of equipos" [value]="equipo.id">{{ nombre(equipo) }} · {{ equipo.codigo || equipo.placas }}</ion-select-option>
+          </ion-select>
+          <div class="paginacion" *ngIf="metaEquipos && metaEquipos.last_page > 1"><ion-button size="small" [disabled]="cargandoEquipos || metaEquipos.current_page <= 1" (click)="cargarEquipos(metaEquipos.current_page - 1)">Equipos anteriores</ion-button><span>{{ metaEquipos.current_page }} / {{ metaEquipos.last_page }}</span><ion-button size="small" [disabled]="cargandoEquipos || metaEquipos.current_page >= metaEquipos.last_page" (click)="cargarEquipos(metaEquipos.current_page + 1)">Más equipos</ion-button></div>
+        </ng-container>
+        <ion-button fill="clear" (click)="limpiarFiltros()">Limpiar filtros</ion-button></div>
+      </details>
+    </ng-container>
+    <div class="estado" *ngIf="cargando" role="status"><ion-spinner/><p>Cargando…</p></div>
+    <div class="estado" *ngIf="error" role="alert"><p>{{ error }}</p><ion-button (click)="cargar()">Reintentar</ion-button></div>
+    <ng-container *ngIf="!cargando && !error">
+      <ng-container *ngIf="!id">
+        <p class="muted" *ngIf="meta && !esIndiceEquipos">{{ meta.total }} resultados</p>
+        <div class="lista-maquinas" *ngIf="recurso === 'maquinas'">
+          <app-mecanico-maquina-card *ngFor="let maquina of filas" [maquina]="maquina" [puedeCambiarUbicacion]="puedeCambiarUbicacion" [ubicacionPendiente]="ubicacionPendiente(maquina.id)" (cambiarUbicacion)="abrirUbicacion($event)" (gestionarUbicacion)="abrirMenuUbicacion($event)" [asignacionPendiente]="asignacionPendiente(maquina.id)" [puedeCapturarHoras]="puedeCapturarHoras" [puedeAsignarObra]="puedeAsignarObra" [puedeRetirarObra]="puedeRetirarObra" (gestionarAsignacion)="abrirAsignacion($event)" (capturarHoras)="abrirHoras($event)" [puedeProgramar]="!!auth.appInfoValue?.empleado_id"/>
+        </div>
+        <div class="lista-maquinas" *ngIf="recurso === 'vehiculos'">
+          <app-mecanico-vehiculo-card *ngFor="let vehiculo of filas" [vehiculo]="vehiculo"></app-mecanico-vehiculo-card>
+        </div>
+        <ion-list *ngIf="recurso === 'servicios'" [class.lista-servicios]="recurso === 'servicios'"><ion-item *ngFor="let fila of filas" [routerLink]="['/tabs-mecanico', recurso, fila.id]" [detail]="true">
+          <ng-container *ngIf="recurso === 'servicios'; else filaEquipo">
+            <ion-label class="ion-text-wrap servicio-resumen">
+              <h2>{{ (fila.maquina || fila.vehiculo) ? nombre((fila.maquina || fila.vehiculo)!) : 'Equipo sin asignar' }}</h2>
+              <p>{{ tipoServicio(fila) }}</p>
+            </ion-label>
+            <div slot="end" class="servicio-lateral">
+              <ion-badge class="estado-servicio" [attr.data-estado]="fila.estado || fila.estatus">{{ etiqueta(fila.estado || fila.estatus) }}</ion-badge>
+              <time *ngIf="fila.fecha_programada" [attr.datetime]="fila.fecha_programada" title="Fecha programada">{{ fila.fecha_programada | date:'dd/MM/yyyy HH:mm' }}</time>
+            </div>
+          </ng-container>
+          <ng-template #filaEquipo>
+            <ion-label class="ion-text-wrap"><h2>{{ nombre(fila) }}</h2><p>{{ fila.codigo || fila.placas || fila.orden_servicio_folio }}</p>
+              <p *ngIf="fila.fecha_programada">{{ fila.fecha_programada | date:'dd/MM/yyyy HH:mm' }}</p>
+            </ion-label><ion-badge slot="end">{{ etiqueta(fila.estado || fila.estatus) }}</ion-badge>
+          </ng-template>
+        </ion-item></ion-list>
+        <p class="estado" *ngIf="filas.length === 0">No se encontraron resultados.</p>
+        <div class="paginacion" *ngIf="meta && meta.last_page > 1"><ion-button [disabled]="meta.current_page <= 1" (click)="cargar(meta.current_page - 1)">Anterior</ion-button><span>{{ meta.current_page }} / {{ meta.last_page }}</span><ion-button [disabled]="meta.current_page >= meta.last_page" (click)="cargar(meta.current_page + 1)">Siguiente</ion-button></div>
+      </ng-container>
+      <app-mecanico-maquina-card *ngIf="equipo && recurso === 'maquinas'" [maquina]="equipo" [puedeCambiarUbicacion]="puedeCambiarUbicacion" [ubicacionPendiente]="ubicacionPendiente(equipo.id)" (cambiarUbicacion)="abrirUbicacion($event)" (gestionarUbicacion)="abrirMenuUbicacion($event)" [asignacionPendiente]="asignacionPendiente(equipo.id)" [detalle]="true" [puedeCapturarHoras]="puedeCapturarHoras" [puedeAsignarObra]="puedeAsignarObra" [puedeRetirarObra]="puedeRetirarObra" (gestionarAsignacion)="abrirAsignacion($event)" (capturarHoras)="abrirHoras($event)" [puedeProgramar]="!!auth.appInfoValue?.empleado_id"/>
+      <section *ngIf="equipo" class="tarjeta">
+        <ng-container *ngIf="recurso !== 'maquinas'">
+        <ion-button *ngIf="auth.appInfoValue?.empleado_id" routerLink="/tabs-mecanico/servicios/nuevo" [queryParams]="{vehiculo_id: equipo.id}">Programar servicio</ion-button>
+        <h1>{{ nombre(equipo) }}</h1><p>{{ equipo.codigo || equipo.placas }}</p><p>{{ etiqueta(equipo.estado || equipo.estatus) }}</p>
+        <p *ngIf="equipo.horometro_base != null">Horómetro base: {{ equipo.horometro_base }} h</p>
+        </ng-container>
+        <h2>Servicios recientes</h2><p *ngIf="!historial.length">Sin servicios registrados.</p>
+        <ion-list><ion-item *ngFor="let item of historial" [routerLink]="item.tipo === 'programado' ? ['/tabs-mecanico/servicios', item.id] : null" [detail]="item.tipo === 'programado'"><ion-label class="ion-text-wrap"><h3>{{ nombre(item) }}</h3><p>{{ etiqueta(item.estatus) }} · {{ item.fecha_programada | date:'dd/MM/yyyy' }}</p><p>{{ item.descripcion }}</p></ion-label></ion-item></ion-list>
+      </section>
+      <ng-container *ngIf="servicio as s">
+
+        <details open class="tarjeta tarjeta-desplegable cabecera-servicio" aria-labelledby="titulo-servicio">
+          <summary class="servicio-banda" [attr.data-estado]="s.estatus">
+            <h1 id="titulo-servicio">Servicio #{{ s.id }}</h1>
+            <ion-badge class="estado-servicio" [attr.data-estado]="s.estatus">{{ etiqueta(s.estatus) }}</ion-badge>
+          <span class="desplegable-flecha" aria-hidden="true"></span></summary>
+          <div class="servicio-identidad">
+            <h2>{{ (s.maquina || s.vehiculo) ? nombre((s.maquina || s.vehiculo)!) : 'Equipo sin asignar' }}</h2>
+            <p class="servicio-categoria">{{ s.categoria_mantenimiento }}</p>
+            <p class="servicio-descripcion" *ngIf="s.descripcion">{{ s.descripcion }}</p>
+          </div>
+          <dl class="servicio-datos">
+            <div><dt>Mecánico</dt><dd>{{ s.mecanico?.nombre || 'Sin asignar' }}</dd></div>
+            <div><dt>Programado</dt><dd>{{ (s.fecha_programada | date:'dd/MM/yyyy HH:mm') || 'Sin programar' }}</dd></div>
+            <div *ngIf="s.horometro != null"><dt>Horómetro</dt><dd>{{ s.horometro | number:'1.0-2' }} h</dd></div>
+            <div *ngIf="s.km_actuales != null"><dt>Kilometraje</dt><dd>{{ s.km_actuales | number:'1.0-2' }} km</dd></div>
+            <div class="servicio-costo"><dt>Costo total</dt><dd>$ {{ s.costo_total | number:'1.2-2' }}</dd></div>
+          </dl>
+        </details>
+
+        <app-mecanico-operaciones [servicio]="s" (actualizado)="servicio = $event">
+        <details class="tarjeta orden-desplegable" [attr.data-orden]="s.orden.folio || s.id">
+          <summary><span class="orden-folio">{{ s.orden.folio || 'Sin orden generada' }}</span><span class="abastecimiento-badge" [attr.data-tono]="estadoAbastecimiento.tono" [attr.aria-label]="'Abastecimiento: ' + estadoAbastecimiento.texto">{{ estadoAbastecimiento.texto }}</span><span class="orden-flecha" aria-hidden="true"></span></summary>
+          <div class="orden-contenido">
+            <p class="orden-ayuda">Materiales de la orden de servicio y avance de surtido.</p>
+            <p *ngIf="!s.materiales.length">Sin materiales en la orden.</p>
+            <article *ngFor="let m of materialesConAvance" class="fila orden-partida">
+              <div class="orden-producto"><strong>{{ m.producto }}</strong><span class="orden-estado" [class.excluido]="!m.incluido">{{ m.incluido ? 'Aplicar' : 'No se solicitará' }}</span></div>
+              <p>Cantidad original: {{ m.cantidad_requerida | number:'1.0-2' }} {{ m.unidad }} · Para este servicio: <strong>{{ (m.incluido ? m.cantidad_requerida : 0) | number:'1.0-2' }} {{ m.unidad }}</strong></p>
+              <p *ngIf="m.motivo_exclusion" class="orden-motivo">{{ m.motivo_exclusion }}</p>
+              <dl *ngIf="m.avance as avance" class="orden-avance">
+                <div><dt>Surtido</dt><dd>{{ avance.surtido | number:'1.0-2' }} {{ m.unidad }}</dd></div>
+                <div><dt>Faltante</dt><dd>{{ avance.faltante | number:'1.0-2' }} {{ m.unidad }}</dd></div>
+                <div><dt>Disponible</dt><dd>{{ avance.disponible | number:'1.0-2' }} {{ m.unidad }}</dd></div>
+              </dl>
+              <p *ngIf="m.avance as avance" class="orden-ayuda">{{ etiqueta(avance.estado) }}</p>
+            </article>
+            <section class="orden-solicitudes" aria-label="Seguimiento de abastecimiento">
+              <h3>Seguimiento de abastecimiento</h3>
+              <p *ngIf="!s.solicitudes.length" class="orden-ayuda">Sin solicitudes.</p>
+              <div *ngFor="let solicitud of s.solicitudes" class="fila">
+                <div class="orden-producto"><strong>{{ solicitud.folio }}</strong><span class="orden-estado">{{ estadoSolicitud(solicitud) }}</span></div>
+                <p *ngFor="let d of solicitud.documentos_inventario">{{ d.folio }} · {{ etiqueta(d.estado) }}</p>
+                <p *ngFor="let oc of solicitud.ordenes_compra">{{ oc.folio }} · {{ etiqueta(oc.estado) }}</p>
+              </div>
+            </section>
+          </div>
+        </details>
+
+        <details ejecucion-registrada class="tarjeta tarjeta-desplegable" *ngIf="s.fecha_inicio || s.fecha_fin || s.notas"><summary><span>Ejecución registrada</span><span class="desplegable-flecha" aria-hidden="true"></span></summary><div class="tarjeta-contenido"><p *ngIf="s.fecha_inicio">Inicio: {{ horaEjecucion(s.fecha_inicio) }} (Ciudad de México)</p><p *ngIf="s.fecha_fin">Fin: {{ horaEjecucion(s.fecha_fin) }} (Ciudad de México)</p><p *ngIf="s.notas" style="white-space: pre-wrap">{{ s.notas }}</p></div></details>
+        <details galeria-evidencias class="tarjeta tarjeta-desplegable"><summary><span>Evidencias</span><span class="desplegable-flecha" aria-hidden="true"></span></summary><div class="tarjeta-contenido"><p *ngIf="!s.evidencias.length">Sin fotografías.</p><figure *ngFor="let foto of s.evidencias"><a *ngIf="foto.url" [href]="foto.url" target="_blank" rel="noopener"><img [src]="foto.url" [alt]="foto.descripcion || 'Evidencia del servicio'" loading="lazy"/></a><figcaption>{{ foto.descripcion }}</figcaption></figure></div></details>
+        </app-mecanico-operaciones>
+
+        
+      </ng-container>
+    </ng-container>
+  </main>
+</ion-content>

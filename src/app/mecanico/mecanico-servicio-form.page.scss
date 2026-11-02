@@ -1,0 +1,67 @@
+:host { display: block; width: 100%; min-width: 0; }
+ion-content { --background: #f2f5fa; }
+.servicio-form { width: 100%; max-width: 780px; margin: 0 auto; padding: 16px 16px 32px; color: #172b49; }
+.servicio-form, .servicio-form * { box-sizing: border-box; }
+form, fieldset, section, .campos > *, .equipo-textos { min-width: 0; max-width: 100%; }
+fieldset { min-inline-size: 0; width: 100%; border: 0; padding: 0; margin: 0; }
+fieldset[disabled] { pointer-events: none; opacity: .7; }
+h1, h2, h3, p { margin: 0; overflow-wrap: anywhere; }
+.equipo-principal { padding: 20px; border-radius: 20px; background: linear-gradient(135deg, #0b265a, #214b88); color: #fff; box-shadow: 0 8px 24px rgba(11, 38, 90, .16); }
+.equipo-encabezado { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.etiqueta { font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: #cadcff; }
+.borrador { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: 20px; padding: 5px 9px; font-size: 11px; }
+.equipo-identidad { display: flex; align-items: flex-start; gap: 12px; }
+.equipo-icono { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; border-radius: 13px; background: rgba(255,255,255,.12); }
+.equipo-icono ion-icon { font-size: 24px; color: #a8c9ff; }
+.equipo-clase { color: #c5d7f4; font-size: 12px; margin-bottom: 6px; }
+h1 { font-size: 22px; line-height: 1.2; font-weight: 750; }
+.equipo-codigo { margin-top: 9px; color: #d7e5fb; font-size: 13px; }
+.equipo-pie { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid rgba(255,255,255,.18); margin-top: 20px; padding-top: 14px; }
+.equipo-pie p { font-size: 11px; line-height: 1.55; color: #d6e4fa; }
+.equipo-pie strong { font-weight: 650; color: #fff; }
+.equipo-pie ion-button { --color: #fff; --border-color: rgba(255,255,255,.55); --border-radius: 9px; margin: 0; }
+.tarjeta { background: #fff; border: 1px solid #e3eaf3; border-radius: 18px; margin-top: 16px; padding: 18px; box-shadow: 0 3px 10px rgba(20,45,80,.025); }
+.seccion-encabezado { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 18px; }
+.seccion-encabezado > div { min-width: 0; }
+.paso { flex: 0 0 26px; display: grid; place-items: center; width: 26px; height: 26px; font-size: 12px; font-weight: 750; border-radius: 8px; background: #edf3ff; color: #2856a0; }
+h2 { font-size: 17px; font-weight: 700; line-height: 1.4; }
+.seccion-encabezado p { font-size: 12px; line-height: 1.5; color: #78869b; margin-top: 4px; }
+.campos { display: grid; gap: 14px; grid-template-columns: minmax(0,1fr); }
+.campo-completo { grid-column: 1 / -1; }
+ion-input, ion-select, ion-textarea { display: block; width: 100%; min-width: 0; max-width: 100%; font-size: 14px; border: 1px solid #dce4ef; border-radius: 11px; padding: 9px 12px !important; --padding-start: 0; --padding-end: 0; background: #fbfcfe; }
+ion-select { --padding-top: 4px; --padding-bottom: 4px; }
+ion-select::part(container), ion-select::part(text) { min-width: 0; max-width: 100%; }
+ion-select::part(text), ion-select::part(label) { white-space: normal; overflow-wrap: anywhere; }
+ion-select::part(label) { font-size: 12px; font-weight: 600; color: #536581; }
+ion-input, ion-textarea { --highlight-color-focused: #2d67c8; }
+ion-searchbar { width: 100%; max-width: 100%; margin: 12px 0; padding: 0; --border-radius: 11px; --box-shadow: none; --background: #f1f4f9; }
+.catalogo-paginacion { margin-top: 14px; }
+.catalogo-paginacion p { text-align: center; font-size: 12px; color: #60728d; }
+.catalogo-botones { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; margin-top: 7px; }
+.catalogo-botones ion-button { min-width: 0; width: 100%; margin: 0; --border-radius: 9px; --box-shadow: none; }
+.catalogo-paginacion > small { display: block; font-size: 11px; line-height: 1.5; color: #7b8798; margin-top: 10px; }
+.lectura { margin: 16px 0; padding: 12px 14px; border-radius: 10px; background: #edf4ff; border-left: 3px solid #719de7; }
+.lectura > span { display: block; color: #536b90; font-size: 11px; margin-bottom: 4px; }
+.lectura strong { color: #214c88; font-size: 18px; }
+.lectura small { font-size: 12px; font-weight: 500; }
+.ayuda, .asignacion { font-size: 11px; color: #7a879a; line-height: 1.55; margin-top: 12px; }
+.asignacion { padding-top: 14px; border-top: 1px solid #edf1f6; }
+.mensaje { padding: 11px 13px; border-radius: 10px; font-size: 12px; line-height: 1.5; margin-bottom: 12px; }
+.mensaje-error { color: #9e2929; background: #fff0f0; border: 1px solid #ffdcdc; }
+.mensaje-aviso { background: #fff8e9; color: #83611e; }
+.estado, .estado-carga { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 12px; color: #6c7e98; padding: 14px 0; }
+.estado-carga ion-spinner { width: 22px; height: 22px; }
+.material { border-top: 1px solid #edf1f6; padding: 14px 0; }
+.material h3 { font-size: 14px; font-weight: 650; line-height: 1.4; }
+.sku { color: #8290a3; font-size: 11px; margin-top: 4px; }
+.material-cantidades { display: grid; gap: 8px; grid-template-columns: repeat(3,minmax(0,1fr)); margin: 12px 0 0; }
+.material-cantidades > div { min-width: 0; border-radius: 8px; padding: 8px; background: #f5f7fb; }
+.material-cantidades dt { font-size: 10px; color: #71829b; }
+.material-cantidades dd { margin: 5px 0 0; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; }
+.material-cantidades dd small { font-size: 10px; font-weight: 400; }
+.material-cantidades .faltante { background: #fff1e8; color: #a85724; }
+.guardar { margin-top: 22px; }
+.guardar p { color: #77869b; text-align: center; font-size: 11px; margin-bottom: 8px; }
+.guardar ion-button { margin: 0; min-height: 46px; font-weight: 650; --background: #0b265a; --border-radius: 12px; --box-shadow: none; }
+@media (min-width: 600px) { .campos { grid-template-columns: repeat(2,minmax(0,1fr)); } .servicio-form { padding-top: 24px; } }
+@media (max-width: 360px) { .servicio-form { padding-left: 10px; padding-right: 10px; } .tarjeta, .equipo-principal { padding: 15px; } h1 { font-size: 20px; } }

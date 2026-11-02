@@ -50,6 +50,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../pages/gerencial-vehiculos/gerencial-vehiculos.page').then(m => m.GerencialVehiculosPage),
       },
+      {
+        path: 'vehiculos/:id',
+        loadComponent: () => import('../pages/gerencial-vehiculos/vehiculo-detalles/vehiculo-detalles.page')
+          .then(m => m.VehiculoDetallesPage),
+      },
        {
           path: 'maquina-detalles/:id',
           loadComponent: () => import('../pages/gerencial-maquinas/maquina-detalles/maquina-detalles.page').then( m => m.MaquinaDetallesPage)

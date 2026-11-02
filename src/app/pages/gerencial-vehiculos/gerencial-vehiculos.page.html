@@ -1,4 +1,5 @@
 <ion-content class="vehiculos-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescarApp($event)"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…" refreshingSpinner="crescent"></ion-refresher-content></ion-refresher>
   <div class="header-section">
     <div class="header-top">
       <div class="header-info">
@@ -32,7 +33,8 @@
         <ion-item
           *ngFor="let v of vehiculos"
           class="vehiculo-item"
-          [detail]="false">
+          [detail]="false"
+          [routerLink]="['/tabs-gerencial/vehiculos', v.id]">
           <div slot="start" class="vehiculo-icon-box">
             <ion-icon name="car-sport-outline"></ion-icon>
           </div>

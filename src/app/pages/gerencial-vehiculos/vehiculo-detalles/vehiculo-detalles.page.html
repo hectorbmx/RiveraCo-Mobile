@@ -1,0 +1,146 @@
+<ion-header *ngIf="panel === 'mecanico'"><ion-toolbar>
+  <ion-buttons slot="start"><ion-back-button [defaultHref]="rutaListado" text="Volver"></ion-back-button></ion-buttons>
+  <ion-title>Vehículo</ion-title>
+  <ion-buttons slot="end"><ion-button *ngIf="auth.panelesDisponiblesValue.length > 1" routerLink="/selector-panel">Acceso</ion-button><app-notificaciones></app-notificaciones></ion-buttons>
+</ion-toolbar></ion-header>
+<ion-content class="vehiculos-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)" [disabled]="loading"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…" refreshingSpinner="crescent"></ion-refresher-content></ion-refresher>
+  <div class="header-section" *ngIf="panel === 'gerencial'">
+    <div class="header-top">
+      <div class="header-info">
+        <div class="back-container"><ion-buttons><ion-back-button [defaultHref]="rutaListado" text="Volver" mode="md"></ion-back-button></ion-buttons><p class="welcome-text">VEHÍCULOS</p></div>
+        <h1 class="dashboard-title">Detalle de vehículo</h1>
+      </div>
+      <div class="profile-icon"><app-profile-menu></app-profile-menu></div>
+    </div>
+  </div>
+  <main class="vehiculos-list-wrap">
+    <div *ngIf="loading" class="estado-pagina" role="status"><ion-spinner name="crescent"></ion-spinner><p>Cargando vehículo…</p></div>
+    <div *ngIf="error" class="estado-pagina error" role="alert"><p>{{ error }}</p><button type="button" (click)="cargar()">Reintentar</button></div>
+    <ng-container *ngIf="!loading && !error && detalle as d">
+      <section class="ficha" [class.ficha-cerrada]="panel === 'mecanico' && !fichaExpandida" aria-labelledby="nombre-vehiculo">
+        <button *ngIf="panel === 'mecanico'" type="button" class="banda-mecanico" (click)="fichaExpandida = !fichaExpandida" [attr.aria-expanded]="fichaExpandida" aria-controls="datos-vehiculo" [attr.aria-label]="(fichaExpandida ? 'Ocultar datos de ' : 'Mostrar datos de ') + nombre()">
+          <span id="nombre-vehiculo">{{ nombre() }}</span><span class="flecha-ficha" [class.abierta]="fichaExpandida" aria-hidden="true"></span>
+        </button>
+        <div id="datos-vehiculo" [hidden]="panel === 'mecanico' && !fichaExpandida">
+        <div class="foto-principal" *ngIf="d.vehiculo.foto_url"><app-vehiculo-adjunto [archivo]="d.vehiculo.foto_url" titulo="Foto del vehículo"></app-vehiculo-adjunto></div>
+        <p class="placas">{{ d.vehiculo.placas || 'Sin placas' }}</p>
+        <h2 *ngIf="panel === 'gerencial'" id="nombre-vehiculo">{{ nombre() }}</h2>
+        <div class="badges"><span class="badge" [attr.data-estado]="d.vehiculo.estatus">{{ etiqueta(d.vehiculo.estatus) }}</span><span class="badge" [class.asignado]="!!d.asignacion_actual">{{ d.asignacion_actual ? 'Asignado' : 'Disponible' }}</span></div>
+        <dl>
+          <div><dt>Empleado actual</dt><dd>{{ d.asignacion_actual?.empleado?.nombre || 'Sin empleado asignado' }}</dd></div>
+          <div><dt>Serie</dt><dd>{{ d.vehiculo.serie || 'Sin registro' }}</dd></div>
+          <div><dt>Tipo</dt><dd>{{ d.vehiculo.tipo || 'Sin registro' }}</dd></div>
+          <div><dt>Color</dt><dd>{{ d.vehiculo.color || 'Sin registro' }}</dd></div>
+          <div><dt>Seguro vigente</dt><dd>{{ d.seguro_vigente?.aseguradora || 'Sin póliza vigente' }}</dd></div>
+          <div *ngIf="d.seguro_vigente"><dt>Vence</dt><dd>{{ fechaCivil(d.seguro_vigente.vigencia_hasta) }}</dd></div>
+        </dl>
+        <div class="adjuntos" *ngIf="d.seguro_vigente as poliza">
+          <app-vehiculo-adjunto tipo="documento" [archivo]="poliza.documento_url" titulo="póliza vigente" sinArchivo="Sin póliza adjunta"></app-vehiculo-adjunto>
+          <app-vehiculo-adjunto tipo="documento" [archivo]="poliza.comprobante_url" titulo="comprobante del seguro vigente" sinArchivo="Sin comprobante adjunto"></app-vehiculo-adjunto>
+        </div>
+        </div>
+      </section>
+
+      <div class="acciones-mecanico" *ngIf="panel === 'mecanico' && auth.appInfoValue?.empleado_id">
+        <ion-button routerLink="/tabs-mecanico/servicios/nuevo" [queryParams]="{vehiculo_id: d.vehiculo.id}">Programar servicio</ion-button>
+      </div>
+
+      <app-vehiculo-historial [mecanico]="panel === 'mecanico'" titulo="Historial de asignaciones" fechaLabel="Asignación" [estado]="asignaciones" (abrir)="abrir('asignaciones', $event)" (pagina)="cargarHistorial('asignaciones', $event)">
+        <article *ngFor="let a of asignaciones.data" class="registro">
+          <div class="registro-cabecera"><h3>{{ a.empleado?.nombre || 'Sin empleado registrado' }}</h3><span class="badge" [class.asignado]="!a.fecha_fin">{{ a.fecha_fin ? 'Finalizada' : 'Abierta' }}</span></div>
+          <dl>
+            <div><dt>Desde</dt><dd>{{ fechaCivil(a.fecha_asignacion) }}</dd></div>
+            <div><dt>Hasta</dt><dd>{{ a.fecha_fin ? fechaCivil(a.fecha_fin) : 'Sin cierre registrado' }}</dd></div>
+            <div><dt>Km inicial</dt><dd>{{ a.km_inicial != null ? (a.km_inicial | number:'1.0-2') : 'Sin registro' }}</dd></div>
+            <div><dt>Km final</dt><dd>{{ a.km_final != null ? (a.km_final | number:'1.0-2') : 'Sin registro' }}</dd></div>
+          </dl>
+          <p *ngIf="a.notas" class="notas">{{ a.notas }}</p>
+          <div class="adjuntos" *ngIf="a.fotos?.length; else sinFotosAsignacion">
+            <app-vehiculo-adjunto *ngFor="let foto of a.fotos; let i = index" [archivo]="foto.url" [titulo]="'Foto de asignación ' + (i + 1)" sinArchivo="Foto sin archivo disponible"></app-vehiculo-adjunto>
+          </div>
+          <ng-template #sinFotosAsignacion><p class="ayuda">Sin fotografías de esta asignación.</p></ng-template>
+        </article>
+      </app-vehiculo-historial>
+
+      <app-vehiculo-historial [mecanico]="panel === 'mecanico'" titulo="Historial de servicios" fechaLabel="Programado" [estado]="servicios" [estados]="estadosServicio" (abrir)="abrir('servicios', $event)" (pagina)="cargarHistorial('servicios', $event)">
+        <article *ngFor="let s of servicios.data" class="registro">
+          <div class="registro-cabecera"><h3><a *ngIf="panel === 'mecanico' && s.tipo === 'programado'; else tituloServicio" [routerLink]="['/tabs-mecanico/servicios', s.id]">Servicio #{{ s.id }} ↗</a><ng-template #tituloServicio>Servicio #{{ s.id }}</ng-template></h3><span class="badge" [attr.data-estado]="s.estatus">{{ etiqueta(s.estatus) }}</span></div>
+          <p class="tipo-servicio">{{ etiqueta(s.categoria_mantenimiento || s.tipo) }}</p>
+          <p *ngIf="s.descripcion" class="notas">{{ s.descripcion }}</p>
+          <dl>
+            <div><dt>Programado</dt><dd>{{ fechaCivil(s.fecha_programada) }}</dd></div>
+            <div *ngIf="s.fecha_inicio"><dt>Inicio</dt><dd>{{ s.fecha_inicio | date:'dd/MM/yyyy HH:mm':'-0600' }}</dd></div>
+            <div *ngIf="s.fecha_fin"><dt>Fin</dt><dd>{{ s.fecha_fin | date:'dd/MM/yyyy HH:mm':'-0600' }}</dd></div>
+            <div><dt>Mecánico</dt><dd>{{ s.mecanico?.nombre || 'Sin registro' }}</dd></div>
+            <div *ngIf="s.km_actuales != null"><dt>Kilometraje</dt><dd>{{ s.km_actuales | number:'1.0-2' }} km</dd></div>
+            <div *ngIf="s.km_proximo_servicio != null"><dt>Próximo servicio</dt><dd>{{ s.km_proximo_servicio | number:'1.0-2' }} km</dd></div>
+            <div *ngIf="s.horometro != null"><dt>Horómetro</dt><dd>{{ s.horometro | number:'1.0-2' }} h</dd></div>
+            <div><dt>Costo total</dt><dd>{{ s.costo_total != null ? ('$ ' + (s.costo_total | number:'1.2-2')) : 'Sin registro' }}</dd></div>
+          </dl>
+          <p *ngIf="s.notas" class="notas">{{ s.notas }}</p>
+        </article>
+      </app-vehiculo-historial>
+
+      <app-vehiculo-historial [mecanico]="panel === 'mecanico'" titulo="Historial de seguros" fechaLabel="Vencimiento" [estado]="seguros" [estados]="estadosSeguro" (abrir)="abrir('seguros', $event)" (pagina)="cargarHistorial('seguros', $event)">
+        <article *ngFor="let s of seguros.data" class="registro">
+          <div class="registro-cabecera"><h3>{{ s.aseguradora || 'Aseguradora sin registro' }}</h3><span class="badge" [attr.data-estado]="s.estatus">{{ etiqueta(s.estatus) }}</span></div>
+          <dl>
+            <div><dt>Póliza</dt><dd>{{ s.poliza_numero || 'Sin registro' }}</dd></div>
+            <div><dt>Tipo</dt><dd>{{ s.tipo_seguro || 'Sin registro' }}</dd></div>
+            <div><dt>Desde</dt><dd>{{ fechaCivil(s.vigencia_desde) }}</dd></div>
+            <div><dt>Hasta</dt><dd>{{ fechaCivil(s.vigencia_hasta) }}</dd></div>
+            <div><dt>Costo</dt><dd>{{ s.costo != null ? (s.costo | number:'1.2-2') : 'Sin registro' }} {{ s.costo != null ? (s.moneda || '') : '' }}</dd></div>
+            <div *ngIf="s.suma_asegurada != null"><dt>Suma asegurada</dt><dd>{{ s.suma_asegurada | number:'1.2-2' }} {{ s.moneda || '' }}</dd></div>
+            <div *ngIf="s.deducible != null"><dt>Deducible</dt><dd>{{ s.deducible | number:'1.2-2' }}</dd></div>
+            <div *ngIf="s.frecuencia_pago"><dt>Frecuencia de pago</dt><dd>{{ s.frecuencia_pago }}</dd></div>
+          </dl>
+          <p *ngIf="s.cobertura" class="notas">{{ s.cobertura }}</p>
+          <p *ngIf="s.observaciones" class="notas">{{ s.observaciones }}</p>
+          <div class="adjuntos">
+            <app-vehiculo-adjunto tipo="documento" [archivo]="s.documento_url" titulo="póliza" sinArchivo="Sin póliza adjunta"></app-vehiculo-adjunto>
+            <app-vehiculo-adjunto tipo="documento" [archivo]="s.comprobante_url" titulo="comprobante" sinArchivo="Sin comprobante adjunto"></app-vehiculo-adjunto>
+          </div>
+        </article>
+      </app-vehiculo-historial>
+
+      <section aria-labelledby="combustible-titulo" class="combustible">
+        <h2 id="combustible-titulo">Combustible</h2>
+        <p class="ayuda">Registros de gasolina y salidas de almacén se consultan por separado.</p>
+        <app-vehiculo-historial [mecanico]="panel === 'mecanico'" titulo="Kilometraje y gasolina" [estado]="registros" (abrir)="abrir('registros', $event)" (pagina)="cargarHistorial('registros', $event)">
+          <article *ngFor="let r of registros.data" class="registro">
+            <div class="registro-cabecera"><h3>{{ r.fecha ? (r.fecha | date:'dd/MM/yyyy HH:mm':'-0600') : 'Sin fecha' }}</h3><span class="badge">{{ etiqueta(r.origen) }}</span></div>
+            <dl>
+              <div><dt>Odómetro</dt><dd>{{ r.km != null ? (r.km | number:'1.0-2') + ' km' : 'Sin lectura' }}</dd></div>
+              <div><dt>Importe de gasolina</dt><dd>{{ r.monto_gasolina != null ? ('$ ' + (r.monto_gasolina | number:'1.2-2')) : 'Sin importe registrado' }}</dd></div>
+              <div><dt>Obra</dt><dd>{{ r.obra?.nombre || 'Sin obra' }}</dd></div>
+              <div><dt>Empleado asignado</dt><dd>{{ r.empleado?.nombre || 'Sin registro' }}</dd></div>
+              <div><dt>Capturado por</dt><dd>{{ r.capturado_por?.nombre || 'Sin registro' }}</dd></div>
+            </dl>
+            <p *ngIf="r.notas" class="notas">{{ r.notas }}</p>
+            <div class="adjuntos">
+              <app-vehiculo-adjunto [archivo]="r.foto_url" titulo="Foto del odómetro" sinArchivo="Sin foto del odómetro"></app-vehiculo-adjunto>
+              <app-vehiculo-adjunto [archivo]="r.foto_ticket_gasolina_url" titulo="Ticket de gasolina" sinArchivo="Sin ticket adjunto"></app-vehiculo-adjunto>
+            </div>
+          </article>
+        </app-vehiculo-historial>
+        <app-vehiculo-historial [mecanico]="panel === 'mecanico'" titulo="Salidas de almacén" [estado]="almacen" (abrir)="abrir('almacen', $event)" (pagina)="cargarHistorial('almacen', $event)">
+          <p class="ayuda" *ngIf="almacen.data.length">Incluye los materiales asignados al vehículo; las cantidades se muestran sin inferir litros.</p>
+          <article *ngFor="let r of almacen.data" class="registro">
+            <div class="registro-cabecera"><h3>{{ r.documento.folio || ('Documento #' + r.documento.id) }}</h3><span class="badge" data-estado="aplicado">Aplicado</span></div>
+            <p class="producto">{{ r.producto?.nombre || 'Producto sin registro' }}</p>
+            <p class="ayuda" *ngIf="r.producto?.sku">{{ r.producto?.sku }}</p>
+            <dl>
+              <div><dt>Fecha</dt><dd>{{ fechaCivil(r.documento.fecha) }}</dd></div>
+              <div><dt>Cantidad</dt><dd>{{ r.cantidad != null ? (r.cantidad | number:'1.0-3') : 'Sin registro' }}</dd></div>
+              <div><dt>Costo unitario</dt><dd>{{ r.costo_unitario != null ? ('$ ' + (r.costo_unitario | number:'1.2-4')) : 'Sin registro' }}</dd></div>
+              <div><dt>Obra</dt><dd>{{ r.obra?.nombre || 'Sin obra' }}</dd></div>
+            </dl>
+            <p *ngIf="r.notas" class="notas">{{ r.notas }}</p>
+          </article>
+        </app-vehiculo-historial>
+      </section>
+    </ng-container>
+  </main>
+  <div class="bottom-spacer"></div>
+</ion-content>

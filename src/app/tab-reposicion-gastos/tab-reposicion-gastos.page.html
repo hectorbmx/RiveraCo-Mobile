@@ -2,14 +2,12 @@
   <ion-toolbar>
     <ion-title>Reposicion de gastos</ion-title>
     <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="loadData()">
-        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
-      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="reposicion-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescarApp($event)" [disabled]="bloquearRefrescoApp"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…" refreshingSpinner="crescent"></ion-refresher-content></ion-refresher>
   <div class="loading-state" *ngIf="loading">
     <ion-spinner name="crescent"></ion-spinner>
   </div>

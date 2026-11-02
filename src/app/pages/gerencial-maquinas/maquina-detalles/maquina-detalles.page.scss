@@ -1,0 +1,25 @@
+.back-container { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 8px; }
+.back-container ion-back-button { --color: #fff; }
+.back-container .welcome-text { margin: 0; font-size: 11px; }
+.dashboard-title { font-size: 28px; overflow-wrap: anywhere; }
+.header-top { gap: 10px; }
+.profile-icon { flex: 0 0 56px; }
+.detalle-card { background: #fff; border-radius: 18px; margin-bottom: 16px; padding: 18px; box-shadow: 0 10px 20px rgba(16,24,40,.06); }
+.detalle-card summary { color: var(--navy); font-size: 14px; font-weight: 800; cursor: pointer; }
+.seccion-titulo { margin: 0; font-size: 18px; font-weight: 800; color: var(--navy); }
+.vacio, .nota-historial { font-size: 12px; color: #64748b; }
+.servicio-item { padding: 16px 0; border-top: 1px solid #e8edf5; }
+.servicio-item:last-child { padding-bottom: 0; }
+.servicio-cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.servicio-cabecera h3 { font-size: 14px; font-weight: 800; color: var(--navy); margin: 0; }
+.servicio-tipo { color: var(--navy); font-size: 12px; font-weight: 700; margin: 6px 0; }
+.servicio-descripcion, .notas { color: #53657c; font-size: 13px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+dl { margin: 14px 0 0; font-size: 12px; }
+dl > div { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.4fr); gap: 10px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+dt { color: #64748b; }
+dd { margin: 0; text-align: right; font-weight: 600; color: var(--navy); overflow-wrap: anywhere; }
+.asignacion-aviso { background: #fef3c7; color: #92400e; padding: 10px; font-size: 12px; border-radius: 8px; }
+.servicio-estado[data-estado="completado"] { background: #dcfce7; color: #166534; }
+.servicio-estado[data-estado="borrador"], .servicio-estado[data-estado="en_proceso"], .servicio-estado[data-estado="orden_generada"] { background: #dbeafe; color: #1e40af; }
+.servicio-estado[data-estado="pendiente"] { background: #fef3c7; color: #92400e; }
+.servicio-estado[data-estado="cancelado"] { background: #fee2e2; color: #991b1b; }

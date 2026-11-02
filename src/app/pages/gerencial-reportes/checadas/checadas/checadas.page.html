@@ -66,6 +66,7 @@
 </ion-header>
 
 <ion-content class="page-content">
+  <ion-refresher slot="fixed" (ionRefresh)="refrescarApp($event)"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…" refreshingSpinner="crescent"></ion-refresher-content></ion-refresher>
 
   <!-- TABLA -->
   <div class="table-card">

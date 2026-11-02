@@ -1,3 +1,7 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -139,7 +143,7 @@ interface ComisionResumen {
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonRefresher, IonRefresherContent,
     CommonModule,
     FormsModule,
     IonBackButton,
@@ -158,6 +162,14 @@ interface ComisionResumen {
   ],
 })
 export class Tab3Page implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  get bloquearRefrescoApp() { return this.cargandoComisiones || this.vista !== 'lista' || this.guardandoComision || this.guardandoEtapa; }
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.bloquearRefrescoApp) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.cargarPantalla().finally(completar); }, this.destroyRefrescoApp);
+  }
+
   ctx: Contexto | null = null;
   form: ComisionForm | null = null;
   today = '';

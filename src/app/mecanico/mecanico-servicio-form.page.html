@@ -1,0 +1,107 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-button [routerLink]="id ? ['/tabs-mecanico/servicios', id] : ['/tabs-mecanico/servicios']">Volver</ion-button></ion-buttons>
+    <ion-title>{{ id ? 'Editar borrador' : 'Programar servicio' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <main class="servicio-form">
+    <div class="estado" *ngIf="cargando"><ion-spinner/><p>Cargando servicio…</p></div>
+    <div class="mensaje mensaje-error" *ngIf="error" role="alert">{{ error }}</div>
+    <ion-button *ngIf="incierto" routerLink="/tabs-mecanico/servicios" expand="block">Revisar servicios</ion-button>
+
+    <form *ngIf="!cargando && !bloqueado" (ngSubmit)="guardar()">
+      <fieldset [disabled]="guardando || incierto || !!guardadoId">
+        <section class="equipo-principal" aria-labelledby="equipo-principal-titulo">
+          <div class="equipo-encabezado">
+            <span class="etiqueta">Servicio programado</span>
+            <span class="borrador">{{ id ? 'Borrador #' + id : 'Nuevo borrador' }}</span>
+          </div>
+          <div class="equipo-identidad">
+            <div class="equipo-icono"><ion-icon [icon]="tipoEquipo === 'maquinas' ? iconos.maquina : iconos.vehiculo" aria-hidden="true"/></div>
+            <div class="equipo-textos">
+              <p class="equipo-clase">{{ tipoEquipo === 'maquinas' ? 'Máquina del servicio' : 'Vehículo del servicio' }}</p>
+              <h1 id="equipo-principal-titulo">{{ equipoSeleccionado ? nombre(equipoSeleccionado) : 'Selecciona un equipo' }}</h1>
+              <p class="equipo-codigo" *ngIf="equipoSeleccionado as equipo">{{ equipo.codigo || equipo.placas || ('Equipo #' + equipo.id) }}</p>
+            </div>
+          </div>
+          <div class="equipo-pie">
+            <p><strong>1 servicio · 1 equipo</strong><br>Los materiales se aplican únicamente a este equipo.</p>
+            <ion-button *ngIf="equipoId && !selectorEquipoAbierto" type="button" size="small" fill="outline" (click)="abrirSelectorEquipo()" [disabled]="guardando || incierto || !!guardadoId">Cambiar equipo</ion-button>
+          </div>
+        </section>
+
+        <section class="tarjeta selector-equipo" *ngIf="selectorEquipoAbierto">
+          <div class="seccion-encabezado"><span class="paso">1</span><div><h2>Elegir el equipo</h2><p>Selecciona una sola máquina o un vehículo.</p></div></div>
+          <ion-select label="Tipo de equipo" labelPlacement="stacked" interface="popover" [(ngModel)]="tipoEquipo" name="tipoEquipo" (ionChange)="cambiarTipo()" [disabled]="guardando || incierto || !!guardadoId">
+            <ion-select-option value="maquinas">Máquina</ion-select-option><ion-select-option value="vehiculos">Vehículo</ion-select-option>
+          </ion-select>
+          <ion-searchbar name="busqueda" placeholder="Buscar por nombre, código o placas" [(ngModel)]="equipoBusqueda" [debounce]="350" (ionInput)="buscarEquipos()" [disabled]="guardando || incierto || !!guardadoId"/>
+          <p class="mensaje mensaje-error" *ngIf="errorEquipos" role="alert">{{ errorEquipos }}</p>
+          <ion-select [label]="tipoEquipo === 'maquinas' ? 'Elegir una máquina' : 'Elegir un vehículo'" labelPlacement="stacked" interface="popover" [(ngModel)]="equipoId" name="equipoId" (ionChange)="seleccionarEquipo()" [multiple]="false" [disabled]="buscando || cargandoCatalogos || guardando || incierto || !!guardadoId">
+            <ion-select-option *ngIf="seleccionadoFueraPagina && equipoSeleccionado as e" [value]="e.id">{{ nombre(e) }} · {{ e.codigo || e.placas }}</ion-select-option>
+            <ion-select-option *ngFor="let e of equipos" [value]="e.id">{{ nombre(e) }} · {{ e.codigo || e.placas }}</ion-select-option>
+          </ion-select>
+          <nav class="catalogo-paginacion" *ngIf="meta && meta.last_page > 1" aria-label="Páginas del catálogo de equipos">
+            <p>Página {{ meta.current_page }} de {{ meta.last_page }} del catálogo</p>
+            <div class="catalogo-botones">
+              <ion-button type="button" size="small" fill="outline" [disabled]="buscando || meta.current_page <= 1" (click)="buscarEquipos(meta.current_page - 1)">Anterior</ion-button>
+              <ion-button type="button" size="small" fill="outline" [disabled]="buscando || meta.current_page >= meta.last_page" (click)="buscarEquipos(meta.current_page + 1)">Siguiente</ion-button>
+            </div>
+            <small>Estas páginas son del catálogo; el servicio conserva un solo equipo seleccionado.</small>
+          </nav>
+          <ion-button *ngIf="equipoId" type="button" fill="clear" size="small" (click)="selectorEquipoAbierto = false">Conservar equipo seleccionado</ion-button>
+        </section>
+
+        <section class="tarjeta programacion">
+          <div class="seccion-encabezado"><span class="paso">2</span><div><h2>Datos del servicio</h2><p>Define qué se realizará y cuándo está programado.</p></div></div>
+          <p class="estado-carga" *ngIf="cargandoCatalogos"><ion-spinner name="dots"/> Consultando tipos y lecturas…</p>
+          <p *ngFor="let aviso of avisosCatalogo" class="mensaje mensaje-aviso">{{ aviso }}</p>
+          <div class="campos">
+            <ion-select class="campo-completo" label="Tipo de servicio preventivo *" labelPlacement="stacked" interface="popover" [(ngModel)]="tipoId" name="tipoId" [disabled]="!catalogos || cargandoCatalogos || guardando || incierto || !!guardadoId">
+              <ion-select-option *ngFor="let tipo of tipos" [value]="tipo.id">{{ tipo.nombre }}<ng-container *ngIf="tipo.intervalo_valor && tipo.unidad"> — cada {{ tipo.intervalo_valor | number:'1.0-0' }} {{ tipo.unidad === 'horas' ? 'h' : 'km' }}</ng-container></ion-select-option>
+            </ion-select>
+            <p class="mensaje mensaje-aviso campo-completo" *ngIf="catalogos && !tipos.length">No hay tipos preventivos configurados para este equipo.</p>
+            <ion-input label="Categoría *" labelPlacement="stacked" placeholder="Ej. Cambio de aceite, servicio general" [(ngModel)]="categoria" name="categoria" [maxlength]="100" required/>
+            <ion-input label="Fecha y hora programada *" labelPlacement="stacked" type="datetime-local" [(ngModel)]="fecha" name="fecha" required/>
+          </div>
+          <p class="ayuda">Fecha y hora de Ciudad de México.</p>
+
+          <div class="lectura" *ngIf="catalogos?.lectura_sugerida as lectura">
+            <span>{{ tipoEquipo === 'maquinas' ? 'Horómetro de referencia' : 'Kilometraje de referencia' }}</span>
+            <strong>{{ lectura.valor === null ? 'Sin registro' : (lectura.valor | number:'1.0-2') }} <small>{{ lectura.unidad }}</small></strong>
+          </div>
+          <div class="campos">
+            <ion-input *ngIf="tipoEquipo === 'maquinas'" class="campo-completo" label="Horómetro actual (h) *" labelPlacement="stacked" type="number" min="0" step="0.01" [(ngModel)]="horometro" name="horometro" required/>
+            <ng-container *ngIf="tipoEquipo === 'vehiculos'">
+              <ion-input label="Kilometraje actual" labelPlacement="stacked" type="number" min="0" step="1" [(ngModel)]="km" name="km"/>
+              <ion-input label="Kilometraje próximo servicio" labelPlacement="stacked" type="number" min="0" step="1" [(ngModel)]="kmProximo" name="kmProximo"/>
+            </ng-container>
+            <ion-textarea class="campo-completo" label="Descripción" labelPlacement="stacked" placeholder="Describe el trabajo a realizar…" [(ngModel)]="descripcion" name="descripcion" [autoGrow]="true" [rows]="3"/>
+          </div>
+          <p class="asignacion">El servicio se asigna a tu empleado. La obra es opcional.</p>
+        </section>
+
+        <section class="tarjeta materiales" *ngIf="sugeridos.length">
+          <div class="seccion-encabezado"><span class="paso">3</span><div><h2>Materiales sugeridos</h2><p>Para el equipo y tipo de servicio seleccionados.</p></div></div>
+          <article class="material" *ngFor="let m of sugeridos">
+            <h3>{{ m.producto }}</h3><p class="sku" *ngIf="m.sku">{{ m.sku }}</p>
+            <dl class="material-cantidades">
+              <div><dt>Requerido</dt><dd>{{ m.cantidad | number:'1.0-2' }} <small>{{ m.unidad }}</small></dd></div>
+              <div><dt>Disponible</dt><dd>{{ m.disponible == null ? '—' : (m.disponible | number:'1.0-2') }} <small>{{ m.unidad }}</small></dd></div>
+              <div [class.faltante]="(m.faltante || 0) > 0"><dt>Faltante</dt><dd>{{ m.faltante == null ? '—' : (m.faltante | number:'1.0-2') }} <small>{{ m.unidad }}</small></dd></div>
+            </dl>
+          </article>
+          <p class="ayuda">La lista definitiva se conserva al generar la orden de servicio.</p>
+        </section>
+
+        <footer class="guardar">
+          <p>Se guardará como borrador para este equipo.</p>
+          <ion-button type="submit" expand="block" [disabled]="guardando || cargandoCatalogos || buscando || !equipoId || !tipoId || !catalogos || incierto || !!guardadoId">{{ guardando ? 'Guardando…' : (id ? 'Guardar cambios' : 'Guardar borrador') }}</ion-button>
+        </footer>
+      </fieldset>
+    </form>
+    <ion-button *ngIf="guardadoId" [routerLink]="['/tabs-mecanico/servicios', guardadoId]" expand="block">Ver servicio guardado</ion-button>
+  </main>
+</ion-content>

@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
 import { appShellGuard } from './guards/app-shell.guard';
 import { authGuard } from './guards/auth-guard';
+import { operativoPanelGuard } from './guards/operativo-panel.guard';
+import { gerencialGuard } from './guards/gerencial-guard';
 
 export const routes: Routes = [
+  { path: 'tabs-mecanico', canActivate: [authGuard], loadChildren: () => import('./mecanico/mecanico.routes').then(m => m.routes) },
   {
     path: 'selector-panel',
     canActivate: [authGuard],
@@ -33,7 +36,7 @@ export const routes: Routes = [
   {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
-    canActivate: [authGuard]
+    canActivate: [authGuard, operativoPanelGuard], canActivateChild: [operativoPanelGuard]
   },
   {
     path: 'empleado-detalles/:empleado_id',
@@ -41,31 +44,38 @@ export const routes: Routes = [
   },
   {
     path: 'maquina-registro/:obra_maquina_id',
+    canActivate: [authGuard, operativoPanelGuard],
     loadComponent: () => import('./pages/maquina-registro/maquina-registro.page').then( m => m.MaquinaRegistroPage)
   },
   {
     path: 'vehiculo-registro/:vehiculo_id',
+    canActivate: [authGuard, operativoPanelGuard],
     loadComponent: () => import('./pages/vehiculo-registro/vehiculo-registro.page').then( m => m.VehiculoRegistroPage)
   },
- 
+
   {
     path: 'gerencial-home',
+    canActivate: [authGuard, gerencialGuard],
     loadComponent: () => import('./pages/gerencial-home/gerencial-home.page').then( m => m.GerencialHomePage)
   },
   {
     path: 'gerencial-obras',
+    canActivate: [authGuard, gerencialGuard],
     loadComponent: () => import('./pages/gerencial-obras/gerencial-obras.page').then( m => m.GerencialObrasPage)
   },
   {
     path: 'gerencial-empleados',
+    canActivate: [authGuard, gerencialGuard],
     loadComponent: () => import('./pages/gerencial-empleados/gerencial-empleados.page').then( m => m.GerencialEmpleadosPage)
   },
   {
     path: 'gerencial-maquinas',
+    canActivate: [authGuard, gerencialGuard],
     loadComponent: () => import('./pages/gerencial-maquinas/gerencial-maquinas.page').then( m => m.GerencialMaquinasPage)
   },
   {
     path: 'gerencial-inventario',
+    canActivate: [authGuard, gerencialGuard],
     loadComponent: () => import('./pages/gerencial-inventario/gerencial-inventario.page').then( m => m.GerencialInventarioPage)
   },
   {
@@ -98,6 +108,6 @@ export const routes: Routes = [
 
 
 
- 
+
 ];
 

@@ -1,0 +1,14 @@
+<ion-button fill="clear" class="campana" [class.clara]="clara" (click)="abrir()" [attr.aria-label]="sinLeer ? 'Notificaciones: ' + sinLeer + ' sin leer' : 'Notificaciones'">
+  <ion-icon slot="icon-only" name="notifications-outline"></ion-icon><ion-badge *ngIf="sinLeer" color="danger">{{ sinLeer > 99 ? '99+' : sinLeer }}</ion-badge>
+</ion-button>
+<ion-modal *ngIf="abierta" #modal [isOpen]="abierta" (didDismiss)="cerrar()"><ng-template>
+  <ion-header><ion-toolbar><ion-title>Notificaciones</ion-title><ion-buttons slot="end"><ion-button (click)="modal.dismiss()">Cerrar</ion-button></ion-buttons></ion-toolbar></ion-header>
+  <ion-content><ion-refresher slot="fixed" (ionRefresh)="refrescar($event)"><ion-refresher-content pullingText="Desliza para actualizar" refreshingText="Actualizando…"></ion-refresher-content></ion-refresher>
+    <main><p *ngIf="cargando" role="status"><ion-spinner name="crescent"></ion-spinner> Cargando…</p><div *ngIf="error" role="alert"><p>{{ error }}</p><ion-button fill="outline" (click)="cargar(pagina)">Reintentar</ion-button></div>
+      <ng-container *ngIf="!cargando"><p *ngIf="!error && !filas.length">No tienes notificaciones.</p>
+        <article *ngFor="let n of filas" [class.sin-leer]="!n.leida"><h2>{{ n.titulo }}</h2><p>{{ n.mensaje }}</p><time *ngIf="n.creada">{{ n.creada | date:'dd/MM/yyyy HH:mm':'-0600' }}</time><ion-button *ngIf="!n.leida" fill="clear" size="small" [disabled]="leyendo.has(n.id)" (click)="leer(n)">Marcar como leída</ion-button><small *ngIf="n.leida">Leída</small><ion-button *ngIf="n.destino" fill="clear" size="small" [disabled]="leyendo.has(n.id)" (click)="verEquipo(n)">Ver {{ n.destino.tipo === 'maquina' ? 'máquina' : 'vehículo' }}</ion-button></article>
+        <nav *ngIf="ultima > 1"><ion-button fill="outline" [disabled]="pagina <= 1" (click)="cargar(pagina - 1)">Anterior</ion-button><span>{{ pagina }} / {{ ultima }}</span><ion-button fill="outline" [disabled]="pagina >= ultima" (click)="cargar(pagina + 1)">Siguiente</ion-button></nav>
+      </ng-container>
+    </main>
+  </ion-content>
+</ng-template></ion-modal>

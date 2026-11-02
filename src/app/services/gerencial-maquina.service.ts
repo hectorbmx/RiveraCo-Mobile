@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { MaquinaListItemDto } from '../models/maquina.model';
+import { MaquinaDetalleResponse, MaquinasResponse } from '../models/maquina.model';
 import { ApiService } from './api';
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class MaquinasGerencialService {
   /**
    * Obtiene la lista de máquinas con filtros opcionales
    */
-getMaquinas(page?: number, q?: string, enUso?: boolean) {
+getMaquinas(page?: number, q?: string, enUso?: boolean): Observable<MaquinasResponse> {
   const params: any = {};
 
   // Solo agrega los params si tienen valor real
@@ -28,13 +28,13 @@ getMaquinas(page?: number, q?: string, enUso?: boolean) {
   if (q && q.trim() !== '') params['q'] = q.trim();
   if (enUso) params['en_uso'] = 1;
 
-  return this.api.get('gerencial/maquinas', params);
+  return this.api.get<MaquinasResponse>('gerencial/maquinas', params);
 }
   /**
    * Obtiene el detalle de una máquina específica
    */
-  getMaquinaById(id: number): Observable<{ok: boolean, data: MaquinaListItemDto}> {
-    return this.api.get<{ok: boolean, data: MaquinaListItemDto}>(`${this.apiUrl}/${id}`);
+  getMaquinaById(id: number): Observable<MaquinaDetalleResponse> {
+    return this.api.get<MaquinaDetalleResponse>(`gerencial/maquinas/${id}`);
   }
 
   /**

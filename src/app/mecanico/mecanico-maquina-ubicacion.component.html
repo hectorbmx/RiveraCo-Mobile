@@ -1,0 +1,37 @@
+<ion-modal [isOpen]="maquinaId !== null" [canDismiss]="puedeCerrar" (didDismiss)="alCerrar()">
+  <ng-template>
+    <ion-header><ion-toolbar><ion-title>Cambiar ubicación</ion-title><ion-buttons slot="end"><ion-button (click)="cerrar()" [disabled]="guardando">Cerrar</ion-button></ion-buttons></ion-toolbar></ion-header>
+    <ion-content><main class="captura-horas">
+      <div class="estado-carga" *ngIf="cargando" role="status"><ion-spinner/><p>Consultando ubicación y destinos…</p></div>
+      <p class="error-general" *ngIf="error" role="alert">{{ error }}</p><p class="aviso" *ngIf="aviso" role="status">{{ aviso }}</p>
+      <section class="maquina-resumen" *ngIf="opciones as o">
+        <span class="codigo">{{ o.maquina.codigo || 'Máquina' }}</span><h2>{{ o.maquina.nombre || 'Máquina sin nombre' }}</h2>
+        <p>{{ obra || (conservaAsignacion ? 'Con obra asignada' : 'Sin obra asignada') }}</p>
+        <div class="referencia"><span>{{ incierto ? 'Ubicación de la captura pendiente' : 'Ubicación actual' }}</span><strong>{{ etiqueta(ubicacionReferencia) }}</strong></div>
+      </section>
+      <p class="aviso" *ngIf="incierto" role="status">Hay un cambio pendiente de confirmar. Se conserva su destino y motivo para reintentar la misma operación.</p>
+      <form *ngIf="opciones && (permite || incierto)" (ngSubmit)="guardar()">
+        <fieldset [disabled]="bloqueado">
+          <ion-select label="Nueva ubicación" labelPlacement="stacked" name="ubicacion" interface="popover" [(ngModel)]="destino" [disabled]="bloqueado" required aria-describedby="error-destino">
+            <ion-select-option [value]="null">Selecciona un destino</ion-select-option>
+            <ion-select-option *ngIf="incierto && destinoFueraLista" [value]="destino">{{ etiqueta(destino) }}</ion-select-option>
+            <ion-select-option *ngFor="let ubicacion of destinos" [value]="ubicacion">{{ etiqueta(ubicacion) }}</ion-select-option>
+          </ion-select>
+          <p id="error-destino" class="error-campo" role="alert">{{ errores['ubicacion'] }}</p>
+          <ion-input label="Motivo del cambio *" labelPlacement="stacked" name="motivo" [(ngModel)]="motivo" [maxlength]="190" [disabled]="bloqueado" required aria-describedby="error-motivo"/>
+          <p id="error-motivo" class="error-campo" role="alert">{{ errores['motivo'] }}</p>
+          <ion-textarea label="Notas (opcional)" labelPlacement="stacked" name="notas" [(ngModel)]="notas" [maxlength]="2000" [rows]="3" [autoGrow]="true" [disabled]="bloqueado" aria-describedby="error-notas"/>
+          <p id="error-notas" class="error-campo" role="alert">{{ errores['notas'] }}</p>
+        </fieldset>
+        <p class="aviso" *ngIf="conservaAsignacion">Seguirá asignada a {{ obra || 'la misma obra' }}. Para enviarla al patio y cerrar la asignación, utiliza «Retirar al patio».</p>
+        <p class="ayuda" *ngIf="!conservaAsignacion">El cambio de ubicación no asigna la máquina a una obra.</p>
+        <p class="ayuda">El estado operativo se conserva. La fecha y el responsable del movimiento se registrarán al guardar.</p>
+        <p class="error-campo" role="alert">{{ errores['asignacion_esperada_id'] || errores['horometro_esperado'] || errores['ubicacion_esperada'] || errores['movimiento_esperado_id'] }}</p>
+        <div class="acciones"><ion-button type="submit" [disabled]="bloqueado">{{ guardando ? 'Guardando…' : 'Revisar y confirmar cambio' }}</ion-button></div>
+      </form>
+      <ion-button *ngIf="incierto" expand="block" type="button" (click)="guardar(true)" [disabled]="guardando || cargando || accesoDenegado || !opciones || !tienePermiso">{{ guardando ? 'Confirmando…' : 'Reintentar mismo cambio' }}</ion-button>
+      <ion-button *ngIf="contextoCambiado" expand="block" type="button" fill="outline" (click)="cargarOpciones(true)" [disabled]="cargando || guardando">Revisar datos actuales</ion-button>
+      <ion-button *ngIf="!opciones && !cargando && !accesoDenegado" expand="block" type="button" fill="outline" (click)="cargarOpciones()">Reintentar consulta</ion-button>
+    </main></ion-content>
+  </ng-template>
+</ion-modal>

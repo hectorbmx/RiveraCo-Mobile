@@ -1,0 +1,33 @@
+:host { color: #152033; }
+ion-modal { --width: min(100%, 560px); --height: min(92%, 860px); --border-radius: 16px; }
+ion-toolbar { --background: #0b265a; --color: #fff; }
+ion-title { font-size: 16px; }
+ion-content { --background: #f2f5fa; }
+.captura-horas { padding: 16px; min-width: 0; }
+.maquina-resumen { border-radius: 12px; background: #fff; border: 1px solid #dfe7f2; padding: 14px; margin-bottom: 16px; }
+.codigo { color: #64748b; font-size: 12px; }
+h2 { margin: 5px 0; color: #0b265a; font-size: 21px; line-height: 1.2; overflow-wrap: anywhere; }
+.maquina-resumen p { margin: 6px 0; color: #475569; font-size: 13px; }
+.referencia { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 12px; }
+.referencia strong { color: #0b265a; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+ion-input, ion-textarea, ion-select { --background: #fff; border: 1px solid #dfe7f2; border-radius: 10px; padding: 10px !important; min-width: 0; margin-top: 8px; }
+label { display: block; min-width: 0; font-size: 13px; font-weight: 600; margin-top: 12px; }
+input { display: block; box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; margin-top: 6px; border: 1px solid #cbd5e1; border-radius: 9px; padding: 12px 8px; background: #fff; color: #152033; font: inherit; }
+.fechas { display: grid; grid-template-columns: minmax(0,1fr); gap: 4px; }
+.ayuda { color: #64748b; font-size: 12px; line-height: 1.5; }
+.error-campo { margin: 5px 0; color: #b91c1c; font-size: 12px; }
+.error-campo:empty { display: none; }
+.error-general, .aviso { padding: 12px; border-radius: 10px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.error-general { color: #991b1b; background: #fee2e2; }
+.aviso { color: #854d0e; background: #fef3c7; }
+.estado-carga { text-align: center; padding: 16px; color: #64748b; font-size: 13px; }
+.acciones { margin-top: 16px; display: flex; }
+.acciones ion-button { flex: 1; margin: 0; }
+ion-button { --border-radius: 9px; --box-shadow: none; white-space: normal; }
+.obra-relacionada { border: 1px solid #dfe7f2; background: #fff; border-radius: 10px; padding: 10px; margin-top: 14px; }
+summary { color: #0b265a; cursor: pointer; font-size: 13px; font-weight: 650; padding: 5px 0; }
+summary small { margin-left: 6px; color: #64748b; font-weight: 400; }
+.paginacion-obras { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; font-size: 12px; }
+@media (min-width: 500px) { .fechas { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; } }
+@media (max-width: 400px) { ion-modal { --height: 100%; --border-radius: 0; } }

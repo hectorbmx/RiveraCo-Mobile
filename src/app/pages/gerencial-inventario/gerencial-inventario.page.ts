@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -26,12 +31,19 @@ import { GerencialInventarioService } from 'src/app/services/gerencial-inventari
   templateUrl: './gerencial-inventario.page.html',
   styleUrls: ['./gerencial-inventario.page.scss'],
   standalone:true,
-  imports:[
+  imports: [IonRefresher, IonRefresherContent,
     IonContent,IonHeader,ProfileMenuComponent,IonTitle,IonList,IonItem,IonLabel,IonSearchbar,IonNote,IonInfiniteScroll,
     IonInfiniteScrollContent,IonSkeletonText,FormsModule,CommonModule,IonIcon,IonSpinner,IonBadge,
   ]
 })
 export class GerencialInventarioPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.reload(completar); }, this.destroyRefrescoApp);
+  }
+
   loading = false;
   rows: InventarioStockRowDto[] = [];
 
@@ -58,7 +70,7 @@ export class GerencialInventarioPage implements OnInit {
     this.reload();
   }
 
- reload() {
+ reload(_completado: () => void = () => {}) {
   this.loading = true;
   this.page = 1;
 
@@ -68,7 +80,7 @@ export class GerencialInventarioPage implements OnInit {
     minimos: this.minimos,
     page: this.page,
     per_page: this.perPage,
-  }).subscribe({
+  }).pipe(finalize(_completado)).subscribe({
     next: (res) => {
       this.rows = res.data ?? [];
       this.meta = res.meta ?? null;

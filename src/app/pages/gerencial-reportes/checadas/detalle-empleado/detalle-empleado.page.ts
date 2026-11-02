@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -35,7 +40,7 @@ import { AttendanceService } from 'src/app/services/attendance.service';
   templateUrl: './detalle-empleado.page.html',
   styleUrls: ['./detalle-empleado.page.scss'],
   standalone: true,
-  imports: [IonIcon, IonList, IonItem, IonLabel, 
+  imports: [IonRefresher, IonRefresherContent, IonIcon, IonList, IonItem, IonLabel,
     IonContent,
     IonHeader,
     IonTitle,
@@ -47,6 +52,13 @@ import { AttendanceService } from 'src/app/services/attendance.service';
   ]
 })
 export class DetalleEmpleadoPage implements OnInit {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.loading) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { if (!this.employeeId) { completar(); return; } this.loadSummary(completar); }, this.destroyRefrescoApp);
+  }
+
 
   employeeId: number | null = null;
   employeeName = 'Empleado';
@@ -105,13 +117,13 @@ export class DetalleEmpleadoPage implements OnInit {
 
     this.loadSummary();
   }
-loadSummary() {
+loadSummary(_completado: () => void = () => {}) {
   if (!this.employeeId) return;
 
   this.loading = true;
   this.errorMessage = '';
 
-  this.attendanceService.getEmployeeSummary(this.employeeId).subscribe({
+  this.attendanceService.getEmployeeSummary(this.employeeId).pipe(finalize(_completado)).subscribe({
     next: (res) => {
       if (res.ok) {
         // Mapeamos cada parte del JSON a tus variables locales
@@ -119,7 +131,7 @@ loadSummary() {
         this.filters = res.filters;
         this.kpis = res.kpis;
         this.rows = res.data; // 'data' del JSON son las filas (rows)
-        
+
         // Si el nombre no venía en el 'state', lo tomamos del objeto employee
         if (!this.employeeName || this.employeeName === 'Empleado') {
           this.employeeName = res.employee.name;
@@ -202,7 +214,7 @@ getInitials(name: string): string {
   return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 }
 regresar() {
-  
+
   this.router.navigate(['/tabs-gerencial/reportes/checadas']);
 }
 }

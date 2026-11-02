@@ -1,3 +1,8 @@
+import { DestroyRef as RefreshDestroyRef, inject as refreshInject } from '@angular/core';
+import type { RefresherCustomEvent } from '@ionic/core';
+import { RefrescoConsultaService } from 'src/app/services/refresco-consulta.service';
+import { IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -39,12 +44,20 @@ import { MaquinaRegistroIndexResponse } from 'src/app/services/auth'; // ajusta 
   templateUrl: './maquina-registro.page.html',
   styleUrls: ['./maquina-registro.page.scss'],
   standalone: true,
-  imports: [IonIcon, IonBackButton, IonContent, IonHeader,IonTextarea, IonInput,IonTitle, IonToolbar,IonCol,IonBadge,IonList,IonItem,IonLabel,IonButton,IonFooter,IonText,IonModal,
+  imports: [IonRefresher, IonRefresherContent, IonIcon, IonBackButton, IonContent, IonHeader,IonTextarea, IonInput,IonTitle, IonToolbar,IonCol,IonBadge,IonList,IonItem,IonLabel,IonButton,IonFooter,IonText,IonModal,
     IonCardTitle,IonRow,IonGrid,IonCardHeader,IonCardSubtitle, CommonModule, FormsModule,IonSpinner,IonCard,IonCardContent,IonButtons],
 })
 
 
 export class MaquinaRegistroPage implements OnInit, OnDestroy {
+  private refrescoApp = refreshInject(RefrescoConsultaService);
+  private destroyRefrescoApp = refreshInject(RefreshDestroyRef);
+  get bloquearRefrescoApp() { return this.loading || this.modalOpen || this.modalFallaOpen || this.saving || this.savingFalla || !!this.estadoPendiente; }
+  refrescarApp(event: RefresherCustomEvent) {
+    if (this.bloquearRefrescoApp) { void event.target.complete(); return; }
+    this.refrescoApp.ejecutar(event, completar => { this.cargar(completar); }, this.destroyRefrescoApp);
+  }
+
   obraMaquinaId!: number;
   estadoPendiente: string | null = null;
   loading = true;
@@ -103,11 +116,11 @@ export class MaquinaRegistroPage implements OnInit, OnDestroy {
 
   }
 
-  cargar() {
+  cargar(_completado: () => void = () => {}) {
     this.loading = true;
     this.errorMsg = null;
 
-    this.sub = this.api.getRegistros(this.obraMaquinaId).subscribe({
+    this.sub = this.api.getRegistros(this.obraMaquinaId).pipe(finalize(_completado)).subscribe({
       
       next: (res) => {
         
