@@ -1,116 +1,55 @@
 <ion-content [fullscreen]="true" class="login-content">
   <div class="login-container">
-    <!-- Header con logo -->
     <div class="header-section">
       <div class="company-badge">
-        <div class="logo-circle">
-          <img src="assets/icon/logo.png" alt="Logo Rivera" />
-        </div>
+        <div class="logo-circle"><img src="assets/icon/logo.png" alt="Logo Rivera" /></div>
         <div class="company-info">
-          <p class="company-name">Portal de Construccion</p>
+          <p class="company-name">Portal de Construcción</p>
           <h1 class="portal-title">RIVERA CONSTRUCCIONES</h1>
         </div>
       </div>
     </div>
 
-    <!-- Título de bienvenida -->
-   
-
-    <!-- Sección de login (sin card) -->
     <div class="login-section">
-      <div class="section-header">
-        <!-- <h3 class="section-title">Iniciar Sesión</h3> -->
-        <p class="section-subtitle">Ingresa tus credenciales para continuar.</p>
-      </div>
-
       <form (ngSubmit)="onLogin()" class="login-form">
-        <!-- Email Input -->
         <div class="input-group">
-          <label class="input-label">CORREO ELECTRÓNICO</label>
-          <ion-input
-            type="email"
-            [(ngModel)]="credentials.email"
-            name="email"
-            placeholder="nombre@ejemplo.com"
-            class="custom-input"
-          ></ion-input>
+          <ion-input id="login-email" type="email" [(ngModel)]="credentials.email" name="email"
+            placeholder="nombre@ejemplo.com" aria-label="Correo electrónico" autocomplete="username" class="custom-input"></ion-input>
+          <label for="login-email" class="input-label">Correo electrónico</label>
         </div>
 
-        <!-- Password Input -->
-     <!-- Password Input -->
-<div class="input-group">
-  <div class="label-row">
-    <label class="input-label">CONTRASEÑA</label>
-    <a routerLink="/forgot-password" class="forgot-link">
-      ¿OLVIDASTE TU CONTRASEÑA?
-    </a>
-  </div>
+        <div class="input-group">
+          <div class="password-wrapper">
+            <ion-input id="login-password" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="credentials.password"
+              name="password" placeholder="••••••••" aria-label="Contraseña" autocomplete="current-password" class="custom-input"></ion-input>
+            <button type="button" class="password-toggle" (click)="togglePassword()" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </button>
+          </div>
+          <label for="login-password" class="input-label">Contraseña</label>
+        </div>
 
-  <div class="password-wrapper">
-    <ion-input
-      [type]="showPassword ? 'text' : 'password'"
-      [(ngModel)]="credentials.password"
-      name="password"
-      placeholder="••••••••"
-      class="custom-input"
-    ></ion-input>
-
-    <ion-icon
-      [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
-      class="password-toggle"
-      (click)="togglePassword()"
-    ></ion-icon>
-  </div>
-</div>
-
-        <!-- Remember me checkbox -->
         <div class="remember-section">
-          <ion-item lines="none" class="remember-item">
-            <!-- <ion-checkbox slot="start" class="remember-checkbox"></ion-checkbox> -->
-             <ion-checkbox
-              slot="start"
-              class="remember-checkbox"
-              [(ngModel)]="rememberMe"
-              name="rememberMe"
-            ></ion-checkbox>
+          <div class="remember-row">
+            <ion-item lines="none" class="remember-item">
+              <ion-checkbox slot="start" class="remember-checkbox" [(ngModel)]="rememberMe" name="rememberMe" aria-label="Recuérdame"></ion-checkbox>
+              <ion-label class="remember-label">Recuérdame</ion-label>
+            </ion-item>
+            <a routerLink="/forgot-password" class="forgot-link">¿Olvidaste tu contraseña?</a>
+          </div>
 
-            <ion-label class="remember-label">Recuérdame</ion-label>
-          </ion-item>
-
-          <ion-item *ngIf="biometricAvailable" lines="none" class="remember-item">
-            <ion-checkbox
-              slot="start"
-              class="remember-checkbox"
-              [(ngModel)]="enableBiometricLogin"
-              name="enableBiometricLogin"
-            ></ion-checkbox>
-
-            <ion-label class="remember-label">Usar {{ biometricLabel }} en este iPhone</ion-label>
+          <ion-item *ngIf="biometricAvailable" lines="none" class="remember-item biometric-option">
+            <ion-checkbox slot="start" class="remember-checkbox" [(ngModel)]="enableBiometricLogin" name="enableBiometricLogin" [attr.aria-label]="'Usar ' + biometricLabel"></ion-checkbox>
+            <ion-icon name="finger-print-outline" aria-hidden="true" class="biometric-icon"></ion-icon>
+            <ion-label class="remember-label">Usar {{ biometricLabel }}</ion-label>
           </ion-item>
         </div>
 
-        <!-- Login Button -->
-        <ion-button expand="block" type="submit" class="login-button">
-          INICIAR SESIÓN
-        </ion-button>
-
-        <ion-button
-          *ngIf="biometricConfigured"
-          expand="block"
-          type="button"
-          fill="outline"
-          class="biometric-button"
-          (click)="onBiometricLogin()"
-        >
+        <ion-button expand="block" type="submit" class="login-button">INICIAR SESIÓN</ion-button>
+        <ion-button *ngIf="biometricConfigured" expand="block" type="button" fill="outline" class="biometric-button" (click)="onBiometricLogin()">
           <ion-icon name="finger-print-outline" slot="start"></ion-icon>
           ENTRAR CON {{ biometricLabel }}
         </ion-button>
-
-        <!-- Register Link -->
-        <div class="register-section">
-          <!-- <span class="register-text">¿Eres nuevo? </span>
-          <a routerLink="/register" class="register-link">Registra tu cuenta</a> -->
-        </div>
       </form>
     </div>
   </div>

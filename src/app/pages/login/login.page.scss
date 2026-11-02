@@ -266,3 +266,22 @@
 .custom-input {
   width: 100%;
 }
+
+// Distribución compacta del formulario de acceso.
+.login-content {
+  .login-container { gap: 20px; }
+  .login-section { margin-top: 0; }
+  .login-section .login-form {
+    gap: 16px;
+    .input-group .input-label { margin: 7px 0 0 3px; }
+    .remember-section { margin-top: 0; }
+    .remember-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .remember-item { --min-height: 40px; }
+    .forgot-link { color: #ffa500; font-size: 12px; font-weight: 700; text-decoration: none; }
+    .biometric-option .biometric-icon { color: #ffa500; font-size: 21px; margin-right: 8px; }
+    .login-button { margin-top: 4px; }
+  }
+}
+.password-toggle { background: transparent; border: 0; padding: 8px; display: flex; align-items: center; }
+.password-wrapper .custom-input { --padding-end: 50px; }
+
